@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+targetNamespace="http://csrc.nist.gov/groups/SNS/appvet"
+   xmlns:appvet="http://csrc.nist.gov/groups/SNS/appvet" elementFormDefault="qualified">
+   <!-- $$Id: AppVetProperties.xsd 38580 2014-04-03 19:53:51Z steveq $$ -->
+   <element name="AppVet">
+        <annotation>
+        	<documentation>The AppVet element defines the properties of an AppVet system.</documentation>
+        </annotation>
+        <complexType>
+         <sequence>
+         	<!-- Configure the runtime development environment -->
+         	<element name="Host" type="appvet:HostType" maxOccurs="1"
+         		minOccurs="1">
+                    <annotation>
+                    	<documentation>The Host element defines properties of the AppVet host.</documentation>
+                    </annotation>
+         	</element>
+         	<element name="Logging" type="appvet:LoggingType"
+         		maxOccurs="1" minOccurs="1" >
+         		<annotation>
+         			<documentation>The Loggin element defines properties of the AppVet logger.</documentation>
+         		</annotation></element>
+         	<element name="Sessions" type="appvet:SessionType"
+         		maxOccurs="1" minOccurs="1" >
+         		<annotation>
+         			<documentation>The Sessions defines properties of AppVet user sessions.</documentation>
+         		</annotation></element>
+         	<element name="Database" type="appvet:DatabaseType"
+         		maxOccurs="1" minOccurs="1" >
+         		<annotation>
+         			<documentation>The Database element defines properties of the AppVet database.</documentation>
+         		</annotation></element>
+
+         	<element name="ToolServices" type="appvet:ToolServicesType"
+         		maxOccurs="1" minOccurs="1">
+                    <annotation>
+                    	<documentation>The ToolServices element defines properties common to all AppVet tool service adapters. </documentation>
+                    </annotation>
+         	</element>
+         	<element name="Apps" type="appvet:AppsType" maxOccurs="1" minOccurs="1">
+         		<annotation>
+         			<documentation>The Apps element defines properties of AppVet apps.</documentation>
+         		</annotation></element>
+         </sequence>
+
+      </complexType>
+   </element>
+   
+   <complexType name="LoggingType">
+      <sequence>
+         <element name="Level" type="appvet:LevelType" maxOccurs="1" minOccurs="1">
+         	<annotation>
+         		<documentation>The Level element defines the level used for AppVet logging. Level values include DEBUG, WARNING, INFO, ERROR. For example, <Level>ERROR</Level>. The Level element should be set to DEBUG during AppVet development and to INFO, WARNING, or ERROR for operational AppVet systems.</documentation>
+         	</annotation></element>
+         <element name="ToConsole" type="boolean" maxOccurs="1" minOccurs="1">
+         	<annotation>
+         		<documentation>The ToConsole element defines whether to write logging information to the console (true) or not (false). For example, <ToConsole>true</ToConsole>. The ToConsole element should be set to true during AppVet development and false for operational AppVet systems.</documentation>
+         	</annotation></element>
+      </sequence>
+   </complexType>
+
+   <simpleType name="LevelType">
+      <restriction base="string">
+         <enumeration value="DEBUG" />
+         <enumeration value="INFO" />
+         <enumeration value="WARNING" />
+         <enumeration value="ERROR" />
+      </restriction>
+   </simpleType>
+
+   <complexType name="DatabaseType">
+      <sequence>
+         <element name="URL" type="anyURI" maxOccurs="1" minOccurs="1">
+         	<annotation>
+         		<documentation>The URL element defines the URL of the JDBC database connector. For example, <URL>jdbc:mysql://localhost/appvet</URL>.</documentation>
+         	</annotation></element>
+         <element name="UserName" type="string" maxOccurs="1" minOccurs="1">
+         	<annotation>
+         		<documentation>The UserName element defines the database username. For example, <UserName>steve</UserName>.</documentation>
+         	</annotation></element>
+         <element name="Password" type="string" maxOccurs="1" minOccurs="1">
+         	<annotation>
+         		<documentation>The Password element defines the database password. For example, <Password>mypassword1234</Password>.</documentation>
+         	</annotation></element>
+      </sequence>
+   </complexType>
+
+   <complexType name="AndroidType">
+      <sequence>
+         <element name="MinSDK" type="int" maxOccurs="1" minOccurs="1"></element>
+         <element name="TargetSDK" type="int" maxOccurs="1" minOccurs="1"></element>
+         <element name="MaxSDK" type="int" maxOccurs="1" minOccurs="0"></element>
+      </sequence>
+   </complexType>
+
+   <complexType name="SessionType">
+      <sequence>
+         <element name="Timeout" type="int" maxOccurs="1"
+            minOccurs="1">
+                <annotation>
+                	<documentation>The Timeout element defines the duration (in milliseconds) of a user session. For example, <Timeout>1800000</Timeout>. Note that user activity that is detected by the system resets Timeout.</documentation>
+                </annotation>
+         </element>
+         <element name="GetUpdatesDelay" type="int" maxOccurs="1"
+            minOccurs="1">
+                <annotation>
+                	<documentation>The GetUpdatesDelay element defines the interval (in milliseconds) to retrieve session update information. For example, <GetUpdatesDisplay>5000</GetUpdatesDisplay>.</documentation>
+                </annotation>
+         </element>
+      </sequence>
+   </complexType>
+   
+    <complexType name="ServicesMgrType">
+       <sequence>
+          <element name="ConnectionTimeout" type="int" maxOccurs="1" minOccurs="1"></element>
+          <element name="SocketTimeout" type="int" maxOccurs="1" minOccurs="1"></element>
+          <element name="Timeout" type="int" maxOccurs="1" minOccurs="1"></element>
+       </sequence>
+    </complexType>
+
+    <complexType name="ToolServicesType">
+       <sequence>
+       	<element name="PollingInterval" type="int" maxOccurs="1"
+       		minOccurs="1">
+                <annotation>
+                	<documentation>The PollingInterval element defines the interval (in milliseconds) to poll for new or updated app information. For example, <PollingInterval>2000</PollingInterval>.</documentation>
+                </annotation>
+       	</element>
+       	<element name="StaggerInterval" type="int" maxOccurs="1"
+       		minOccurs="1">
+                <annotation>
+                	<documentation>The StaggerInterval element defines the delay (in milliseconds) to invoke a tool on an app. For example, <StaggerInterval>1000</StaggerInterval>.</documentation>
+                </annotation>
+       	</element>
+       	<element name="ConnectionTimeout" type="int" maxOccurs="1"
+       		minOccurs="1">
+                <annotation>
+                	<documentation>The ConnectionTimeout element defines the maximum time permitted (in milliseconds) to establish a connection to a remote tool service. </documentation>
+                </annotation>
+       	</element>
+       	<element name="SocketTimeout" type="int" maxOccurs="1"
+       		minOccurs="1">
+                <annotation>
+                	<documentation>The SocketTimeout element defines the maximum time permitted (in milliseconds) to receive data from a remote tool service.</documentation>
+                </annotation>
+       	</element>
+       	<element name="Timeout" type="int" maxOccurs="1" minOccurs="1">
+       		<annotation>
+       			<documentation>The Timeout element defines the maximum time permitted (in milliseconds) for a synchronous service to complete.</documentation>
+       		</annotation></element>
+       </sequence>
+    </complexType>
+
+
+    <complexType name="HostType">
+    	<sequence>
+    		<!--  Hostname must be a Fully Qualified Domain Name (FQDN) 
+    		that includes both a local 
+    			hostname and a domain name. This is required due to reliability
+    			issues in deriving the FQDN from the host IP. Because AppVet
+    			clients must connect to AppVet server(s) using the FQDN, it is 
+    			necessary to require the admin to define this property. Note
+    			that if a FQDN is used for the host, all clients must also
+    			use the same FQDN when connecting to the host. Similarly,
+    			if an IP address in lieu of an FQDN for the host, all clients
+    			must connect to the host using that IP address.-->
+    		<element name="Hostname" type="string" maxOccurs="1"
+    			minOccurs="1">
+                <annotation>
+                	<documentation>The Hostname element defines the fully qualified domain name (FQDN) or IP address of the host. For example, <Hostname>myhost.examlpe.com</Hostname>. If DHCP is used, Hostame must have the value Hostname="DHCP".</documentation>
+                </annotation>
+    		</element>
+    		<element name="SSL" type="boolean" maxOccurs="1"
+    			minOccurs="1">
+                <annotation>
+                	<documentation>The SSL element defines whether SSL is used by the Tomcat server (true) or not (false).  For example, <SSL>true</SSL>. Note that the value of SSL (true or false) must match the Tomcat server configuration as defined in $CATALINA_HOME/conf/server.xml.</documentation>
+                </annotation>
+    		</element>
+    		<element name="Port" type="string" maxOccurs="1"
+    			minOccurs="1">
+                <annotation>
+                	<documentation>The Port element defines the Tomcat port number for accessing AppVet. For example, <Port>8080</Port>.  Note that the value of Port must match the Tomcat server configuration as defined in $CATALINA_HOME/conf/server.xml.</documentation>
+                </annotation>
+    		</element>
+    		<!--  Defines whether to keep received apps (true) or delete them
+    		after processing (false). -->
+    	</sequence>
+    </complexType>
+
+    <complexType name="AppsType">
+    	<sequence>
+    		<element name="KeepApps" type="boolean" default="false" maxOccurs="1" minOccurs="1">
+    			<annotation>
+    				<documentation>The KeepApps element defines whether AppVet should keep (true) or delete (false) received apps. Note that keeping apps on the system can lead to large disk usage.</documentation>
+    			</annotation></element>
+    	</sequence>
+    </complexType>
+</schema>

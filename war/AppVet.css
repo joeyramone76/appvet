@@ -1,0 +1,659 @@
+/** Add css rules here for your application. */
+
+
+/** Add css rules here for your application. */
+
+/** Redirect page. */
+redirect
+{
+vertical-align:middle;
+}
+
+/** Example rules used by the template application (remove for your app) */
+h1 {
+	margin-right: 0px;
+	margin-left: 0px;
+	padding-left: 10px;
+	border: outset;
+	font-size: 18em;
+	font-weight: bold;
+	text-align: center;
+}
+
+.sendButton {
+  display: block;
+  font-size: 16pt;
+}
+
+/** Most GWT widgets already have a style name defined */
+.gwt-DialogBox {
+  width: 400px;
+}
+
+.dialogVPanel {
+  margin: 5px;
+}
+
+.serverResponseLabelError {
+  color: red;
+}
+
+/** Set ids using widget.getElement().setId("idOfElement") */
+#closeButton {
+  margin: 15px 6px 6px;
+}
+.nistHeader {
+	color: white;
+	font-size: 6px;
+	background-color: White;
+}
+.statusMessage {
+	color: Yellow;
+	background-color: Black;
+}
+.userStatus {
+	color: Blue;
+	padding-right: 10px;
+	font-style: italic;
+	font-weight: normal;
+	background-color: White;
+}
+.nistLogo {
+	color: White;
+	font-size: 6px;
+}
+.headerPanel {
+	color: white;
+	margin-bottom: 100px;
+}
+.appsLabel {
+	color: #333333;
+	padding-right: 5px;
+	padding-left: 5px;
+	font-size: 14px;
+	font-weight: bold;
+	vertical-align: middle;
+}
+.logoTitle {
+	color: Black;
+	padding-top: 10px;
+	font-size: 24px;
+	font-weight: bold;
+}
+.versionTitle {
+	color: Black;
+	font-size: 12px;
+	font-weight: normal;
+}
+.none {
+}
+.logoVersion {
+	color: white;
+	font-size: 10px;
+}
+.atpTitle {
+	color: white;
+	padding-top: 15px;
+	padding-right: 10px;
+	font-size: 24px;
+	font-weight: bold;
+	background-color: Black;
+}
+.atpVersion {
+}
+.errorDialogBox {
+	color: red;
+	font-size: 14px;
+	vertical-align: middle;
+	text-align: center;
+}
+errorMessage {
+	color: red;
+	font-size: 14px;
+	font-weight: bold;
+	vertical-align: middle;
+	text-align: center;
+}
+searchPanel {
+	padding-bottom: 10px;
+}
+.searchPanel {
+	padding-bottom: 20px;
+}
+.logOutButton {
+	color: black;
+	background-color: white;
+}
+.splitPanel {
+	color: White;
+	border: 1px Red;
+	background-color: White;
+}
+.atpMenuBar {
+	color: Black;
+	text-align: right;
+	background-color: White;
+}
+.menuItem {
+	padding-right: 30px;
+}
+.atpStatusLabel {
+	color: Blue;
+	padding-left: 5px;
+}
+.showAllPushButton {
+	color: Navy;
+	background-color: White;
+}
+.appListButtonPanel {
+	padding: 5px;
+	border-top: White;
+	border-right: White;
+	border-bottom: 1px solid Silver;
+	border-left: White;
+}
+.appLogo {
+	color: dimgray;
+	padding-bottom: 10px;
+	padding-left: 10px;
+	font-size: 18px;
+	font-weight: bold;
+}
+.appInfoHtml {
+	border-top: thin;
+	border-bottom: thin;
+}
+.appInfoButtonPanel {
+	padding-bottom: 15px;
+}
+.appInfoScrollPanel {
+	padding-bottom: 10px;
+}
+.AppInformationLabeledPanel {
+	padding-bottom: 10px;
+}
+.analysisResultsLabeledPanel {
+	color: Black;
+	background-color: Maroon;
+}
+.appLogoError {
+	color: Red;
+	padding-bottom: 10px;
+	padding-left: 10px;
+	font-size: 18px;
+	font-weight: bold;
+}
+.appLogoEndorsed {
+	color: Green;
+	padding-bottom: 10px;
+	padding-left: 10px;
+	font-size: 18px;
+	font-weight: bold;
+}
+.appLogoWarning {
+	color: #ff6600;
+	padding-bottom: 10px;
+	padding-left: 10px;
+	font-size: 18px;
+	font-weight: bold;
+}
+
+#appInfoSectionHeader {
+	color: dimgray;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+#tableitemgood {
+	text-align: left;
+	color: green;
+	font-size: 12px
+}
+
+#tableitemwarning {
+	text-align: left;
+	color: orange;
+	font-size: 12px
+}
+
+.tableitembad {
+	text-align: left;
+	color: red;
+	font-size: 12px
+}
+
+#tableitemdimmed {
+	text-align: left;
+	color: gray;
+	font-size: 12px
+}
+.gwt-FileUpload {
+}
+.apkZipUploadLabel {
+	padding-right: 10px;
+}
+.gwt-MenuItem {
+	color: darkslategray;
+	padding-right: 5px;
+	border: 1px solid White;
+	font-size: 14px;
+}
+.statusLabel {
+	color: Blue;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	font-size: 14px;
+}
+.uploadPanel {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+.appUpload {
+	margin-bottom: 10px;
+}
+.maliciousCheckBox {
+}
+.horizontalTaReleasePanel {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+.uploadLabel {
+	color: darkslategray;
+}
+.taReleaseCheckBox {
+	margin-right: 10px;
+}
+.infoDialogBox {
+	color: black;
+	font-size: 14px;
+	vertical-align: middle;
+	text-align: center;
+}
+.submissionRequirementsLabel {
+	color: blue;
+	border: solid White;
+	font-size: 12px;
+}
+.SeeHelpSubmissionRequirements {
+	color: Blue;
+	font-size: 12px;
+}
+.appInfoName {
+	color: darkslategray;
+	padding-left: 5px;
+	font-size: 24px;
+	font-weight: bold;
+}
+.appInfoVersion {
+	color: darkslategray;
+	padding-left: 5px;
+	font-size: 12px;
+}
+.moreInfo {
+	color: Blue;
+	padding-left: 5px;
+	font-size: 12px;
+	cursor: pointer;
+	cursor: hand;
+}
+.testReportsPanel {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+.footNote {
+	font-size: 10px;
+}
+.resultsScrollPanel {
+	color: darkslategray;
+	padding-top: 10px;
+	padding-bottom: 2px;
+	border-top: 1px solid darkslategray;
+	border-right: 0px darkslategray;
+	border-bottom: 0px darkslategray;
+	border-left: 0px darkslategray;
+}
+.iconPanel {
+	color: darkslategray;
+	margin-top: 5px;
+	margin-left: 5px;
+}
+.resultsPanel {
+	border: 1px solid Black;
+}
+.dataGrid {
+	color: darkslategray;
+	margin-right: 5px;
+	margin-left: 5px;
+	border-top: solid Silver;
+	border-right: Silver;
+	border-bottom: 1px solid Silver;
+	border-left: Silver;
+}
+.resultScrollPanel {
+	padding: 5px;
+	border-top: 1px darkslategray;
+	border-right: 0px darkslategray;
+	border-bottom: 0px darkslategray;
+	border-left: 0px darkslategray;
+}
+.appInfoDialogCloseButton {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+.appInfoDialogScrollPanel {
+	border: 1px solid grey;
+}
+.inCollaborationWithLabel {
+	padding-right: 5px;
+	font-size: 10px;
+	font-style: italic;
+}
+.devModeIndicator {
+	color: Red;
+}
+.deleteConfirmDialog {
+	color: Red;
+	font-size: 16px;
+}
+.gwt-PushButton {
+	color: darkslategrey;
+}
+.seeLogTxt {
+	color: darkslategray;
+	margin-left: 5px;
+	border: 1px dashed Green;
+	font-size: 11px;
+}
+.buttonPanelStyle {
+	margin-bottom: 10px;
+	padding-top: 10px;
+	border: 0px solid Silver;
+}
+.cancelOkButtonStyle {
+	margin-right: 5px;
+	margin-left: 5px;
+}
+.loginPanel {
+	margin-left: auto;
+    margin-right: auto;
+}
+.statusPanel {
+}
+.mainHeaderPanel {
+	border: 1px solid Silver;
+}
+.atpMainImage {
+	margin: 5px 20px 5px 5px;
+}
+.AppsLabel {
+	color: darkslategray;
+	font-size: 16px;
+	font-weight: bold;
+}
+.searchTextBox {
+	color: Gray;
+	margin-right: 2px;
+	padding-left: 5px;
+	border: 1px solid Silver;
+}
+.atpButton {
+	color: darkslategray;
+	border: 1px solid darkslategray;
+}
+.mainDockPanel {
+}
+.leftAtpPanel {
+	border: 1px solid Silver;
+}
+.rightSimplePanel {
+	border: 1px dotted Green;
+}
+.userMenuBar {
+	color: White;
+}
+.gwt-MenuBar gwt-MenuBar-vertical {
+}
+.buttonPanel {
+	margin-top: 10px;
+	margin-bottom: 5px;
+}
+.gwt-Button {
+	color: darkslategray;
+	background-color: White;
+}
+.gwt-InlineHTML {
+	padding: 5px;
+}
+.gwt-Image {
+}
+.taLogo {
+}
+.loginTaLogo {
+	padding: 5px;
+}
+.mainTaLogo {
+	padding-top: 5px;
+	padding-right: 5px;
+	padding-bottom: 5px;
+}
+.northAtpPanel {
+}
+.atpHeaderPanel {
+	padding: 5px;
+	border: 1px solid Silver;
+}
+.AccountMenuItem {
+	color: Blue;
+	padding-right: 5px;
+	border: 1px solid White;
+	font-size: 14px;
+	font-style: italic;
+}
+.appsGrid {
+	color: darkslategray;
+}
+.appListTable {
+	color: darkslategray;
+	border: 1px Blue;
+}
+.imageHref {
+	padding: 10px;
+}
+.verticalPanel {
+}
+.footerPanel {
+	padding: 5px;
+	border: solid White;
+}
+.contactUs {
+	color: darkslategray;
+	font-size: 10px;
+}
+.lastUpdated {
+	color: darkslategray;
+	font-size: 10px;
+}
+.pushButtonPanel {
+	border: 0px outset White;
+}
+.logoPanel {
+	margin: 5px;
+}
+.outsetPanel {
+	color: Silver;
+}
+.insetPanel {
+	color: White;
+	padding: 5px;
+	border: 1px solid Silver;
+}
+.gwt-Label {
+	color: darkslategray;
+	border: solid White;
+	vertical-align: middle;
+	text-align: center;
+}
+.appUploadPanel {
+	border: 1px solid Silver;
+}
+.submitAppButton {
+	margin-top: 10px;
+}
+.taReleaseKitTextBox {
+	margin-right: 5px;
+}
+.reportUploadPanel {
+	margin: 5px;
+	border: 1px solid Silver;
+}
+.reportUploadLabel {
+}
+.reportUploadButtonPanel {
+	margin-top: 10px;
+}
+.reportUploadWidget {
+}
+.submitAppLabel {
+	color: Blue;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	border: 0px solid White;
+}
+.grid {
+	margin: 5px;
+	border-top: solid White;
+	border-right: solid White;
+	border-bottom: 1px solid Silver;
+	border-left: solid White;
+}
+.disclaimer {
+	padding: 5px;
+	border: 1px solid Silver;
+}
+.downloadPanel {
+	color: darkslategray;
+	margin-top: 5px;
+	margin-right: 10px;
+	margin-left: 10px;
+	border: 1px solid Silver;
+}
+.usersList {
+	margin: 5px 5px 20px;
+	border: 1px solid Silver;
+}
+.userSearch {
+	margin: 5px;
+}
+.usersTable {
+	color: darkslategray;
+	border: 1px solid Silver;
+}
+.usersGrid {
+	color: darkslategray;
+	border: 1px solid Silver;
+}
+.deleteScroll {
+	border: 1px solid Silver;
+}
+.usersCenterPanel {
+	margin: 5px;
+}
+.usersDockPanel {
+	border: 1px solid Silver;
+}
+.usersHorizPanel {
+	margin-bottom: 5px;
+	padding: 5px;
+	border: 1px solid Silver;
+}
+.messageDialogPanel {
+	border: 1px solid Silver;
+	vertical-align: middle;
+}
+.messageDialogLabel {
+	margin-top: 40px;
+	margin-bottom: 40px;
+	border: solid White;
+	vertical-align: middle;
+}
+.messageLabel {
+}
+.messagePanel {
+	padding-bottom: 10px;
+	border: 1px solid Silver;
+}
+.checkBox {
+	margin-right: 10px;
+}
+.fusePanel {
+	border: solid Silver;
+}
+.fuseLabel {
+	border: solid White;
+	font-size: 10px;
+}
+.loginButton {
+	margin: 10px;
+}
+.dockLayoutPanel {
+	padding: 10px;
+}
+. {
+	border: 1px solid Silver;
+}
+.appInfoHtml2 {
+	border: 1px dashed Red;
+}
+.eastDockPanel {
+	border: 1px dashed Red;
+}
+.leftCenterPanel {
+	border-top: solid Silver;
+	border-right: 1px solid Silver;
+	border-bottom: solid Silver;
+	border-left: solid Silver;
+}
+.appFunctionButtonPanel {
+}
+.centerAtpSplitPanel {
+	border: 1px solid Silver;
+}
+.toolResultsHtml {
+	padding-left: 5px;
+}
+.rightCenterPanel {
+	border-top: solid Silver;
+	border-right: solid Silver;
+	border-bottom: solid Silver;
+	border-left: 1px solid Silver;
+}
+.gwt-HorizontalSplitPanel {
+	border: 1px solid Silver;
+}
+.gwt-DecoratorPanel {
+}
+.userFormPanel {
+	border: 1px solid Silver;
+}
+.mavPanelLogo {
+}
+.mavHeaderPanel {
+	padding: 2px;
+	border: 1px solid Silver;
+}
+.aboutDialogButtonPanel {
+	padding-bottom: 10px;
+}
+.loginPanelLogo {
+	margin-top: 15px;
+}
+.appVetHeaderPanel {
+	padding-right: 5px;
+	padding-left: 5px;
+	border-bottom: 1px solid Silver;
+}
+.nistLoginLogo {
+	padding-top: 5px;
+	padding-right: 5px;
+}
+
