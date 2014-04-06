@@ -1167,9 +1167,16 @@ public class AppVetInstaller implements ItemListener {
 				e.printStackTrace();
 			}
 
-			// TODO: Install WAR file into $TOMCAT/webapps
-			System.out.println("Loading appvet.war file... (TBD)");
-			processingTextArea.append("Loading appvet.war file (TBD)...\n");
+			// Install WAR file into $TOMCAT/webapps
+			try {
+				String currentDirectory = System.getProperty("user.dir");
+				FileUtil.copyFile(new File(currentDirectory
+						+ "/" + INSTALLER_FILES_DIR + "/deploy/bin/appvet.war"), new File(
+								CATALINA_HOME + "/webapps/appvet.war"));		
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			processingTextArea.append("Loading appvet.war file...\n");
 
 			// Display completion
 			System.out.println("AppVet Installed!");
