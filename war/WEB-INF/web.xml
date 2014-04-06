@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns="http://java.sun.com/xml/ns/javaee" 
+    xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" 
+    id="WebApp_ID" version="3.0">
+  <!-- $$Id: web.xml 38558 2014-03-30 16:09:22Z steveq $$ -->
+  <servlet>
+    <servlet-name>GWTServlet</servlet-name>
+    <servlet-class>gov.nist.appvet.gwt.server.GWTServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>GWTServlet</servlet-name>
+    <url-pattern>/appvet/greet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>AppVetServlet</servlet-name>
+    <servlet-class>gov.nist.appvet.servlet.AppVetServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AppVetServlet</servlet-name>
+    <url-pattern>/AppVetServlet</url-pattern>
+  </servlet-mapping>
+  <welcome-file-list>
+    <welcome-file>AppVet.html</welcome-file>
+  </welcome-file-list>
+</web-app>
