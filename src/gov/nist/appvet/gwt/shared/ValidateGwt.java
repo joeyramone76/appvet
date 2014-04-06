@@ -21,9 +21,7 @@ package gov.nist.appvet.gwt.shared;
 
 import gov.nist.appvet.shared.validate.ValidateBase;
 
-/**
- * $$Id: ValidateGwt.java 38554 2014-03-30 16:06:12Z steveq $$
- */
+
 public class ValidateGwt extends ValidateBase {
 
     private ValidateGwt() {

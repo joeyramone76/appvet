@@ -30,9 +30,6 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-/**
- * $$Id: AboutDialogBox.java 38554 2014-03-30 16:06:12Z steveq $$
- */
 public class AboutDialogBox extends DialogBox {
 
     public final PushButton closeButton;

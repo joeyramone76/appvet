@@ -19,9 +19,7 @@
  */
 package gov.nist.appvet.shared.validate;
 
-/**
- * $$Id: Validate.java 38554 2014-03-30 16:06:12Z steveq $$
- */
+
 public class Validate extends ValidateBase {
     
     private Validate() {

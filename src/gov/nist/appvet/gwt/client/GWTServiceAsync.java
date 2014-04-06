@@ -28,9 +28,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-/**
- * $$Id: GWTServiceAsync.java 38554 2014-03-30 16:06:12Z steveq $$
- */
+
 public interface GWTServiceAsync {
 
     void adminSetUser(UserInfoGwt userInfo, AsyncCallback<List<UserInfoGwt>> callback)

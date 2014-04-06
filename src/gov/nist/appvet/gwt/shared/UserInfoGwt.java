@@ -24,9 +24,7 @@ import gov.nist.appvet.shared.validate.Validate;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-/**
- * $$Id: UserInfoGwt.java 38554 2014-03-30 16:06:12Z steveq $$
- */
+
 public class UserInfoGwt implements IsSerializable {
 
     private boolean newUser = false;

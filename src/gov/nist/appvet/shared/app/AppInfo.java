@@ -27,15 +27,12 @@ import java.io.File;
 
 import org.apache.commons.fileupload.FileItem;
 
-/**
- * $$Id: AppInfo.java 38554 2014-03-30 16:06:12Z steveq $$
- */
+
 public class AppInfo extends AppInfoBase {
 
 	public static final long serialVersionUID = 1L;
 	private static final Logger appvetLog = AppVetProperties.log;
 	public String sessionId = null;
-//	public String analyst = null;	// username of analyst
 	public FileItem fileItem = null;
 	public String toolId = null;	// Used only for submitting tool report
 	public String toolRisk = null;  // Used only for submitting tool risk

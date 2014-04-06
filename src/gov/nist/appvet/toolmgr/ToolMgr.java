@@ -41,9 +41,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 
-/**
- * $$Id: ToolMgr.java 38554 2014-03-30 16:06:12Z steveq $$
- */
+
 public class ToolMgr implements Runnable {
 
 	private static final Logger log = AppVetProperties.log;

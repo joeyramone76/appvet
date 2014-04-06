@@ -29,9 +29,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 
-/**
- * $$Id: UsersListPagingDataGrid.java 38554 2014-03-30 16:06:12Z steveq $$
- */
+
 public class UsersListPagingDataGrid<T> extends PagingDataGrid<T> {
 
     @Override

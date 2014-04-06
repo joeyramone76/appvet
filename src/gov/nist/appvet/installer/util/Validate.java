@@ -19,9 +19,6 @@
  */
 package gov.nist.appvet.installer.util;
 
-/**
- * $$Id: Validate.java 38554 2014-03-30 16:06:12Z steveq $$
- */
 public class Validate {
 
     public static final int CNRI_HANDLE_HASH_MAX_LENGTH = 128;

@@ -20,8 +20,6 @@
 package gov.nist.appvet.servlet;
 
 import gov.nist.appvet.properties.AppVetProperties;
-import gov.nist.appvet.servlet.shared.Native;
-import gov.nist.appvet.servlet.shared.TimeoutException;
 import gov.nist.appvet.shared.Authenticate;
 import gov.nist.appvet.shared.Database;
 import gov.nist.appvet.shared.ErrorMessage;
@@ -39,20 +37,13 @@ import gov.nist.appvet.toolmgr.ToolServiceAdapter;
 import gov.nist.appvet.toolmgr.ToolMgr;
 import gov.nist.appvet.tools.preprocessor.Registration;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -69,11 +60,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
-/**
- * This class implements AppVet file uploads/downloads.
- * 
- * $$Id: AppVetServlet.java 38554 2014-03-30 16:06:12Z steveq $$
- */
+
 public class AppVetServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;

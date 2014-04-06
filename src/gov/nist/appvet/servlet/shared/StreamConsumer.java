@@ -24,9 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-/**
- * $$Id: StreamConsumer.java 38554 2014-03-30 16:06:12Z steveq $$
- */
+
 public class StreamConsumer extends Thread {
 
     private InputStream inputStream = null;

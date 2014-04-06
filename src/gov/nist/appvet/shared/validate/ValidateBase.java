@@ -21,9 +21,7 @@ package gov.nist.appvet.shared.validate;
 
 import gov.nist.appvet.shared.role.Role;
 
-/**
- * $$Id: ValidateBase.java 38554 2014-03-30 16:06:12Z steveq $$
- */
+
 public class ValidateBase {
 
     public static final int CNRI_HANDLE_HASH_MAX_LENGTH = 128;

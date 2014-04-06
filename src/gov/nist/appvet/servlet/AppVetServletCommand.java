@@ -19,9 +19,6 @@
  */
 package gov.nist.appvet.servlet;
 
-/**
- * $$Id: AppVetServletCommand.java 38554 2014-03-30 16:06:12Z steveq $$
- */
 public enum AppVetServletCommand {
 
 	AUTHENTICATE,

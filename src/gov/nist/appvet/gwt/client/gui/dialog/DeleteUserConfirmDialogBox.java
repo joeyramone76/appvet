@@ -28,9 +28,6 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-/**
- * $$Id: DeleteUserConfirmDialogBox.java 38554 2014-03-30 16:06:12Z steveq $$
- */
 public class DeleteUserConfirmDialogBox extends DialogBox {
 
     public PushButton okButton = null;

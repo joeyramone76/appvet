@@ -83,9 +83,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-/**
- * $$Id: AppVetPanel.java 38554 2014-03-30 16:06:12Z steveq $$
- */
 @SuppressWarnings("deprecation")
 public class AppVetPanel extends DockLayoutPanel {
 

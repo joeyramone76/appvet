@@ -41,9 +41,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * $$Id: Database.java 38554 2014-03-30 16:06:12Z steveq $$
- */
+
 public class Database {
 
 

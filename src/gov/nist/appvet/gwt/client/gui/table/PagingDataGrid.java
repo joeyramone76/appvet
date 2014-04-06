@@ -41,7 +41,6 @@ import com.google.gwt.view.client.ListDataProvider;
  * 
  * @author Ravi Soni
  * 
- *         $$Id: PagingDataGrid.java 38562 2014-03-30 16:20:25Z steveq $$
  */
 public abstract class PagingDataGrid<T> extends Composite {
 

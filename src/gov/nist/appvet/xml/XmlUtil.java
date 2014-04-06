@@ -37,9 +37,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-/**
- * $$Id: XmlUtil.java 38554 2014-03-30 16:06:12Z steveq $$
- */
+
 public class XmlUtil {
 
     private static final Logger log = AppVetProperties.log;

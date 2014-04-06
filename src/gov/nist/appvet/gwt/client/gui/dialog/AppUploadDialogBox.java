@@ -34,9 +34,7 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-/**
- * $$Id: AppUploadDialogBox.java 38562 2014-03-30 16:20:25Z steveq $$
- */
+
 @SuppressWarnings("deprecation")
 public class AppUploadDialogBox extends DialogBox {
 

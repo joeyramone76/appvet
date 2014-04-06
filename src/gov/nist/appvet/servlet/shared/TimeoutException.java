@@ -19,9 +19,7 @@
  */
 package gov.nist.appvet.servlet.shared;
 
-/**
- * $$Id: TimeoutException.java 38554 2014-03-30 16:06:12Z steveq $$
- */
+
 public class TimeoutException extends Exception {
 
     private static final long serialVersionUID = 1L;

@@ -23,9 +23,7 @@ import gov.nist.appvet.shared.status.AppStatus;
 
 import java.io.Serializable;
 
-/**
- * $$Id: AppInfoBase.java 38554 2014-03-30 16:06:12Z steveq $$
- */
+
 public class AppInfoBase implements Serializable {
     private static final long serialVersionUID = 1L;
     public String appId = null;
@@ -39,9 +37,6 @@ public class AppInfoBase implements Serializable {
     public long statusTime = 0;
     public String userName = null;
     public String clientHost = null;
-//    public String minSdk = null;
-//    public String maxSdk = null;
-//    public String targetSdk = null;
 
     public AppInfoBase() {
     }
@@ -72,15 +67,6 @@ public class AppInfoBase implements Serializable {
 	if (userName.toLowerCase().indexOf(lowerCaseToken) > -1) {
 	    return true;
 	}
-//	if (minSdk.toLowerCase().indexOf(lowerCaseToken) > -1) {
-//	    return true;
-//	}
-//	if (maxSdk.toLowerCase().indexOf(lowerCaseToken) > -1) {
-//	    return true;
-//	}
-//	if (targetSdk.toLowerCase().indexOf(lowerCaseToken) > -1) {
-//	    return true;
-//	}
 
 	return false;
     }

@@ -35,9 +35,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * $$Id: AndroidManifest.java 38554 2014-03-30 16:06:12Z steveq $$
- */
 public class AndroidManifest {
 	
 	public static final String APKTOOL_WINDOWS_COMMAND = "apktool.bat";

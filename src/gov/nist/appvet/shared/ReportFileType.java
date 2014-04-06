@@ -19,9 +19,7 @@
  */
 package gov.nist.appvet.shared;
 
-/**
- * $$Id$$
- */
+
 public enum ReportFileType {
     
     PDF, 

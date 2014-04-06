@@ -55,9 +55,7 @@ import org.apache.http.params.HttpParams;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
 
-/**
- * $$Id: ToolServiceAdapter.java 38554 2014-03-30 16:06:12Z steveq $$
- */
+
 public class ToolServiceAdapter implements Runnable {
 
 	private String appvetResultHeaderName = null;
@@ -111,16 +109,6 @@ public class ToolServiceAdapter implements Runnable {
 		return null;
 	}
 
-//	public static ToolServiceAdapter getByName(String toolName) {
-//		for (int i = 0; i < AppVetProperties.availableTools.size(); i++) {
-//			final ToolServiceAdapter adapter = AppVetProperties.availableTools.get(i);
-//			if (adapter.name.equals(toolName)) {
-//				return adapter;
-//			}
-//		}
-//		log.error("Tool name '" + toolName + "' does not exist!");
-//		return null;
-//	}
 
 	public static String getHtmlReportString(String reportPath, AppInfo appInfo) {
 		byte[] encoded = null;

@@ -53,9 +53,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-/**
- * $$Id: LoginPanel.java 38554 2014-03-30 16:06:12Z steveq $$
- */
 public class LoginPanel extends DockLayoutPanel {
 
 	// See appvet.gwt.xml

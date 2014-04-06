@@ -36,11 +36,7 @@ import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-/**
- * This class wraps an HTTPClient to accept any SSL Certificate on the server.
- * 
- * $$Id: SSLWrapper.java 36158 2013-01-31 23:56:52Z steveq$$
- */
+
 public class SSLWrapper {
 
     private static final Logger log = AppVetProperties.log;

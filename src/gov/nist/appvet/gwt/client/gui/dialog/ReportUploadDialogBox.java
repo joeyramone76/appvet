@@ -37,9 +37,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-/**
- * $$Id: ReportUploadDialogBox.java 38554 2014-03-30 16:06:12Z steveq $$
- */
+
 public class ReportUploadDialogBox extends DialogBox {
 
 	public FormPanel uploadReportForm = null;

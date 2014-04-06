@@ -26,110 +26,105 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Timer;
 
-/**
- * This class is used to execute native commands.
- * 
- * $$Id: Native.java 38554 2014-03-30 16:06:12Z steveq $$
- */
 public class Native {
 
-    public static String os = null;
-    static {
-	os = System.getProperty("os.name");
-    }
-
-    public static synchronized boolean exec(AppInfo appInfo, String command,
-	    long timeout, StringBuilder outputBuffer, StringBuilder errorBuffer, 
-	    boolean logErrors) throws TimeoutException, IOException {
-	final boolean successful = 
-		exec(command, timeout, appInfo.log, outputBuffer, errorBuffer);
-	if (!successful && logErrors) {
-	    appInfo.log.error("Error executing " + command + ". Details: \n"
-		    + outputBuffer.toString() + ", " + errorBuffer.toString());
+	public static String os = null;
+	static {
+		os = System.getProperty("os.name");
 	}
-	return successful;
-    }
 
-    public static synchronized boolean exec(String command, long timeout,
-	    Logger log, StringBuilder outputBuffer, StringBuilder errorBuffer) 
-		    throws TimeoutException, IOException {
-	boolean success = false;
-	Timer timer = null;
-	InterruptTimerTask interrupter = null;
-	Process process = null;
-	InputStream inputStream = null;
-	StreamConsumer errorOutputStreamConsumer = null;
-	InputStream errorInputStream = null;
-	StreamConsumer outputStreamConsumer = null;
-	try {
-	    log.debug("Native.exec(): " + command);
-	    interrupter = new InterruptTimerTask(Thread.currentThread());
-	    timer = new Timer(true);
-	    timer.schedule(interrupter, timeout);
-	    process = Runtime.getRuntime().exec(command);
-	    inputStream = process.getInputStream();
-	    outputStreamConsumer = 
-		    new StreamConsumer(inputStream, outputBuffer);
-	    errorInputStream = process.getErrorStream();
-	    errorOutputStreamConsumer = 
-		    new StreamConsumer(errorInputStream, errorBuffer);
-	    outputStreamConsumer.start();
-	    errorOutputStreamConsumer.start();
-
-	    final int exitVal = process.waitFor();
-	    log.debug("Exit value: " + exitVal + " for \"" + command + "\"");
-	    if (exitVal == 0) {
-		success = true;
-	    }
-	} catch (final InterruptedException e) {
-	    throw new TimeoutException("Timeout for " + command + " after "
-		    + timeout + "ms");
-	} finally {
-	    if (errorOutputStreamConsumer != null) {
-		if (errorOutputStreamConsumer.isAlive()) {
-		    errorOutputStreamConsumer.interrupt();
+	public static synchronized boolean exec(AppInfo appInfo, String command,
+			long timeout, StringBuilder outputBuffer,
+			StringBuilder errorBuffer, boolean logErrors)
+			throws TimeoutException, IOException {
+		final boolean successful = exec(command, timeout, appInfo.log,
+				outputBuffer, errorBuffer);
+		if (!successful && logErrors) {
+			appInfo.log.error("Error executing " + command + ". Details: \n"
+					+ outputBuffer.toString() + ", " + errorBuffer.toString());
 		}
-		errorOutputStreamConsumer = null;
-	    }
-	    if (outputStreamConsumer != null) {
-		if (outputStreamConsumer.isAlive()) {
-		    outputStreamConsumer.interrupt();
-		}
-		outputStreamConsumer = null;
-	    }
-	    if (errorInputStream != null) {
-		errorInputStream.close();
-		errorInputStream = null;
-	    }
-	    if (inputStream != null) {
-		inputStream.close();
-		inputStream = null;
-	    }
-
-	    // WARNING: A Windows/Solaris JDK bug might allow this process
-	    // to continue after it is destroyed!
-	    if (process != null) {
-		process.destroy();
-	    }
-
-	    if (timer != null) {
-		timer.cancel();
-		timer = null;
-	    }
-
-	    // If the process returns within the timeout period, we have to
-	    // stop the interrupter so that it does not unexpectedly interrupt
-	    // some other code later.
-	    if (interrupter != null) {
-		interrupter.cancel();
-		interrupter = null;
-	    }
-
-	    // We need to clear the interrupt flag on the current thread just
-	    // in case interrupter executed after waitFor had already returned
-	    // but before timer.cancel took effect.
-	    Thread.interrupted();
+		return successful;
 	}
-	return success;
-    }
+
+	public static synchronized boolean exec(String command, long timeout,
+			Logger log, StringBuilder outputBuffer, StringBuilder errorBuffer)
+			throws TimeoutException, IOException {
+		boolean success = false;
+		Timer timer = null;
+		InterruptTimerTask interrupter = null;
+		Process process = null;
+		InputStream inputStream = null;
+		StreamConsumer errorOutputStreamConsumer = null;
+		InputStream errorInputStream = null;
+		StreamConsumer outputStreamConsumer = null;
+		try {
+			log.debug("Native.exec(): " + command);
+			interrupter = new InterruptTimerTask(Thread.currentThread());
+			timer = new Timer(true);
+			timer.schedule(interrupter, timeout);
+			process = Runtime.getRuntime().exec(command);
+			inputStream = process.getInputStream();
+			outputStreamConsumer = new StreamConsumer(inputStream, outputBuffer);
+			errorInputStream = process.getErrorStream();
+			errorOutputStreamConsumer = new StreamConsumer(errorInputStream,
+					errorBuffer);
+			outputStreamConsumer.start();
+			errorOutputStreamConsumer.start();
+
+			final int exitVal = process.waitFor();
+			log.debug("Exit value: " + exitVal + " for \"" + command + "\"");
+			if (exitVal == 0) {
+				success = true;
+			}
+		} catch (final InterruptedException e) {
+			throw new TimeoutException("Timeout for " + command + " after "
+					+ timeout + "ms");
+		} finally {
+			if (errorOutputStreamConsumer != null) {
+				if (errorOutputStreamConsumer.isAlive()) {
+					errorOutputStreamConsumer.interrupt();
+				}
+				errorOutputStreamConsumer = null;
+			}
+			if (outputStreamConsumer != null) {
+				if (outputStreamConsumer.isAlive()) {
+					outputStreamConsumer.interrupt();
+				}
+				outputStreamConsumer = null;
+			}
+			if (errorInputStream != null) {
+				errorInputStream.close();
+				errorInputStream = null;
+			}
+			if (inputStream != null) {
+				inputStream.close();
+				inputStream = null;
+			}
+
+			// WARNING: A Windows/Solaris JDK bug might allow this process
+			// to continue after it is destroyed!
+			if (process != null) {
+				process.destroy();
+			}
+
+			if (timer != null) {
+				timer.cancel();
+				timer = null;
+			}
+
+			// If the process returns within the timeout period, we have to
+			// stop the interrupter so that it does not unexpectedly interrupt
+			// some other code later.
+			if (interrupter != null) {
+				interrupter.cancel();
+				interrupter = null;
+			}
+
+			// We need to clear the interrupt flag on the current thread just
+			// in case interrupter executed after waitFor had already returned
+			// but before timer.cancel took effect.
+			Thread.interrupted();
+		}
+		return success;
+	}
 }

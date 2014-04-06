@@ -37,9 +37,7 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 
-/**
- * $$Id: AppsListPagingDataGrid.java 38554 2014-03-30 16:06:12Z steveq $$
- */
+
 public class AppsListPagingDataGrid<T> extends PagingDataGrid<T> {
 
     private final DateTimeFormat dateTimeFormat = DateTimeFormat

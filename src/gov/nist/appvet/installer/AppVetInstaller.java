@@ -38,9 +38,7 @@ import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
-/**
- * $$Id: AppVetInstaller.java 38554 2014-03-30 16:06:12Z steveq $$
- */
+
 public class AppVetInstaller implements ItemListener {
 
 	private final String INSTALLER_FILES_DIR = "appvet_installer_files";

@@ -32,9 +32,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-/**
- * $$Id: AppVetProperties.java 38554 2014-03-30 16:06:12Z steveq $$
- */
 public class AppVetProperties {
 
 	/** AppVet version number. */

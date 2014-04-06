@@ -28,9 +28,7 @@ import java.nio.file.StandardCopyOption;
 
 import org.apache.commons.fileupload.FileItem;
 
-/**
- * $$Id: FileUtil.java 38554 2014-03-30 16:06:12Z steveq $$
- */
+
 public class FileUtil {
 
 	private static final Logger log = AppVetProperties.log;

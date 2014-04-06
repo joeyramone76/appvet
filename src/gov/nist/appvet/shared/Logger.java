@@ -28,12 +28,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-/**
- * This class is used for logging. This class was developed due to limitations
- * of java.util.logging and Log4j.
- * 
- * $$Id: Logger.java 38554 2014-03-30 16:06:12Z steveq $$
- */
+
 public class Logger {
 
 	private SimpleDateFormat format = null;

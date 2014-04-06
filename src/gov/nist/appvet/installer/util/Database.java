@@ -24,9 +24,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-/**
- * $$Id: Database.java 38554 2014-03-30 16:06:12Z steveq $$
- */
 public class Database {
 
 	public String URL;

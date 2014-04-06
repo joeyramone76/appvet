@@ -33,7 +33,6 @@ import javax.crypto.spec.PBEKeySpec;
  * PBKDF2 salted password hashing.
  * Author: havoc AT defuse.ca
  * www: http://crackstation.net/hashing-security.htm
- * $$Id: Authenticate.java 38554 2014-03-30 16:06:12Z steveq $$
  */
 public class Authenticate {
 

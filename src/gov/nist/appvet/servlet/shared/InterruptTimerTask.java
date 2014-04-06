@@ -21,9 +21,6 @@ package gov.nist.appvet.servlet.shared;
 
 import java.util.TimerTask;
 
-/**
- * $$Id: InterruptTimerTask.java 38554 2014-03-30 16:06:12Z steveq $$
- */
 public class InterruptTimerTask extends TimerTask {
 
 	private final Thread thread;

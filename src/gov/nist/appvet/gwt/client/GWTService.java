@@ -29,9 +29,6 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-/**
- * $$Id: GWTService.java 38554 2014-03-30 16:06:12Z steveq $$
- */
 @RemoteServiceRelativePath("greet")
 public interface GWTService extends RemoteService {
 

@@ -40,9 +40,7 @@ import java.util.List;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-/**
- * $$Id: GWTServiceImpl.java 38554 2014-03-30 16:06:12Z steveq $$
- */
+
 public class GWTServiceImpl extends RemoteServiceServlet implements GWTService {
 
 	private static final long serialVersionUID = 1L;
