@@ -1168,13 +1168,23 @@ public class AppVetInstaller implements ItemListener {
 			// Install WAR file into $TOMCAT/webapps
 			try {
 				String currentDirectory = System.getProperty("user.dir");
-				FileUtil.copyFile(new File(currentDirectory
-						+ "/" + INSTALLER_FILES_DIR + "/deploy/bin/appvet.war"), new File(
-								CATALINA_HOME + "/webapps/appvet.war"));		
+				File warFile = new File(currentDirectory
+						+ "/" + INSTALLER_FILES_DIR + "/deploy/bin/appvet.war");
+				if (warFile.exists()) {
+					FileUtil.copyFile(warFile, new File(
+									CATALINA_HOME + "/webapps/appvet.war"));
+					processingTextArea.append("Loading appvet.war file...\n");
+				} else {
+					String msg = "You are running AppVet from the source distribution which requires you to "
+							+ "export the appvet project as a war file to "
+							+ "$CATALINA_HOME/webapps/appvet.war after this installation.";
+					JOptionPane.showMessageDialog(frame, msg, "AppVet Installer", JOptionPane.WARNING_MESSAGE);
+					processingTextArea.append(msg);
+				}
+		
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
-			processingTextArea.append("Loading appvet.war file...\n");
 
 			// Display completion
 			System.out.println("AppVet Installed!");
