@@ -40,84 +40,93 @@ import org.w3c.dom.NodeList;
 
 public class XmlUtil {
 
-    private static final Logger log = AppVetProperties.log;
-    
-    private Document document = null;
+	private static final Logger log = AppVetProperties.log;
 
-    public XmlUtil(File xmlFile) {
-	DocumentBuilderFactory docBuilderFactory = null;
-	DocumentBuilder docBuilder = null;
-	try {
-	    if (!xmlFile.exists()) {
-		log.error("File " + xmlFile.getName()
-			+ " does not exist.");
-	    }
-	    docBuilderFactory = DocumentBuilderFactory.newInstance();
-	    docBuilder = docBuilderFactory.newDocumentBuilder();
-	    document = docBuilder.parse(xmlFile);
-	} catch (final Exception e) {
-	    log.error(e.getMessage());
-	} finally {
-	    docBuilder = null;
-	    docBuilderFactory = null;
-	}
-    }
+	private Document document = null;
 
-    public synchronized String getXPathValue(String nodePath) {
-	if (nodePath == null) {
-	    return null;
-	}
-	XPath xPath = XPathFactory.newInstance().newXPath();
-	Node node = null;
-	try {
-	    node = (Node) xPath.evaluate(nodePath,
-		    document.getDocumentElement(), XPathConstants.NODE);
-	    if (node == null) {
-		return null;
-	    }
-	    final String elementValue = node.getFirstChild().getNodeValue()
-		    .trim();
-	    if (elementValue != null && !elementValue.isEmpty()) {
-		return elementValue;
-	    }
-	} catch (final Exception e) {
-	    log.error(e.getMessage());
-	} finally {
-	    node = null;
-	    xPath = null;
-	}
-	return null;
-    }
-
-    public synchronized ArrayList<String> getXPathValues(String nodePath) {
-	final ArrayList<String> values = new ArrayList<String>();
-	XPath xPath = null;
-	NodeList nodes = null;
-	Element element = null;
-	String elementValue = null;
-	try {
-	    xPath = XPathFactory.newInstance().newXPath();
-	    nodes = (NodeList) xPath.evaluate(nodePath,
-		    document.getDocumentElement(), XPathConstants.NODESET);
-	    if (nodes == null || nodes.getLength() == 0) {
-		return null;
-	    }
-	    for (int i = 0; i < nodes.getLength(); ++i) {
-		element = (Element) nodes.item(i);
-		elementValue = element.getFirstChild().getNodeValue()
-			.trim();
-		if (elementValue != null && !elementValue.isEmpty()) {
-		    values.add(elementValue);
+	public XmlUtil(File xmlFile) {
+		DocumentBuilderFactory docBuilderFactory = null;
+		DocumentBuilder docBuilder = null;
+		try {
+			if (!xmlFile.exists()) {
+				if (log == null) {
+					System.err.println("File " + xmlFile.getName()
+							+ " does not exist.");
+				} else {
+				log.error("File " + xmlFile.getName()
+						+ " does not exist.");
+				}
+			}
+			docBuilderFactory = DocumentBuilderFactory.newInstance();
+			docBuilder = docBuilderFactory.newDocumentBuilder();
+			document = docBuilder.parse(xmlFile);
+		} catch (final Exception e) {
+			if (log == null) {
+				e.printStackTrace();
+			} else {
+				log.error(e.getMessage());
+			}
+		} finally {
+			docBuilder = null;
+			docBuilderFactory = null;
 		}
-	    }
-	} catch (final XPathExpressionException e) {
-	    log.error(e.getMessage());
-	} finally {
-	    elementValue = null;
-	    element = null;
-	    nodes = null;
-	    xPath = null;
 	}
-	return values;
-    }
+
+	public synchronized String getXPathValue(String nodePath) {
+		if (nodePath == null) {
+			return null;
+		}
+		XPath xPath = XPathFactory.newInstance().newXPath();
+		Node node = null;
+		try {
+			node = (Node) xPath.evaluate(nodePath,
+					document.getDocumentElement(), XPathConstants.NODE);
+			if (node == null) {
+				return null;
+			}
+			final String elementValue = node.getFirstChild().getNodeValue()
+					.trim();
+			if (elementValue != null && !elementValue.isEmpty()) {
+				return elementValue;
+			}
+		} catch (final Exception e) {
+			log.error(e.getMessage());
+		} finally {
+			node = null;
+			xPath = null;
+		}
+		return null;
+	}
+
+	public synchronized ArrayList<String> getXPathValues(String nodePath) {
+		final ArrayList<String> values = new ArrayList<String>();
+		XPath xPath = null;
+		NodeList nodes = null;
+		Element element = null;
+		String elementValue = null;
+		try {
+			xPath = XPathFactory.newInstance().newXPath();
+			nodes = (NodeList) xPath.evaluate(nodePath,
+					document.getDocumentElement(), XPathConstants.NODESET);
+			if (nodes == null || nodes.getLength() == 0) {
+				return null;
+			}
+			for (int i = 0; i < nodes.getLength(); ++i) {
+				element = (Element) nodes.item(i);
+				elementValue = element.getFirstChild().getNodeValue()
+						.trim();
+				if (elementValue != null && !elementValue.isEmpty()) {
+					values.add(elementValue);
+				}
+			}
+		} catch (final XPathExpressionException e) {
+			log.error(e.getMessage());
+		} finally {
+			elementValue = null;
+			element = null;
+			nodes = null;
+			xPath = null;
+		}
+		return values;
+	}
 }

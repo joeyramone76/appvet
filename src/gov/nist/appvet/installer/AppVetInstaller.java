@@ -85,14 +85,17 @@ public class AppVetInstaller implements ItemListener {
 	public AppVetInstaller() {
 
 		String envVarExample = "";
+		String jarsignerStr = "";
 		os = System.getProperty("os.name");
 		if (!os.startsWith("Win") && !os.equals("Linux")) {
 			System.out.println("AppVet Installer is not available for " + os);
 			System.exit(0);
 		} else if (os.startsWith("Win")) {
 			envVarExample = "C:\\appvet_files";
+			jarsignerStr = "jarsigner.exe";
 		} else if (os.equals("Linux")) {
 			envVarExample = "/home/appvet_files";
+			jarsignerStr = "jarsigner";
 		}
 
 		try {
@@ -114,8 +117,10 @@ public class AppVetInstaller implements ItemListener {
 			System.exit(0);
 		}
 
-		// Check if JAVA_HOME is set to JDK (which contains Jarsigner.exe)
-		File file = new File(JAVA_HOME + "/bin/jarsigner.exe");
+		// Check if JAVA_HOME is set to a JDK rather than JRE. We do this
+		// since AppVet might require tools that are available in a JDK
+		// but not in a JRE (e.g., jarsigner).
+		File file = new File(JAVA_HOME + "/bin/" + jarsignerStr);
 		if (!file.exists()) {
 			JOptionPane.showMessageDialog(frame, 
 					"JAVA_HOME does not seem to be set to a Java JDK.",
@@ -1175,9 +1180,9 @@ public class AppVetInstaller implements ItemListener {
 									CATALINA_HOME + "/webapps/appvet.war"));
 					processingTextArea.append("Loading appvet.war file...\n");
 				} else {
-					String msg = "You are running AppVet from the source distribution which requires you to "
-							+ "export the appvet project as a war file to "
-							+ "$CATALINA_HOME/webapps/appvet.war after this installation.";
+					String msg = "Running AppVet from the source distribution\n"
+							+ "does not copy the appvet war file to\n"
+							+ "Tomcat. This must be done manually.";
 					JOptionPane.showMessageDialog(frame, msg, "AppVet Installer", JOptionPane.WARNING_MESSAGE);
 					processingTextArea.append(msg);
 				}
