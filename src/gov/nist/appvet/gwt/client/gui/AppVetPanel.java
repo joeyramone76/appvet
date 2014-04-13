@@ -769,7 +769,7 @@ public class AppVetPanel extends DockLayoutPanel {
 
 			@Override
 			public void execute() {
-	            Window.open("http://csrc.nist.gov/groups/SNS/acpt/index.html", "_blank", null);
+	            Window.open("http://csrc.nist.gov/projects/appvet", "_blank", null);
 			}
 
 		});

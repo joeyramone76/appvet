@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://csrc.nist.gov/groups/SNS/appvet"
-	xmlns:appvet="http://csrc.nist.gov/groups/SNS/appvet" elementFormDefault="qualified"
+	xmlns:appvet="http://csrc.nist.gov/projects/appvet" elementFormDefault="qualified"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 	<!-- $$Id: ToolServiceAdapter.xsd 38580 2014-04-03 19:53:51Z steveq $$ -->
 

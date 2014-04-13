@@ -1061,9 +1061,9 @@ public class AppVetInstaller implements ItemListener {
 			processingTextArea.append("Creating properties file...\n");
 
 			String appVetProperties = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-					+ "<appvet:AppVet xmlns:appvet=\"http://csrc.nist.gov/groups/SNS/appvet\" \n"
+					+ "<appvet:AppVet xmlns:appvet=\"http://csrc.nist.gov/projects/appvet\" \n"
 					+ "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n"
-					+ "xsi:schemaLocation=\"http://csrc.nist.gov/groups/SNS/appvet AppVetProperties.xsd\">\n"					
+					+ "xsi:schemaLocation=\"http://csrc.nist.gov/projects/appvet AppVetProperties.xsd\">\n"					
 					+ " <appvet:Host>\n" 
 					+ "    <appvet:Hostname></appvet:Hostname>\n"
 					+ "    <appvet:SSL></appvet:SSL>\n"
@@ -1173,8 +1173,11 @@ public class AppVetInstaller implements ItemListener {
 			// Install WAR file into $TOMCAT/webapps
 			try {
 				String currentDirectory = System.getProperty("user.dir");
-				File warFile = new File(currentDirectory
-						+ "/" + INSTALLER_FILES_DIR + "/deploy/bin/appvet.war");
+				String warFilePath = currentDirectory + "/" 
+						+ INSTALLER_FILES_DIR 
+						+ "/deploy/tomcat/webapps/appvet.war";
+				//System.out.println("warfFilepath: " + warFilePath);
+				File warFile = new File(warFilePath);
 				if (warFile.exists()) {
 					FileUtil.copyFile(warFile, new File(
 									CATALINA_HOME + "/webapps/appvet.war"));
@@ -1192,7 +1195,7 @@ public class AppVetInstaller implements ItemListener {
 			}
 
 			// Display completion
-			System.out.println("AppVet Installed!");
+			System.out.println("\nAppVet Installed!");
 			processingTextArea.append("AppVet Installed!\n");
 			doneButton.setEnabled(true);
 		}

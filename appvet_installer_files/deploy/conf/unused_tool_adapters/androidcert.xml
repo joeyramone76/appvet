@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<appvet:ToolServiceAdapter xmlns:appvet="http://csrc.nist.gov/groups/SNS/appvet" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://csrc.nist.gov/groups/SNS/appvet ToolServiceAdapter.xsd ">
+<appvet:ToolServiceAdapter xmlns:appvet="http://csrc.nist.gov/projects/appvet" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://csrc.nist.gov/groups/SNS/appvet ToolServiceAdapter.xsd ">
   <appvet:Description>
     <appvet:Name>Android Cert Verifier</appvet:Name>
     <appvet:Id>certverify</appvet:Id>
