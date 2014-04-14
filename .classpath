@@ -7,7 +7,6 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-io-2.0.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/fontbox-1.6.0.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-servlet.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/httpclient-4.2.3.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/httpcore-4.2.3.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/httpmime-4.2.3.jar"/>
@@ -15,5 +14,6 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/pdfbox-1.6.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/eclipse-jee-kepler-R-win32-x86_64/plugins/com.google.gwt.eclipse.sdkbundle_2.5.1/gwt-2.5.1/gwt-servlet.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
