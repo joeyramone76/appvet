@@ -284,14 +284,14 @@ public class AppVetServlet extends HttpServlet {
 							response, HttpServletResponse.SC_BAD_REQUEST, true);
 					return;
 				} else {
-					sendHttpResponse(userName, appId, commandStr, clientIpAddress,
-							"HTTP/1.1 202 Accepted", response,
-							HttpServletResponse.SC_ACCEPTED, false);
 					appInfo = createAppInfo(userName, sessionId,
 							fileItem, clientIpAddress, request);
 					if (appInfo == null)
 						return;
 					else {
+						sendHttpResponse(userName, appInfo.appId, commandStr, clientIpAddress,
+								"HTTP/1.1 202 Accepted", response,
+								HttpServletResponse.SC_ACCEPTED, false);
 						Registration registration = new Registration(appInfo);
 						registration.registerApp();
 					}
@@ -685,6 +685,8 @@ public class AppVetServlet extends HttpServlet {
 		try {
 			response.setStatus(httpResponseCode);
 			response.setContentType("text/html");
+			// Return app ID for the new app submission
+			response.setHeader("appid", appId);
 			out = response.getWriter();
 			out.println(message);
 			out.flush();
