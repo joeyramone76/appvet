@@ -44,9 +44,9 @@ public class ConfigInfoGwt implements IsSerializable {
     public ConfigInfoGwt() {
     }
 
-    public String getAppVetBuild() {
-	return appVetBuild;
-    }
+//    public String getAppVetBuild() {
+//	return appVetBuild;
+//    }
 
     public String getAppVetHostUrl() {
 	return appVetHostUrl;
@@ -76,9 +76,9 @@ public class ConfigInfoGwt implements IsSerializable {
 	return hostname;
     }
 
-    public String getLastUpdated() {
-	return lastUpdated;
-    }
+//    public String getLastUpdated() {
+//	return lastUpdated;
+//    }
 
     public long getMaxIdleTime() {
 	return maxIdleTime;
@@ -104,9 +104,9 @@ public class ConfigInfoGwt implements IsSerializable {
 	return userInfo;
     }
 
-    public void setAppVetBuild(String appvetBuild) {
-	this.appVetBuild = appvetBuild;
-    }
+//    public void setAppVetBuild(String appvetBuild) {
+//	this.appVetBuild = appvetBuild;
+//    }
 
     public void setAppVetHostUrl(String appvetHostUrl) {
 	this.appVetHostUrl = appvetHostUrl;
@@ -140,9 +140,9 @@ public class ConfigInfoGwt implements IsSerializable {
 	this.hostname = hostname;
     }
 
-    public void setLastUpdated(String lastUpdated) {
-	this.lastUpdated = lastUpdated;
-    }
+//    public void setLastUpdated(String lastUpdated) {
+//	this.lastUpdated = lastUpdated;
+//    }
 
     public void setMaxIdleTime(long maxIdleTime) {
 	this.maxIdleTime = maxIdleTime;

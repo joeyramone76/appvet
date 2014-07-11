@@ -746,7 +746,7 @@ public class AppVetPanel extends DockLayoutPanel {
 			@Override
 			public void execute() {
 				aboutDialogBox = new AboutDialogBox(configInfo
-						.getAppVetVersion(), configInfo.getAppVetBuild());
+						.getAppVetVersion());
 				aboutDialogBox.setText("About");
 				aboutDialogBox.center();
 				aboutDialogBox.closeButton.setFocus(true);
@@ -852,16 +852,16 @@ public class AppVetPanel extends DockLayoutPanel {
 		addSouth(horizontalPanel_2, 35.0);
 		horizontalPanel_2.setSize("100%", "");
 
-		final Label lastUpdatedLabel = new Label("Last updated: "
-				+ configInfo.getLastUpdated());
-		lastUpdatedLabel
-		.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
-		lastUpdatedLabel.setStyleName("lastUpdated");
-		horizontalPanel_2.add(lastUpdatedLabel);
-		lastUpdatedLabel.setWidth("200px");
-		horizontalPanel_2.setCellWidth(lastUpdatedLabel, "100%");
-		horizontalPanel_2.setCellVerticalAlignment(lastUpdatedLabel,
-				HasVerticalAlignment.ALIGN_MIDDLE);
+//		final Label lastUpdatedLabel = new Label("Last updated: "
+//				+ configInfo.getLastUpdated());
+//		lastUpdatedLabel
+//		.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+//		lastUpdatedLabel.setStyleName("lastUpdated");
+//		horizontalPanel_2.add(lastUpdatedLabel);
+//		lastUpdatedLabel.setWidth("200px");
+//		horizontalPanel_2.setCellWidth(lastUpdatedLabel, "100%");
+//		horizontalPanel_2.setCellVerticalAlignment(lastUpdatedLabel,
+//				HasVerticalAlignment.ALIGN_MIDDLE);
 
 		final HorizontalSplitPanel centerAppVetSplitPanel = new HorizontalSplitPanel();
 		centerAppVetSplitPanel.setSplitPosition("64%");

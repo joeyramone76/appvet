@@ -35,7 +35,7 @@ public class AboutDialogBox extends DialogBox {
     public final PushButton closeButton;
     public Label messageLabel = null;
 
-    public AboutDialogBox(String version, String build) {
+    public AboutDialogBox(String version) {
 	super(false, true);
 
 	setSize("400px", "209px");
@@ -65,7 +65,7 @@ public class AboutDialogBox extends DialogBox {
 		HasHorizontalAlignment.ALIGN_CENTER);
 	image.setSize("192px", "73px");
 
-	final String message = "Version " + version + " (Build " + build + ")";
+	final String message = "Version " + version;
 
 	final HorizontalPanel horizontalPanel = new HorizontalPanel();
 	verticalPanel.add(horizontalPanel);
