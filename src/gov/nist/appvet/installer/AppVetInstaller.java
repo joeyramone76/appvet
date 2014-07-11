@@ -258,7 +258,7 @@ public class AppVetInstaller implements ItemListener {
 		gbl_panel_4.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panel_4.setLayout(gbl_panel_4);
 
-		final JRadioButton useHostNameCheckBox = new JRadioButton("Use Hostname: ");
+		final JRadioButton useHostNameCheckBox = new JRadioButton("Use FQDN:     ");
 		useHostNameCheckBox.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -287,9 +287,9 @@ public class AppVetInstaller implements ItemListener {
 		useHostnameHelp.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				JOptionPane.showMessageDialog(frame, "Select hostname if "
+				JOptionPane.showMessageDialog(frame, "Select FQDN (Fully Qualified Domain Name) if "
 						+ "AppVet is running in a production/operational\n"
-						+ "environment. The selected hostname must be used\n"
+						+ "environment. The selected FQDN must be used "
 						+ "to access the AppVet service.",
 						"Help", JOptionPane.INFORMATION_MESSAGE);
 			}
@@ -942,8 +942,10 @@ public class AppVetInstaller implements ItemListener {
 		card5.add(panel, BorderLayout.CENTER);
 		panel.setLayout(new BorderLayout(0, 0));
 
-		processingTextArea = new JTextArea();
-		panel.add(processingTextArea, BorderLayout.CENTER);
+		processingTextArea = new JTextArea(10, 30);
+		JScrollPane scrollPane = new JScrollPane(processingTextArea);
+		scrollPane.setSize(20,  60);
+		panel.add(scrollPane, BorderLayout.CENTER);
 
 		JPanel panel_1 = new JPanel();
 		card5.add(panel_1, BorderLayout.SOUTH);
@@ -964,70 +966,101 @@ public class AppVetInstaller implements ItemListener {
 	class Installer implements Runnable {
 
 		public void run() {
-			// Create MySQL Tables
-			System.out.println("Creating database tables...");
-			processingTextArea.append("Creating database tables...\n");
-
+			
+			System.out.println("AppVet installation starting...");
+			processingTextArea.append("AppVet installation starting...");
+			
 			Database db = new Database(myqlUri, mysqlUsername, mysqlPassword);
-			String sql = "create database appvet";
-			if (!db.update(sql)) {
-				showErrorMessage("Could not create database. Shutting down.");
+
+			// Test MySQL connection
+			try {
+				db.canConnect();
+			} catch (Exception e) {
+				System.err.println("Could not connect to MySQL: " + e.getMessage());
+				showErrorMessage("Could not connect to MySQL: " + e.getMessage() + ". Shutting down...");
 				System.exit(0);
 			}
 
+			String sql = "create database appvet";
+			try {
+				db.update(sql);
+			} catch (Exception e) {
+				System.err.println("Could not create appvet database: " + e.getMessage());
+				showErrorMessage("Could not create appvet database: " + e.getMessage() + ". Shutting down...");
+				System.exit(0);
+			}
+			
 			db.setDatabase("appvet");
 
 			// Create users table
 			sql = "CREATE TABLE users (username VARCHAR(32), PRIMARY KEY (username), password VARCHAR(102), org VARCHAR(120), email VARCHAR(120), role VARCHAR(48), lastlogon TIMESTAMP, fromhost VARCHAR(120), lastName VARCHAR(32), firstName VARCHAR(32));";
-			if (!db.update(sql)) {
-				showErrorMessage("Could not create users table. Shutting down.");
+			try {
+				db.update(sql);
+			} catch (Exception e) {
+				System.err.println("Could not create users table: " + e.getMessage());
+				showErrorMessage("Could not create users table: " + e.getMessage() + ". Shutting down...");
 				System.exit(0);
 			}
+			System.out.println("Created users table");
+			processingTextArea.append("Created users table\n");
 
 			// Create sessions table
 			sql = "CREATE TABLE sessions (sessionid VARCHAR(32), PRIMARY KEY (sessionid), username VARCHAR(120), clientaddress VARCHAR(120), expiretime BIGINT);";
-			if (!db.update(sql)) {
-				showErrorMessage("Could not create sessions table. Shutting down.");
+			try {
+				db.update(sql);
+			} catch (Exception e) {
+				System.err.println("Could not create sessions table: " + e.getMessage());
+				showErrorMessage("Could not create sessions table: " + e.getMessage() + ". Shutting down...");
 				System.exit(0);
 			}
+			System.out.println("Created sessions table");
+			processingTextArea.append("Created sessions table\n");
 
 			// Create apps table
 			sql = "CREATE TABLE apps (appid VARCHAR(32), PRIMARY KEY (appid), appname VARCHAR(120), packagename VARCHAR(120), versioncode VARCHAR(120), versionname VARCHAR(120), filename VARCHAR(120), submittime TIMESTAMP NULL, appstatus VARCHAR(120), statustime TIMESTAMP NULL, username VARCHAR(120), clienthost VARCHAR(120));";
-			if (!db.update(sql)) {
-				showErrorMessage("Could not create apps table. Shutting down.");
+			try {
+				db.update(sql);
+			} catch (Exception e) {
+				System.err.println("Could not create apps table: " + e.getMessage());
+				showErrorMessage("Could not create apps table: " + e.getMessage() + ". Shutting down...");
 				System.exit(0);
 			}
-
+			System.out.println("Created apps table");
+			processingTextArea.append("Created apps table\n");
+			
 			// Create toolstatus table
 			sql = "CREATE TABLE toolstatus (appid VARCHAR(32), PRIMARY KEY (appid), registration VARCHAR(120), appinfo VARCHAR(120));";
-			if (!db.update(sql)) {
-				showErrorMessage("Could not create toolstatus table. Shutting down.");
+			try {
+				db.update(sql);
+			} catch (Exception e) {
+				System.err.println("Could not create toolstatus table: " + e.getMessage());
+				showErrorMessage("Could not create toolstatus table: " + e.getMessage() + ". Shutting down...");
 				System.exit(0);
 			}
-
+			System.out.println("Created toolstatus table");
+			processingTextArea.append("Created toolstatus table\n");
+			
 			// Add AppVet admin
 			try {
-				System.out.println("Adding admin account...");
-				processingTextArea.append("Adding admin account...\n");
-
 				final String passwordHash = Authenticate.createHash(appVetPassword);
 				sql = "INSERT INTO users VALUES ('" + appVetUserName + "','"
 						+ passwordHash + "','" + appVetOrganization + "','" + appVetEmail
 						+ "','ADMIN', 0, null, '" + appVetLastName + "','"
 						+ appVetFirstName + "');";
-				if (!db.update(sql)) {
-					showErrorMessage("Could not add admin account. Shutting down.");
-					System.exit(0);
+				try {
+					db.update(sql);
+				} catch (Exception e) {
+					System.err.println("Could not add admin account: " + e.getMessage());
+					showErrorMessage("Could not add admin account: " + e.getMessage() + ". Shutting down...");
 				}
+				System.out.println("Added admin account: " + appVetUserName);
+				processingTextArea.append("Added admin account: " + appVetUserName + "\n");
 
-			} catch (NoSuchAlgorithmException e) {
-				e.printStackTrace();
-			} catch (InvalidKeySpecException e) {
-				e.printStackTrace();
-			}
-
-			System.out.println("Creating directories...");
-			processingTextArea.append("Creating directories...\n");
+			} catch (Exception e) {
+				System.err.println("Could not add admin account: " + e.getMessage());
+				showErrorMessage("Could not add admin account: " + e.getMessage() + ". Shutting down...");
+				System.exit(0);
+			} 
 
 			// Install AppVet files
 			String dirPath = APPVET_FILES_HOME + "/apps";
@@ -1035,30 +1068,43 @@ public class AppVetInstaller implements ItemListener {
 			if (!f.exists()) {
 				new File(dirPath).mkdirs();
 			}
+			System.out.println("Created apps directory: " + APPVET_FILES_HOME + "/apps");
+			processingTextArea.append("Created apps directory: " + APPVET_FILES_HOME + "/apps\n");
+			
 			dirPath = APPVET_FILES_HOME + "/conf";
 			f = new File(dirPath);
 			if (!f.exists()) {
 				new File(dirPath).mkdirs();
 			}
+			System.out.println("Created config directory: " + APPVET_FILES_HOME + "/conf");
+			processingTextArea.append("Created config directory: " + APPVET_FILES_HOME + "/conf\n");
+			
 			dirPath = APPVET_FILES_HOME + "/conf/tool_adapters";
 			f = new File(dirPath);
 			if (!f.exists()) {
 				new File(dirPath).mkdirs();
 			}
+			System.out.println("Created tool adapters directory: " + APPVET_FILES_HOME + "/tool_adapters");
+			processingTextArea.append("Created tool adapters directory: " + APPVET_FILES_HOME + "/tool_adapters\n");
+			
 			dirPath = APPVET_FILES_HOME + "/logs";
 			f = new File(dirPath);
 			if (!f.exists()) {
 				new File(dirPath).mkdirs();
 			}
+			System.out.println("Created logs directory: " + APPVET_FILES_HOME + "/logs");
+			processingTextArea.append("Created logs directory: " + APPVET_FILES_HOME + "/logs\n");
+			
 			dirPath = CATALINA_HOME + "/webapps/appvet_images";
 			f = new File(dirPath);
 			if (!f.exists()) {
 				new File(dirPath).mkdirs();
 			}
-
+			System.out.println("Created images directory: " + APPVET_FILES_HOME + "/appvet_images");
+			processingTextArea.append("Created images directory: " + APPVET_FILES_HOME + "/appvet_images\n");
+			
 			// Modify AppVetProperties.xml with given user input data
-			System.out.println("Creating properties file...");
-			processingTextArea.append("Creating properties file...\n");
+
 
 			String appVetProperties = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 					+ "<appvet:AppVet xmlns:appvet=\"http://csrc.nist.gov/projects/appvet\" \n"
@@ -1101,8 +1147,12 @@ public class AppVetInstaller implements ItemListener {
 						+ "/" + INSTALLER_FILES_DIR + "/deploy/tomcat/webapps/appvet_images/default.png"), new File(
 								CATALINA_HOME + "/webapps/appvet_images/default.png"));
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.out.println("Could not create default app icon: " + e.getMessage());
+				processingTextArea.append("Could create copy default app icon: " + e.getMessage() + "\n");
 			}
+			System.out.println("Created default app icon");
+			processingTextArea.append("Created default app icon\n");
+			
 			// Copy registration and appinfo tool adapters
 			try {
 				String currentDirectory = System.getProperty("user.dir");
@@ -1112,9 +1162,12 @@ public class AppVetInstaller implements ItemListener {
 				FileUtil.copyFile(new File(currentDirectory
 						+ "/" + INSTALLER_FILES_DIR + "/deploy/conf/tool_adapters/appinfo.xml"), new File(
 								APPVET_FILES_HOME + "/conf/tool_adapters/appinfo.xml"));		
-			} catch (IOException e1) {
-				e1.printStackTrace();
+			} catch (IOException e) {
+				System.out.println("Could not create registration or tool adapters properties: " + e.getMessage());
+				processingTextArea.append("Could not create registration or tool adapters properties: " + e.getMessage() + "\n");
 			}
+			System.out.println("Created registration and tool adapters properties");
+			processingTextArea.append("Created registration and tool adapters properties\n");
 			
 			// Add complementary tools. These tools may be unavailable at time of deployment.
 			try {
@@ -1122,33 +1175,54 @@ public class AppVetInstaller implements ItemListener {
 				FileUtil.copyFile(new File(currentDirectory
 						+ "/" + INSTALLER_FILES_DIR + "/deploy/conf/unused_tool_adapters/androidcert.xml"), new File(
 								APPVET_FILES_HOME + "/conf/tool_adapters/androidcert.xml"));		
-			} catch (IOException e1) {
-				e1.printStackTrace();
+			} catch (IOException e) {
+				System.out.println("Could not create tools properties: " + e.getMessage());
+				processingTextArea.append("Could not create tools properties: " + e.getMessage() + "\n");
 			}
-
+			System.out.println("Created tools properties");
+			processingTextArea.append("Created  tools properties\n");
+			
 			// Set Hostname
 			String str = appVetProperties.replaceAll("<appvet:Hostname></appvet:Hostname>",
 					"<appvet:Hostname>" + hostname + "</appvet:Hostname>");
-
+			System.out.println("Set hostname =  " + hostname);
+			processingTextArea.append("Set hostname = " + hostname + "\n");
+			
 			// Set keep apps
 			String str0 = str.replaceAll("<appvet:KeepApps></appvet:KeepApps>",
 					"<appvet:KeepApps>" + keepApps + "</appvet:KeepApps>");
-
+			System.out.println("Set keepApps = " + keepApps);
+			processingTextArea.append("Set keepApps = " + keepApps + "\n");
+			
 			// Set SSL
 			String str1 = str0.replaceAll("<appvet:SSL></appvet:SSL>",
 					"<appvet:SSL>" + tomcatSsl + "</appvet:SSL>");
+			System.out.println("Set Tomcat SSL = " + tomcatSsl);
+			processingTextArea.append("Set Tomcat SSL = " + tomcatSsl + "\n");
+			
 			// Set Port
 			String str2 = str1.replaceAll("<appvet:Port></appvet:Port>", "<appvet:Port>"
 					+ tomcatPort + "</appvet:Port>");
+			System.out.println("Set Tomcat port = " + tomcatPort);
+			processingTextArea.append("Set Tomcat port = " + tomcatPort + "\n");
+			
 			// Set database URL
 			String str3 = str2.replaceAll("<appvet:URL></appvet:URL>", "<appvet:URL>"
 					+ myqlUri + "</appvet:URL>");
+			System.out.println("Set MySQL URI = " + myqlUri);
+			processingTextArea.append("Set MySQL URI = " + myqlUri + "\n");
+			
 			// Set database username
 			String str4 = str3.replaceAll("<appvet:UserName></appvet:UserName>",
 					"<appvet:UserName>" + mysqlUsername + "</appvet:UserName>");
+			System.out.println("Set MySQL username = " + mysqlUsername);
+			processingTextArea.append("Set MySQL username = " + mysqlUsername + "\n");
+			
 			// Set database password
 			String str5 = str4.replaceAll("<appvet:Password></appvet:Password>",
 					"<appvet:Password>" + mysqlPassword + "</appvet:Password>");
+			System.out.println("Set MySQL password = " + mysqlPassword);
+			processingTextArea.append("Set MySQL password = " + mysqlPassword + "\n");
 
 			// Write AppVetProperties.xml file
 			f = new File(APPVET_FILES_HOME + "/conf/AppVetProperties.xml");
@@ -1159,17 +1233,24 @@ public class AppVetInstaller implements ItemListener {
 				out.println(str5);
 				out.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.out.println("Could not create AppVet properties file: " + e.getMessage());
+				processingTextArea.append("Could not create AppVet properties file: " + e.getMessage() + "\n");	
 			}
+			System.out.println("Created AppVet properties file");
+			processingTextArea.append("Created AppVet properties file\n");
+			
 
 			// Create AppVet log file
 			f = new File(APPVET_FILES_HOME + "/logs/appvet_log.txt");
 			try {
 				f.createNewFile();
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.out.println("Could not create AppVet log file: " + e.getMessage());
+				processingTextArea.append("Could not create AppVet log file: " + e.getMessage() + "\n");
 			}
-
+			System.out.println("Created AppVet log file");
+			processingTextArea.append("Created AppVet log file\n");
+			
 			// Install WAR file into $TOMCAT/webapps
 			try {
 				String currentDirectory = System.getProperty("user.dir");
@@ -1181,21 +1262,24 @@ public class AppVetInstaller implements ItemListener {
 				if (warFile.exists()) {
 					FileUtil.copyFile(warFile, new File(
 									CATALINA_HOME + "/webapps/appvet.war"));
-					processingTextArea.append("Loading appvet.war file...\n");
+					System.out.println("Copied AppVet war file to Tomcat");
+					processingTextArea.append("Copied AppVet war file to Tomcat\n");					
 				} else {
-					String msg = "Running AppVet from the source distribution\n"
-							+ "does not copy the appvet war file to\n"
-							+ "Tomcat. This must be done manually.";
+					String msg = "Running this installer from the source distribution\n"
+							+ "requires AppVet to be separately compiled and\n"
+							+ "copied manually to the Tomcat /webapps directory\n"
+							+ "before starting AppVet.";
 					JOptionPane.showMessageDialog(frame, msg, "AppVet Installer", JOptionPane.WARNING_MESSAGE);
 					processingTextArea.append(msg);
 				}
 		
-			} catch (IOException e1) {
-				e1.printStackTrace();
+			} catch (IOException e) {
+				System.out.println("Could not create AppVet war file in Tomcat /webapps directory: " + e.getMessage());
+				processingTextArea.append("Could not create AppVet war file in Tomcat /webapps directory: " + e.getMessage() + "\n");
 			}
-
+			
 			// Display completion
-			System.out.println("\nAppVet Installed!");
+			System.out.println("\nAppVet Installed!\nDone");
 			processingTextArea.append("AppVet Installed!\n");
 			doneButton.setEnabled(true);
 		}

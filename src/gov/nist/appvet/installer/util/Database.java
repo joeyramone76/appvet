@@ -30,7 +30,7 @@ public class Database {
 	public String username;
 	public String password;
 
-	private Connection getConnection() {
+	private Connection getConnection() throws Exception {
 		Connection connection = null;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
@@ -38,14 +38,9 @@ public class Database {
 					+ "&password=" + password);
 			if (connection != null) {
 				connection.setAutoCommit(true); // No need to manually commit
-			} else {
-				System.err
-						.println("Could not connect to database.");
 			}
 		} catch (final Exception e) {
-			System.err.println("Could not connect to database: "
-					+ e.getMessage() + "\nShutting down...");
-			e.printStackTrace();
+			throw new Exception(e);
 		}
 		return connection;
 	}
@@ -55,22 +50,31 @@ public class Database {
 		this.username = username;
 		this.password = password;
 	}
+	
+	public void canConnect() throws Exception {
+		Connection connection = null;
+		try {
+			connection = getConnection();
+		} catch (final Exception e) {
+			throw new Exception(e);
+		} finally {
+			cleanUpConnection(connection);
+		}
+	}
 
 	public void setDatabase(String dbName) {
 		this.URL += "/" + dbName;
 	}
 
-	public synchronized boolean update(String sql) {
+	public synchronized void update(String sql) throws Exception {
 		Connection connection = null;
 		Statement statement = null;
 		try {
 			connection = getConnection();
 			statement = connection.createStatement();
 			statement.executeUpdate(sql);
-			return true;
 		} catch (final SQLException e) {
-			System.err.println(e.getMessage() + " using: " + sql);
-			return false;
+			throw new Exception(e);
 		} finally {
 			cleanUpStatement(statement);
 			cleanUpConnection(connection);
