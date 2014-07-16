@@ -23,7 +23,6 @@ package gov.nist.appvet.properties;
 import gov.nist.appvet.shared.Database;
 import gov.nist.appvet.shared.Logger;
 import gov.nist.appvet.shared.validate.Validate;
-import gov.nist.appvet.shared.validate.ValidateBase;
 import gov.nist.appvet.toolmgr.ToolServiceAdapter;
 import gov.nist.appvet.xml.XmlUtil;
 

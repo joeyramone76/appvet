@@ -4,6 +4,7 @@
     <appvet:Name>Androwarn</appvet:Name>
     <appvet:Id>androwarn</appvet:Id>
     <appvet:VendorName>Maaaaz</appvet:VendorName>
+    <appvet:VendorWebsite>https://github.com/maaaaz/androwarn</appvet:VendorWebsite>
     <appvet:ReportFile>TXT</appvet:ReportFile>
   </appvet:Description>
   <appvet:Protocol>
