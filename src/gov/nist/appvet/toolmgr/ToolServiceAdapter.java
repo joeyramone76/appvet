@@ -462,6 +462,7 @@ public class ToolServiceAdapter implements Runnable {
 			appInfo.log.info(name + " elapsed: "
 					+ Logger.formatElapsed(elapsedTime));
 		} catch (final Exception e) {
+			e.printStackTrace();
 			appInfo.log.error(e.getMessage());
 			ToolStatusManager.setToolStatus(appInfo.appId, this.id, ToolStatus.ERROR);
 		}
