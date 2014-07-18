@@ -238,17 +238,17 @@ public class ToolMgr implements Runnable {
 				// In rare cases, an app might still be in the PROCESSING
 				// status at this point. If so, indicate this error by
 				// changing app status to FAIL.
-				AppStatus appStatus = AppStatusManager.getAppStatus(appInfo.appId);
+/*				AppStatus appStatus = AppStatusManager.getAppStatus(appInfo.appId);
 				if (appStatus == AppStatus.PROCESSING) {
 					log.error("App still PROCESSING after tools shut down."
 							+ " Setting app status to ERROR");
 					AppStatusManager.setAppStatus(appInfo.appId, AppStatus.ERROR);
-				}
+				}*/
 
 				// Post-process
 				final long endTime = new Date().getTime();
 				final long elapsedTime = endTime - startTime;
-				appStatus = AppStatusManager.getAppStatus(appid);
+				AppStatus appStatus = AppStatusManager.getAppStatus(appid);
 				if (appStatus == AppStatus.ERROR) {
 					appInfo.log.info("App status: ERROR");
 				} else {

@@ -211,7 +211,7 @@ public class AppVetPanel extends DockLayoutPanel {
 							} else {
 								appNameHtml = "<div id=\"endorsed\" style='color: dimgray; size:18; weight: bold'>"
 										+ selectedApp.appName + "</div>";
-								addReportButton.setEnabled(false);
+								addReportButton.setEnabled(true);
 								deleteButton.setEnabled(false);
 								downloadButton.setEnabled(false);
 							}

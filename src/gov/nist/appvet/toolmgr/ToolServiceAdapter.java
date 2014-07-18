@@ -442,7 +442,7 @@ public class ToolServiceAdapter implements Runnable {
 						.toString();
 				if ((httpResponseVal.indexOf("HTTP/1.1 202 Accepted") > -1)
 						|| (httpResponseVal.indexOf("HTTP/1.1 200 OK") > -1)) {
-					// Do nothing
+					appInfo.log.info("Asynchronous Kryptowire received: " + httpResponseVal);
 				} else {
 					appInfo.log.error("Tool '" + id + "' received: "
 							+ httpResponseVal
