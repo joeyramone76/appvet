@@ -185,6 +185,7 @@ public class AppVetPanel extends DockLayoutPanel {
 										+ "/appvet_images/default.png";
 								appInfoIcon.setUrl(iconPath);
 							} else if (selectedApp.appStatus == AppStatus.PROCESSING) {
+								appInfoIcon.setVisible(true);
 								iconVersion++;
 								final String iconPath = HOST_URL
 										+ "/appvet_images/"
