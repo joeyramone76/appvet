@@ -164,8 +164,9 @@ public class AppVetPanel extends DockLayoutPanel {
 									"Could not retrieve app info", true);
 						} else {
 							String appNameHtml = null;
+							appInfoIcon.setVisible(true);
+
 							if (selectedApp.appStatus == AppStatus.REGISTERING) {
-								appInfoIcon.setVisible(true);
 								iconVersion++;
 								final String iconPath = HOST_URL
 										+ "/appvet_images/default.png?v"
@@ -180,12 +181,10 @@ public class AppVetPanel extends DockLayoutPanel {
 								.setHTML("<b>Version: </b>N/A");
 								return;
 							} else if (selectedApp.appStatus == AppStatus.PENDING) {
-								appInfoIcon.setVisible(true);
 								final String iconPath = HOST_URL
 										+ "/appvet_images/default.png";
 								appInfoIcon.setUrl(iconPath);
 							} else if (selectedApp.appStatus == AppStatus.PROCESSING) {
-								appInfoIcon.setVisible(true);
 								iconVersion++;
 								final String iconPath = HOST_URL
 										+ "/appvet_images/"
@@ -193,7 +192,6 @@ public class AppVetPanel extends DockLayoutPanel {
 										+ iconVersion;
 								appInfoIcon.setUrl(iconPath);
 							} else {
-								appInfoIcon.setVisible(true);
 								final String iconPath = HOST_URL
 										+ "/appvet_images/"
 										+ selectedApp.appId + ".png";
