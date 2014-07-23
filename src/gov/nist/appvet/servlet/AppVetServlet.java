@@ -215,6 +215,7 @@ public class AppVetServlet extends HttpServlet {
 						log.debug("userName: " + userName);
 					} else if (incomingParameter.equals("password")) {
 						password = incomingValue;
+						log.debug("password: " + password);
 					} else if (incomingParameter.equals("sessionid")) {
 						sessionId = incomingValue;
 						log.debug("sessionId: " + sessionId);
@@ -509,13 +510,20 @@ public class AppVetServlet extends HttpServlet {
 			String password, String clientIpAddress, String commandStr) {
 		// All users except app stores and tools must
 		// use sessionID except during login authentication
+		log.debug("Verifying session...");
 		if (Database.isValidSession(sessionId, clientIpAddress)) {
 			return true;
 		}
+		
+		log.debug("Session invalid. Verifying username and password...");
+
 		// If sessionID was not validated, validate username and password
 		if (!Authenticate.isAuthenticated(userName, password)) {
 			return false;
 		}
+		
+		log.debug("User authenticated. Checking login command for other clients...");
+
 		// Username and password authenticated, so check if request is for
 		// login authentication. Note that all AppVet users except
 		// third-party clients will authenticate via RPC with GWTServiceImpl.
@@ -525,9 +533,13 @@ public class AppVetServlet extends HttpServlet {
 				&& (role == Role.OTHER_CLIENT)) {
 			return true;
 		}
+		
+		log.debug("Verifying role for login authentication... ");
+
 		// If request is not for login authentication, check if user is an
 		// app store or third-party analysis provider
-		if (role == Role.TOOL_SERVICE_PROVIDER) {
+		if (role == Role.TOOL_SERVICE_PROVIDER ||
+				role == Role.ANALYST) {   // This is for Kryptowire
 			return true;
 		} else {
 			return false;

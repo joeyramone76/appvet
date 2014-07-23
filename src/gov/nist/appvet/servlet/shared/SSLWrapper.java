@@ -48,7 +48,7 @@ public class SSLWrapper {
 	SSLSocketFactory ssf = null;
 	SchemeRegistry sr = null;
 	try {
-	    ctx = SSLContext.getInstance("TLS");
+	    ctx = SSLContext.getInstance("TLSv1.2");
 	    tm = new X509TrustManager() {
 		
 		@Override
