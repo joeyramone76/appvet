@@ -31,8 +31,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
@@ -308,7 +306,7 @@ public class AppVetInstaller implements ItemListener {
 		panel_4.add(useStaticIp, gbc_useStaticIp);
 
 		final JTextField ipTextField = new JTextField(ipAddr);
-		ipTextField.setEditable(false);
+		ipTextField.setEditable(true);
 		GridBagConstraints gbc_ipTextField = new GridBagConstraints();
 		gbc_ipTextField.insets = new Insets(0, 0, 5, 5);
 		gbc_ipTextField.fill = GridBagConstraints.HORIZONTAL;
