@@ -35,7 +35,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 
-@SuppressWarnings("deprecation")
 public class AppUploadDialogBox extends DialogBox {
 
     public PushButton cancelButton = null;
@@ -91,12 +90,6 @@ public class AppUploadDialogBox extends DialogBox {
 	hiddenSessionId.setValue(sessionId);
 	verticalPanel.add(hiddenSessionId);
 	hiddenSessionId.setWidth("");
-
-//	final Hidden hiddenTaRelease = new Hidden();
-//	hiddenTaRelease.setValue("");
-//	hiddenTaRelease.setName("tarelease");
-//	verticalPanel.add(hiddenTaRelease);
-//	hiddenTaRelease.setSize("", "");
 
 	final HorizontalPanel horizontalButtonPanel = new HorizontalPanel();
 	horizontalButtonPanel.setStyleName("buttonPanel");
@@ -177,9 +170,6 @@ public class AppUploadDialogBox extends DialogBox {
 
 	    @Override
 	    public void onClick(ClickEvent event) {
-//		if (!taReleaseTextBox.getText().isEmpty()) {
-//		    hiddenTaRelease.setValue(taReleaseTextBox.getText());
-//		}
 		uploadAppForm.submit();
 	    }
 

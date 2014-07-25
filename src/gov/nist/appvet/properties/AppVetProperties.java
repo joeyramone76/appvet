@@ -35,10 +35,6 @@ public class AppVetProperties {
 
 	/** AppVet version number. */
 	public static final String VERSION = "1.0";
-	/** AppVet build number. Commit to update build number. */
-	//public static String BUILD = "";
-	/** AppVet last updated. Commit to update last updated. */
-	//public static String LAST_UPDATED = "";
 
 	// Logging
 	public static Logger log = null;
@@ -115,23 +111,6 @@ public class AppVetProperties {
 	public static ArrayList<ToolServiceAdapter> availableTools = null;
 	public static String STATUS_MESSAGE = null;
 	static {
-//		final String svnBuildInfo = "$$Id: AppVetProperties.java 38554 2014-03-30 16:06:12Z steveq $$";
-//		String svnBuildDate = null;
-//		String svnBuildTime = null;
-//		final String[] svnInfoTokens = svnBuildInfo.split("\\s+");
-//		for (final String svnInfoToken : svnInfoTokens) {
-//			if (ValidateBase.isNumeric(svnInfoToken)) {
-//				BUILD = svnInfoToken;
-//			}
-//			if (ValidateBase.isDate(svnInfoToken)) {
-//				svnBuildDate = svnInfoToken;
-//			}
-//			if (ValidateBase.isTime(svnInfoToken)) {
-//				svnBuildTime = svnInfoToken;
-//			}
-//		}
-//		LAST_UPDATED = svnBuildDate + " " + svnBuildTime;
-		
 		CONFIG_FILE_PATH = APPVET_FILES_HOME + "/conf/AppVetProperties.xml";
 		final File configFile = new File(CONFIG_FILE_PATH);
 		final String configFileName = configFile.getName();
@@ -149,8 +128,6 @@ public class AppVetProperties {
 
 		log.debug("-------------------- AppVet PROPERTIES --------------------");
 		printVal("VERSION", VERSION);
-//		printVal("BUILD", BUILD);
-//		printVal("LAST_UPDATED", LAST_UPDATED);
 		printVal("APPVET_FILES_HOME", APPVET_FILES_HOME);
 		printVal("LOG_PATH", LOG_PATH);
 		printVal("LOG_LEVEL", LOG_LEVEL);

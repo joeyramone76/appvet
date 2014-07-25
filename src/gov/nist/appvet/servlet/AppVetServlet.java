@@ -81,7 +81,6 @@ public class AppVetServlet extends HttpServlet {
 		String clientIpAddress = request.getRemoteAddr();
 
 		try {
-
 			//-------------------------- Authenticate --------------------------
 			if (isAuthenticated(sessionId, userName, password, clientIpAddress,
 					commandStr)) {
@@ -228,9 +227,6 @@ public class AppVetServlet extends HttpServlet {
 					} else if (incomingParameter.equals("appid")) {
 						appId = incomingValue;
 						log.debug("appId: " + appId);
-//					} else if (incomingParameter.equals("analyst")) {
-//						analyst = incomingValue;
-//						log.debug("analyst: " + analyst);
 					} else {
 						log.warn("Received unknown parameter: "
 								+ incomingValue + " from IP: "
@@ -357,11 +353,6 @@ public class AppVetServlet extends HttpServlet {
 			appInfo.toolId = toolId;
 			appInfo.toolRisk = toolRisk;
 			appInfo.fileItem = fileItem;
-//			if (analyst != null) {
-//				appInfo.analyst = analyst;
-//			} else {
-//				appInfo.analyst = userName;
-//			}
 			return appInfo;
 		} else {
 			// App ID received but does not exist in database.

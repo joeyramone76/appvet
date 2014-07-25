@@ -25,9 +25,6 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 
-/**
- * $$Id: AppVet.java 38553 2014-03-30 16:05:22Z steveq $$
- */
 public class AppVet implements EntryPoint { 
 
 	@Override

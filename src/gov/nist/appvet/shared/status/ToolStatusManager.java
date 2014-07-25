@@ -51,7 +51,6 @@ public class ToolStatusManager {
 	}
 
 	private synchronized static void computeAppStatus(String appId) {
-
 		// Registration
 		ToolServiceAdapter tool = ToolServiceAdapter.getById("registration");
 		ToolStatus toolStatus = getToolStatus(appId, tool.id);
@@ -88,7 +87,6 @@ public class ToolStatusManager {
 		int numToolFails = 0;
 		int numToolWarnings = 0;
 		int numToolPasses = 0;
-		//int numToolsNa = 0;
 		int numToolsSubmitted = 0;
 		int numTools = AppVetProperties.availableTools.size();
 		for (int i = 0; i < numTools; i++) {

@@ -28,7 +28,6 @@ public class AppStatusManager {
     private static final Logger log = AppVetProperties.log;
 
 	private AppStatusManager() {
-		
 	}
 	
     public synchronized static void setAppStatus(String appId,
