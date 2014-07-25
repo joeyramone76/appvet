@@ -343,7 +343,7 @@ public class Database {
 				System.err.println("Could not connect to database.");
 			}
 		} catch (final Exception e) {
-			System.err.println("Could not connect to database: " + e.getMessage());
+			e.printStackTrace();
 		}
 		String sql = null;
 		try {

@@ -41,7 +41,7 @@ public class FileUtil {
 			Files.copy(sourceFile.toPath(), destFile.toPath(),
 					StandardCopyOption.REPLACE_EXISTING);
 		} catch (final IOException e) {
-			System.err.println(e.getMessage());
+			e.printStackTrace();
 			return false;
 		}
 		return true;

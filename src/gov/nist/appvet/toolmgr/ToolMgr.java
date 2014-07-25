@@ -235,15 +235,12 @@ public class ToolMgr implements Runnable {
 				}
 				delay();
 
-				// In rare cases, an app might still be in the PROCESSING
-				// status at this point. If so, indicate this error by
-				// changing app status to FAIL.
-/*				AppStatus appStatus = AppStatusManager.getAppStatus(appInfo.appId);
-				if (appStatus == AppStatus.PROCESSING) {
-					log.error("App still PROCESSING after tools shut down."
-							+ " Setting app status to ERROR");
-					AppStatusManager.setAppStatus(appInfo.appId, AppStatus.ERROR);
-				}*/
+				// Note here that the app may still have a PROCESSING
+				// status if it is still waiting for a result from an
+				// asynchronous service. However, all the tools for this app
+				// have completed at this point. The PROCESSING status will
+				// change once the report for the asynchronous service(s)
+				// are received.
 
 				// Post-process
 				final long endTime = new Date().getTime();
