@@ -239,7 +239,7 @@ public class AppVetServlet extends HttpServlet {
 			}
 			incomingParameter = null;
 			incomingValue = null;
-
+			
 			//-------------------------- Authenticate --------------------------
 			if (isAuthenticated(sessionId, userName, password, clientIpAddress,
 					commandStr)) {
@@ -312,7 +312,7 @@ public class AppVetServlet extends HttpServlet {
 					if (appInfo == null)
 						return;
 					else
-						submitReport(appInfo, response);
+						submitReport(userName, appInfo, response);
 				}
 				break;
 			default:
@@ -717,7 +717,7 @@ public class AppVetServlet extends HttpServlet {
 		}
 	}
 
-	private void submitReport(AppInfo appInfo, HttpServletResponse response) {
+	private void submitReport(String submitterUserName, AppInfo appInfo, HttpServletResponse response) {
 		final ToolServiceAdapter tool = 
 				ToolServiceAdapter.getById(appInfo.toolId);
 		String reportName = null;
@@ -746,7 +746,7 @@ public class AppVetServlet extends HttpServlet {
 						+ appInfo.userName);
 			}
 
-			appInfo.log.info(appInfo.userName + " invoked SUBMIT_REPORT for "
+			appInfo.log.info(submitterUserName + " invoked SUBMIT_REPORT for "
 					+ tool.name + " on " + "app " + appInfo.appId + " with "
 					+ appInfo.fileItem.getName() + " setting tool status to "
 					+ appInfo.toolRisk);
