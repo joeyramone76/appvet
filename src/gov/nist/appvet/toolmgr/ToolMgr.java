@@ -105,9 +105,6 @@ public class ToolMgr implements Runnable {
 			appinfoReport.write("<img border=\"0\" width=\"192px\" src=\"images/appvet_logo.png\" alt=\"appvet\" />");
 			appinfoReport.write("<HR>\n");
 			appinfoReport.write("<h3>AndroidManifest Pre-Processing Report</h3>\n");
-			appinfoReport.write("<p>This report provides information found in " + appInfo.fileName + "'s "
-					+ "manifest and describes any issues found in the manifest.</p>\n");
-			appinfoReport.write("<br>\n");
 			appinfoReport.write("<pre>\n");
 			final Date date = new Date();
 			final SimpleDateFormat format = new SimpleDateFormat(
