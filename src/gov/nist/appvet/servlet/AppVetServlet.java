@@ -107,7 +107,7 @@ public class AppVetServlet extends HttpServlet {
 						HttpServletResponse.SC_OK, false);
 				return;
 			case GET_STATUS:
-				log.info(userName + " invoked " + command.name()
+				log.debug(userName + " invoked " + command.name()
 						+ " on app " + appId);
 				final AppStatus currentStatus = AppStatusManager.getAppStatus(appId);
 				sendHttpResponse(userName, appId, command.name(), clientIpAddress,
@@ -117,26 +117,26 @@ public class AppVetServlet extends HttpServlet {
 
 				// Used by all clients.
 			case GET_TOOL_REPORT:
-				log.info(userName + " invoked " + command.name()
+				log.debug(userName + " invoked " + command.name()
 						+ " of " + report + " on app " + appId);
 				returnReport(response, appId, report, clientIpAddress);
 				break;
 			case GET_APP_LOG:
-				log.info(userName + " invoked " + command.name()
+				log.debug(userName + " invoked " + command.name()
 						+ " on app " + appId);
 				returnAppLog(response, appId, clientIpAddress);
 				break;
 			case GET_APPVET_LOG:
-				log.info(userName + " invoked " + command.name());
+				log.debug(userName + " invoked " + command.name());
 				returnAppVetLog(response, clientIpAddress);
 				break;
 			case DOWNLOAD_APP:
-				log.info(userName + " invoked " + command.name()
+				log.debug(userName + " invoked " + command.name()
 						+ " on app " + appId);
 				downloadApp(response, appId, appName, clientIpAddress);
 				break;
 			case DOWNLOAD_REPORTS:
-				log.info(userName + " invoked " + command.name()
+				log.debug(userName + " invoked " + command.name()
 						+ " on " + "app " + appId);
 				final AppStatus appStatus = AppStatusManager.getAppStatus(appId);
 				if (appStatus != null) {
@@ -273,7 +273,7 @@ public class AppVetServlet extends HttpServlet {
 			command = AppVetServletCommand.valueOf(commandStr);
 			switch (command) {
 			case SUBMIT_APP:
-				log.info(userName + " invoked " + command.name()
+				log.debug(userName + " invoked " + command.name()
 						+ " with file " + fileItem.getName());
 				if (!ValidateBase.hasValidAppFileExtension(fileItem.getName())) {
 					sendHttpResponse(userName, appId, commandStr, clientIpAddress,
@@ -295,7 +295,7 @@ public class AppVetServlet extends HttpServlet {
 				}
 				break;
 			case SUBMIT_REPORT:
-				log.info(userName + " invoked " + command.name()
+				log.debug(userName + " invoked " + command.name()
 						+ " on app " + appId + " with report " + fileItem.getName());
 				if (!ValidateBase.hasValidReportFileExtension(fileItem.getName())) {
 					sendHttpResponse(userName, appId, commandStr, clientIpAddress,
@@ -489,7 +489,7 @@ public class AppVetServlet extends HttpServlet {
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-		log.info("*** Starting AppVetServlet "
+		log.info("*** Starting AppVet service "
 				+ AppVetProperties.VERSION + " on "
 				+ AppVetProperties.SERVLET_URL);
 		toolMgr = new ToolMgr();
