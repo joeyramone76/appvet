@@ -72,8 +72,6 @@ public class Registration {
 			regReportWriter.write("<img border=\"0\" width=\"192px\" src=\"images/appvet_logo.png\" alt=\"appvet\" />");
 			regReportWriter.write("<HR>\n");
 			regReportWriter.write("<h3>Registration Report</h3>\n");
-			regReportWriter.write("<p>This report provides information related to registering " + appInfo.fileName + " with AppVet.<p>\n");
-			regReportWriter.write("<br>\n");
 			regReportWriter.write("<pre>\n");
 			final Date date = new Date();
 			final SimpleDateFormat format = new SimpleDateFormat(
