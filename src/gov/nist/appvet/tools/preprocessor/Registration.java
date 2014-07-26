@@ -67,6 +67,7 @@ public class Registration {
 			regReportWriter.write("h3 {font-family:arial;}\n");
 			regReportWriter.write("p {font-family:arial;}\n");
 			regReportWriter.write("</style>\n");
+			regReportWriter.write("<title>Registration Report</title>\n");
 			regReportWriter.write("</head>\n");
 			regReportWriter.write("<body>\n");
 			regReportWriter.write("<img border=\"0\" width=\"192px\" src=\"images/appvet_logo.png\" alt=\"appvet\" />");

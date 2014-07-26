@@ -100,6 +100,7 @@ public class ToolMgr implements Runnable {
 			appinfoReport.write("h3 {font-family:arial;}\n");
 			appinfoReport.write("p {font-family:arial;}\n");
 			appinfoReport.write("</style>\n");
+			appinfoReport.write("<title>Android Manifest Report</title>\n");
 			appinfoReport.write("</head>\n");
 			appinfoReport.write("<body>\n");
 			appinfoReport.write("<img border=\"0\" width=\"192px\" src=\"images/appvet_logo.png\" alt=\"appvet\" />");
