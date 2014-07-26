@@ -5,7 +5,7 @@
     <appvet:Id>certverify</appvet:Id>
     <appvet:VendorName>NIST</appvet:VendorName>
     <appvet:VendorWebsite>https://appsec.nist.gov/android-cert-test</appvet:VendorWebsite>
-    <appvet:ReportFile>TXT</appvet:ReportFile>
+    <appvet:ReportFile>HTML</appvet:ReportFile>
   </appvet:Description>
   <appvet:Protocol>
     <appvet:Type>SYNCHRONOUS</appvet:Type>

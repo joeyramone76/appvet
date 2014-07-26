@@ -7,7 +7,7 @@
 		<appvet:Id>masterkeyextrafield</appvet:Id>
 		<appvet:VendorName>NIST</appvet:VendorName>
     <appvet:VendorWebsite>https://appsec.nist.gov/android-masterkey-extrafield-test</appvet:VendorWebsite>
-		<appvet:ReportFile>TXT</appvet:ReportFile>
+		<appvet:ReportFile>HTML</appvet:ReportFile>
 	</appvet:Description>
 	<appvet:Protocol>
 		<appvet:Type>ASYNCHRONOUS</appvet:Type>
