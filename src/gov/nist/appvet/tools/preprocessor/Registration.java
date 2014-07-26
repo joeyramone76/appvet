@@ -78,7 +78,6 @@ public class Registration {
 			final SimpleDateFormat format = new SimpleDateFormat(
 					"yyyy-MM-dd' 'HH:mm:ss.SSSZ");
 			final String currentDate = format.format(date);
-			regReportWriter.write("Date: \t\t" + currentDate + "\n\n");
 			connection = Database.getConnection();
 			AppStatus appStatus = AppStatusManager.getAppStatus(appInfo.appId);
 			if (appStatus == null) {
@@ -157,18 +156,18 @@ public class Registration {
 				appInfo.appName = projectName;
 				appInfo.log.debug("Got project name: " + projectName + "\tOK");
 
-				regReportWriter.write("App ID: \t" + appInfo.appId + "\n");
 				regReportWriter.write("File: \t\t" + appInfo.fileName + "\n");
+				regReportWriter.write("Date: \t\t" + currentDate + "\n\n");
 				final File file = new File(appInfo.getIdPath() + "/"
 						+ appInfo.fileName);
+				regReportWriter.write("App ID: \t" + appInfo.appId + "\n");
 				regReportWriter
-				.write("Submitter: \t" + appInfo.userName + "\n");
+				.write("Submitter: \t" + appInfo.userName + "\n\n");
 
 				ToolStatusManager.setToolStatus(appInfo.appId, registrationTool.id,
 						ToolStatus.PASS);
-				regReportWriter.write("\n<hr>\n");
 				regReportWriter
-				.write("Status\t\t<font color=\"green\">PASS</font>\n");
+				.write("Status:\t\t<font color=\"green\">PASS</font>\n");
 				log.debug("End registration for appID=" + appInfo.appId);
 				regReportWriter.write("</pre>\n");
 				regReportWriter.write("</body>\n");

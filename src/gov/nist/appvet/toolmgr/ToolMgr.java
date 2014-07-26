@@ -111,9 +111,9 @@ public class ToolMgr implements Runnable {
 			final SimpleDateFormat format = new SimpleDateFormat(
 					"yyyy-MM-dd' 'HH:mm:ss.SSSZ");
 			final String currentDate = format.format(date);
+			appinfoReport.write("File: \t\t" + appInfo.fileName + "\n");
 			appinfoReport.write("Date: \t\t" + currentDate + "\n\n");
 			appinfoReport.write("App ID: \t" + appInfo.appId + "\n");
-			appinfoReport.write("File: \t\t" + appInfo.fileName + "\n");
 			if (ValidateBase.hasValidAppFileExtension(appInfo.fileName)) {
 				ToolStatusManager.setToolStatus(appInfo.appId, appinfoTool.id, ToolStatus.SUBMITTED);
 				if (!AndroidManifest.decodeApk(appInfo, apkFilePath, appinfoReport)) {
@@ -128,36 +128,9 @@ public class ToolMgr implements Runnable {
 				return false;
 			}
 			
-/*			// Verify certificate
-			if (!AndroidManifest.validCert(appInfo, appinfoReport)) {
-				foundWarning = true;
-			}
-
-			// Verify SDK
-			if (!AndroidManifest.validMinSDK(appInfo, appinfoReport)) {
-				foundWarning = true;
-				appinfoReport.write("\nWARNING: Invalid min SDK\n");
-			}
-
-			if (!AndroidManifest.validTargetSDK(appInfo, appinfoReport)) {
-				foundWarning = true;
-				appinfoReport.write("\nWARNING: Invalid target SDK\n");
-			}
-
-			// Final app status
-			if (foundWarning) {
-				ToolStatusManager.setToolStatus(appInfo.appId, appinfoTool.id, ToolStatus.WARNING);
-			} else {
-				ToolStatusManager.setToolStatus(appInfo.appId, appinfoTool.id, ToolStatus.PASS);
-				appinfoReport.write("\n<hr>\n");
-				appinfoReport
-				.write("Status\t\t<font color=\"green\">PASS</font>\n");
-			}*/
-			
 			ToolStatusManager.setToolStatus(appInfo.appId, appinfoTool.id, ToolStatus.PASS);
-			appinfoReport.write("\n<hr>\n");
 			appinfoReport
-			.write("Status\t\t<font color=\"green\">PASS</font>\n");
+			.write("\nStatus:\t\t<font color=\"green\">PASS</font>\n");
 			log.debug("End AndroidManifest preprocessing for appID="
 					+ appInfo.appId);
 			return true;
