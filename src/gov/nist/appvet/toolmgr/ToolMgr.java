@@ -103,7 +103,8 @@ public class ToolMgr implements Runnable {
 			appinfoReport.write("<title>Android Manifest Report</title>\n");
 			appinfoReport.write("</head>\n");
 			appinfoReport.write("<body>\n");
-			appinfoReport.write("<img border=\"0\" width=\"192px\" src=\"images/appvet_logo.png\" alt=\"appvet\" />");
+			String appVetImagesUrl = AppVetProperties.URL + "/images/appvet_logo.png";
+			appinfoReport.write("<img border=\"0\" width=\"192px\" src=\"" + appVetImagesUrl + "\" alt=\"appvet\" />");
 			appinfoReport.write("<HR>\n");
 			appinfoReport.write("<h3>AndroidManifest Pre-Processing Report</h3>\n");
 			appinfoReport.write("<pre>\n");

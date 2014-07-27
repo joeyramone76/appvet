@@ -70,7 +70,8 @@ public class Registration {
 			regReportWriter.write("<title>Registration Report</title>\n");
 			regReportWriter.write("</head>\n");
 			regReportWriter.write("<body>\n");
-			regReportWriter.write("<img border=\"0\" width=\"192px\" src=\"images/appvet_logo.png\" alt=\"appvet\" />");
+			String appVetImagesUrl = AppVetProperties.URL + "/images/appvet_logo.png";
+			regReportWriter.write("<img border=\"0\" width=\"192px\" src=\"" + appVetImagesUrl + "\" alt=\"appvet\" />");
 			regReportWriter.write("<HR>\n");
 			regReportWriter.write("<h3>Registration Report</h3>\n");
 			regReportWriter.write("<pre>\n");
