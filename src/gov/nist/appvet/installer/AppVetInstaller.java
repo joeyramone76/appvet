@@ -306,7 +306,7 @@ public class AppVetInstaller implements ItemListener {
 		panel_4.add(useStaticIp, gbc_useStaticIp);
 
 		final JTextField ipTextField = new JTextField(ipAddr);
-		ipTextField.setEditable(false);
+		ipTextField.setEditable(true);
 		GridBagConstraints gbc_ipTextField = new GridBagConstraints();
 		gbc_ipTextField.insets = new Insets(0, 0, 5, 5);
 		gbc_ipTextField.fill = GridBagConstraints.HORIZONTAL;
