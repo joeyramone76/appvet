@@ -56,13 +56,13 @@ public class GWTServiceImpl extends RemoteServiceServlet implements GWTService {
 			throws IllegalArgumentException {
 		if (userInfo.isNewUser()) {
 			if (Database.adminAddNewUser(userInfo)) {
-				log.info("Added user " + userInfo.getFullName());
+				log.debug("Added user " + userInfo.getFullName());
 			} else {
 				log.error("Could not add user " + userInfo.getFullName());
 			}
 		} else {
 			if (Database.updateUser(userInfo)) {
-				log.info("Updated user " + userInfo.getFullName());
+				log.debug("Updated user " + userInfo.getFullName());
 			} else {
 				log.error("Could not update user " + userInfo.getFullName());
 			}
@@ -81,7 +81,7 @@ public class GWTServiceImpl extends RemoteServiceServlet implements GWTService {
 		final String clientIpAddress = getThreadLocalRequest().getRemoteAddr();
 		if (Authenticate.isAuthenticated(username, password)) {
 			Database.updateClientHost(username, clientIpAddress);
-			log.info(username + " logged into GWT from: "
+			log.debug(username + " logged into GWT from: "
 					+ clientIpAddress);
 			final String sessionId = Database.setSession(username,
 					clientIpAddress);
@@ -165,7 +165,7 @@ public class GWTServiceImpl extends RemoteServiceServlet implements GWTService {
 				iconFile.delete();
 			}
 			iconFile = null;
-			log.info(username + " invoked DELETE APP on app "
+			log.debug(username + " invoked DELETE APP on app "
 					+ appid);
 			return true;
 		} else {

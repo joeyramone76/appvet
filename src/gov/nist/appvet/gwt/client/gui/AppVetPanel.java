@@ -1004,7 +1004,7 @@ public class AppVetPanel extends DockLayoutPanel {
 				HasHorizontalAlignment.ALIGN_CENTER);
 		submitButton.setSize("18px", "18px");
 		downloadButton = new PushButton("Download");
-		downloadButton.setTitle("Download Reports/App");
+		downloadButton.setTitle("Download Reports");
 		downloadButton
 		.setHTML("<img width=\"18px\" src=\"images/icon-download.png\" alt=\"Download\" />");
 		horizontalPanel.add(downloadButton);
