@@ -279,7 +279,7 @@ public class AppVetInstaller implements ItemListener {
 		panel_4.add(hostNameTextField, gbc_hostNameTextField);
 		hostNameTextField.setColumns(10);
 
-		final JRadioButton useStaticIp = new JRadioButton("Use Static IP: ");
+		final JRadioButton useStaticIp = new JRadioButton("Use IP:    ");
 
 		JButton useHostnameHelp = new JButton("?");
 		useHostnameHelp.addMouseListener(new MouseAdapter() {
@@ -319,10 +319,10 @@ public class AppVetInstaller implements ItemListener {
 		useStaticIpHelp.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				JOptionPane.showMessageDialog(frame, "Select static IP if "
-						+ "AppVet is running in a development environment with\n"
-						+ "a static IP address. This IP address must be used\n"
-						+ "to access the AppVet service.",
+				JOptionPane.showMessageDialog(frame, "Select if an FQDN is not available.\n"
+						+ "The IP address can be static or dynamic. If it is dynamic,\n"
+						+ "this address will need to be changed in the HostType->Hostname\n"
+						+ "tag of your AppVetProperties.xml file each time the address changes.",
 						"Help", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
@@ -332,37 +332,37 @@ public class AppVetInstaller implements ItemListener {
 		gbc_useStaticIpHelp.gridy = 1;
 		panel_4.add(useStaticIpHelp, gbc_useStaticIpHelp);
 
-		final JRadioButton useDHCP = new JRadioButton("Use DHCP");
-		GridBagConstraints gbc_useDHCP = new GridBagConstraints();
-		gbc_useDHCP.anchor = GridBagConstraints.WEST;
-		gbc_useDHCP.insets = new Insets(0, 0, 5, 5);
-		gbc_useDHCP.gridx = 0;
-		gbc_useDHCP.gridy = 2;
-		panel_4.add(useDHCP, gbc_useDHCP);
-
-		JButton useDHCPHelp = new JButton("?");
-		useDHCPHelp.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				JOptionPane.showMessageDialog(frame, "Select DHCP if "
-						+ "AppVet is running in a development environment with\n"
-						+ "a dynamic IP address. This IP address will change\n"
-						+ "over time.",
-						"Help", JOptionPane.INFORMATION_MESSAGE);
-			}
-		});
-		GridBagConstraints gbc_useDHCPHelp = new GridBagConstraints();
-		gbc_useDHCPHelp.anchor = GridBagConstraints.WEST;
-		gbc_useDHCPHelp.insets = new Insets(0, 0, 5, 5);
-		gbc_useDHCPHelp.gridx = 1;
-		gbc_useDHCPHelp.gridy = 2;
-		panel_4.add(useDHCPHelp, gbc_useDHCPHelp);
-		
-        ButtonGroup group = new ButtonGroup();
-        group.add(useHostNameCheckBox);
-        group.add(useStaticIp);
-        group.add(useDHCP);
-        
+//		final JRadioButton useDHCP = new JRadioButton("Use DHCP");
+//		GridBagConstraints gbc_useDHCP = new GridBagConstraints();
+//		gbc_useDHCP.anchor = GridBagConstraints.WEST;
+//		gbc_useDHCP.insets = new Insets(0, 0, 5, 5);
+//		gbc_useDHCP.gridx = 0;
+//		gbc_useDHCP.gridy = 2;
+//		panel_4.add(useDHCP, gbc_useDHCP);
+//
+//		JButton useDHCPHelp = new JButton("?");
+//		useDHCPHelp.addMouseListener(new MouseAdapter() {
+//			@Override
+//			public void mouseClicked(MouseEvent e) {
+//				JOptionPane.showMessageDialog(frame, "Select DHCP if "
+//						+ "AppVet is running in a development environment with\n"
+//						+ "a dynamic IP address. This IP address will change\n"
+//						+ "over time.",
+//						"Help", JOptionPane.INFORMATION_MESSAGE);
+//			}
+//		});
+//		GridBagConstraints gbc_useDHCPHelp = new GridBagConstraints();
+//		gbc_useDHCPHelp.anchor = GridBagConstraints.WEST;
+//		gbc_useDHCPHelp.insets = new Insets(0, 0, 5, 5);
+//		gbc_useDHCPHelp.gridx = 1;
+//		gbc_useDHCPHelp.gridy = 2;
+//		panel_4.add(useDHCPHelp, gbc_useDHCPHelp);
+//		
+//        ButtonGroup group = new ButtonGroup();
+//        group.add(useHostNameCheckBox);
+//        group.add(useStaticIp);
+//        group.add(useDHCP);
+//        
 		final JCheckBox keepAppsCheckBox = new JCheckBox("Keep Apps");
 		keepAppsCheckBox.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_keepAppsCheckBox = new GridBagConstraints();
