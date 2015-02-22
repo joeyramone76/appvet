@@ -65,13 +65,29 @@ public class AndroidManifest {
 				appInfo.log.info("Decoded APK:\tOK");
 				return true;
 			} else {
-				appInfo.log.error(outputBuffer.toString());
-				appinfoReport.write("\n<font color=\"red\">"
-						+ ErrorMessage.ANDROID_APK_DECODE_ERROR.getDescription()
-						+ " (File may be corrupted)</font>");
-				appInfo.log.error(ErrorMessage.ANDROID_APK_DECODE_ERROR.getDescription());
-				ToolStatusManager.setToolStatus(appInfo.appId, appinfoTool.id,
-						ToolStatus.ERROR);
+				//appInfo.log.error("OutputBuffer: " + outputBuffer.toString() + "|");
+				//appInfo.log.error("ErrorBuffer: " + errorBuffer.toString() + "||");
+
+				if (outputBuffer.indexOf("FileNotFound") >= 0 ||
+						outputBuffer.indexOf("was not found or was not readable") >= 0) {
+					// Anti-virus on system may have removed app if it was malware
+					appInfo.log.error(outputBuffer.toString());
+					appinfoReport.write("\n<font color=\"red\">"
+							+ ErrorMessage.FILE_NOT_FOUND.getDescription()
+							+ " (File removed by system; file may be malware)</font>");
+					appInfo.log.error(ErrorMessage.FILE_NOT_FOUND.getDescription());
+					ToolStatusManager.setToolStatus(appInfo.appId, appinfoTool.id,
+							ToolStatus.ERROR);
+				} else {
+					appInfo.log.error(outputBuffer.toString());
+					appinfoReport.write("\n<font color=\"red\">"
+							+ ErrorMessage.ANDROID_APK_DECODE_ERROR.getDescription()
+							+ " (File may be corrupted)</font>");
+					appInfo.log.error(ErrorMessage.ANDROID_APK_DECODE_ERROR.getDescription());
+					ToolStatusManager.setToolStatus(appInfo.appId, appinfoTool.id,
+							ToolStatus.ERROR);
+				}
+
 				return false;
 			}
 		} catch (final TimeoutException e) {

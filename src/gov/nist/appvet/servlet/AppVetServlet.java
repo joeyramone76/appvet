@@ -87,7 +87,9 @@ public class AppVetServlet extends HttpServlet {
 				if (sessionId != null) {
 					userName = Database.getSessionUser(sessionId);
 				}
+				log.debug("User '" + userName + "' is authenticated.");
 			} else {
+				log.debug("User '" + userName + "' could not be authenticated.");
 				sendHttpResponse(userName, appId, commandStr, clientIpAddress,
 						ErrorMessage.AUTHENTICATION_ERROR.getDescription(), response,
 						HttpServletResponse.SC_BAD_REQUEST, true);
@@ -98,15 +100,17 @@ public class AppVetServlet extends HttpServlet {
 			final AppVetServletCommand command = AppVetServletCommand.getCommand(commandStr);
 			switch (command) {
 
-			// Used solely by third-party clients that are not app stores nor
-			// analysis (tool service) providers.
-			case AUTHENTICATE:
-				sessionId = Database.setSession(userName, clientIpAddress);
-				sendHttpResponse(userName, appId, command.name(), clientIpAddress,
-						"SESSIONID=" + sessionId, response,
-						HttpServletResponse.SC_OK, false);
-				return;
+//			case AUTHENTICATE:
+//				log.debug("AUTHENTICATIN!");
+//				sessionId = Database.setSession(userName, clientIpAddress);
+//				sendHttpResponse(userName, appId, command.name(), clientIpAddress,
+//						"SESSIONID=" + sessionId, response,
+//						HttpServletResponse.SC_OK, false);
+//				return;
 			case GET_STATUS:
+				/* Get the current processing status of the app. Used only
+				 * by non-GUI clients. GUI clients get status via GWT RPC.
+				 */
 				log.debug(userName + " invoked " + command.name()
 						+ " on app " + appId);
 				final AppStatus currentStatus = AppStatusManager.getAppStatus(appId);
@@ -114,28 +118,37 @@ public class AppVetServlet extends HttpServlet {
 						"CURRENT_STATUS=" + currentStatus.name(), response,
 						HttpServletResponse.SC_OK, false);
 				break;
-
-				// Used by all clients.
 			case GET_TOOL_REPORT:
+				/* Get the processing status of the selected app. Used by GUI 
+				 * and non-GUI clients.*/
 				log.debug(userName + " invoked " + command.name()
 						+ " of " + report + " on app " + appId);
 				returnReport(response, appId, report, clientIpAddress);
 				break;
 			case GET_APP_LOG:
+				/* Get the log of the selected app. Used by GUI and non-GUI 
+				 * clients.*/
 				log.debug(userName + " invoked " + command.name()
 						+ " on app " + appId);
 				returnAppLog(response, appId, clientIpAddress);
 				break;
 			case GET_APPVET_LOG:
+				/* Get the main AppVet log. Used by GUI and non-GUI 
+				 * clients.*/
 				log.debug(userName + " invoked " + command.name());
 				returnAppVetLog(response, clientIpAddress);
 				break;
 			case DOWNLOAD_APP:
+				/* Download the selected app. Used by GUI and non-GUI 
+				 * clients.*/
 				log.debug(userName + " invoked " + command.name()
 						+ " on app " + appId);
 				downloadApp(response, appId, appName, clientIpAddress);
 				break;
 			case DOWNLOAD_REPORTS:
+				/* Download reports for the selected app. Reports can only be
+				 * downloaded if the app has completed processing. Used by GUI 
+				 * and non-GUI clients.*/
 				log.debug(userName + " invoked " + command.name()
 						+ " on " + "app " + appId);
 				final AppStatus appStatus = AppStatusManager.getAppStatus(appId);
@@ -246,7 +259,9 @@ public class AppVetServlet extends HttpServlet {
 				if (sessionId != null) {
 					userName = Database.getSessionUser(sessionId);
 				}
+				log.debug("User '" + userName + "' is authenticated.");
 			} else {
+				log.debug("User '" + userName + "' could not be authenticated.");
 				sendHttpResponse(userName, appId, commandStr, clientIpAddress,
 						ErrorMessage.AUTHENTICATION_ERROR.getDescription(), response,
 						HttpServletResponse.SC_BAD_REQUEST, true);
@@ -273,6 +288,8 @@ public class AppVetServlet extends HttpServlet {
 			command = AppVetServletCommand.valueOf(commandStr);
 			switch (command) {
 			case SUBMIT_APP:
+				/* Submit a new app for processing. Used by GUI and non-GUI 
+				 * clients. */
 				log.debug(userName + " invoked " + command.name()
 						+ " with file " + fileItem.getName());
 				if (!ValidateBase.hasValidAppFileExtension(fileItem.getName())) {
@@ -295,6 +312,7 @@ public class AppVetServlet extends HttpServlet {
 				}
 				break;
 			case SUBMIT_REPORT:
+				/* Submit a tool report. Used by GUI and non-GUI clients. */
 				log.debug(userName + " invoked " + command.name()
 						+ " on app " + appId + " with report " + fileItem.getName());
 				if (!ValidateBase.hasValidReportFileExtension(fileItem.getName())) {
@@ -497,23 +515,34 @@ public class AppVetServlet extends HttpServlet {
 		toolMgrThread.start();
 	}
 
+	// TODO: Remove commandStr and clientIpAddress if not needed!
 	private boolean isAuthenticated(String sessionId, String userName,
 			String password, String clientIpAddress, String commandStr) {
-		// All users except app stores and tools must
-		// use sessionID except during login authentication
-		log.debug("Verifying session...");
-		if (Database.isValidSession(sessionId, clientIpAddress)) {
-			return true;
+		
+		// Session IDs are only used by AppVet GUI users. All other clients
+		// authenticate via username and password and do not use session IDs.
+		log.debug("Validating session...");
+		if (sessionId != null) {
+			if (Database.isValidSession(sessionId, clientIpAddress)) {
+				return true;
+			}
 		}
 		
 		log.debug("Session invalid. Verifying username and password...");
 
 		// If sessionID was not validated, validate username and password
-		if (!Authenticate.isAuthenticated(userName, password)) {
+		if (userName != null && password != null) {
+			if (Authenticate.isAuthenticated(userName, password)) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
 			return false;
 		}
+
 		
-		log.debug("User authenticated. Checking login command for other clients...");
+/*		log.debug("User authenticated. Checking login command for other clients...");
 
 		// Username and password authenticated, so check if request is for
 		// login authentication. Note that all AppVet users except
@@ -534,7 +563,7 @@ public class AppVetServlet extends HttpServlet {
 			return true;
 		} else {
 			return false;
-		}
+		}*/
 	}
 
 	private void returnAppLog(HttpServletResponse response, String appid,
