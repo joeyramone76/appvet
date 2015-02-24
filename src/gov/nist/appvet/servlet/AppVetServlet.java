@@ -70,12 +70,19 @@ public class AppVetServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) {
+		/* Used for all GET commands.*/
 		String userName = request.getParameter("username");
+		/* Used for all GET commands.*/
 		String password = request.getParameter("password");
+		/* Used for all GET commands.*/
 		String sessionId = request.getParameter("sessionid");
+		/* Used for all GET commands.*/
 		String commandStr = request.getParameter("command");
+		/* Used for all GET commands except GET_APPVET_LOG.*/
 		String appId = request.getParameter("appid");
+		/* Used only for GET_TOOL_REPORT command.*/
 		String report = request.getParameter("report");
+		/* Used only for DOWNLOAD_APP command.*/
 		String appName = request.getParameter("appname");
 		String clientIpAddress = request.getRemoteAddr();
 
@@ -219,24 +226,31 @@ public class AppVetServlet extends HttpServlet {
 					incomingParameter = item.getFieldName();
 					incomingValue = item.getString();
 					if (incomingParameter.equals("command")) {
+						/* Used for all POST commands.*/
 						commandStr = incomingValue;
 						log.debug("commandStr: " + commandStr);
 					} else if (incomingParameter.equals("username")) {
+						/* Used for all POST commands.*/
 						userName = incomingValue;
 						log.debug("userName: " + userName);
 					} else if (incomingParameter.equals("password")) {
+						/* Used for all POST commands.*/
 						password = incomingValue;
 						log.debug("password: " + password);
 					} else if (incomingParameter.equals("sessionid")) {
+						/* Used for all POST commands.*/
 						sessionId = incomingValue;
 						log.debug("sessionId: " + sessionId);
 					} else if (incomingParameter.equals("toolid")) {
+						/* Used only for submit report command.*/
 						toolId = incomingValue;
 						log.debug("toolid: " + toolId);
 					} else if (incomingParameter.equals("toolrisk")) {
+						/* Used only for submit report command.*/
 						toolRisk = incomingValue;
 						log.debug("toolrisk: " + toolRisk);
 					} else if (incomingParameter.equals("appid")) {
+						/* Used only for submit report command.*/
 						appId = incomingValue;
 						log.debug("appId: " + appId);
 					} else {
@@ -303,7 +317,7 @@ public class AppVetServlet extends HttpServlet {
 						return;
 					else {
 						sendHttpResponse(userName, appInfo.appId, commandStr, clientIpAddress,
-								"HTTP/1.1 202 Accepted", response,
+								"APP_ID=" + appInfo.appId, response,
 								HttpServletResponse.SC_ACCEPTED, false);
 						Registration registration = new Registration(appInfo);
 						registration.registerApp();
@@ -682,7 +696,7 @@ public class AppVetServlet extends HttpServlet {
 				if (!file.exists()) {
 					sendHttpResponse(null, appid, null, clientIpAddress,
 							"Report not available", response,
-							HttpServletResponse.SC_INTERNAL_SERVER_ERROR, true);
+							HttpServletResponse.SC_BAD_REQUEST, true);
 					return;
 				}
 				if (report.endsWith(".pdf")) {
@@ -720,6 +734,7 @@ public class AppVetServlet extends HttpServlet {
 			response.setHeader("appid", appId);
 			out = response.getWriter();
 			out.println(message);
+
 			out.flush();
 			if (errorMessage) {
 				log.error("Returned HTTP " + httpResponseCode
