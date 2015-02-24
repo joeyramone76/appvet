@@ -296,6 +296,7 @@ public class AppVetServlet extends HttpServlet {
 				return;
 			}
 
+			
 			//------------------------- Handle command -------------------------
 			AppInfo appInfo = null;
 			command = AppVetServletCommand.valueOf(commandStr);
