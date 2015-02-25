@@ -318,7 +318,7 @@ public class AppVetServlet extends HttpServlet {
 						return;
 					else {
 						sendHttpResponse(userName, appInfo.appId, commandStr, clientIpAddress,
-								"APP_ID=" + appInfo.appId, response,
+								"appid=" + appInfo.appId, response,
 								HttpServletResponse.SC_ACCEPTED, false);
 						Registration registration = new Registration(appInfo);
 						registration.registerApp();
