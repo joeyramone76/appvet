@@ -67,8 +67,10 @@ public class LoginPanel extends DockLayoutPanel {
 	public LoginPanel(Unit unit) {
 		super(Unit.PX);
 
-		final String version = AppVetProperties.VERSION;
-		log.info("Starting AppVet v" + version + "...");
+		// WARNING! DO NOT CALL APPVETPROPERTIES ELSE CODE WILL NOT
+		// COMPILE WITH GOOGLE COMPILER!
+		//final String version = AppVetProperties.VERSION;
+		//log.info("Starting AppVet v" + version + "...");
 
 		setSize("100%", "");
 		
