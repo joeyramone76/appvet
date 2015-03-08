@@ -33,6 +33,7 @@ import gov.nist.appvet.gwt.shared.AppInfoGwt;
 import gov.nist.appvet.gwt.shared.ConfigInfoGwt;
 import gov.nist.appvet.gwt.shared.ToolStatusGwt;
 import gov.nist.appvet.gwt.shared.UserInfoGwt;
+import gov.nist.appvet.shared.os.DeviceOS;
 import gov.nist.appvet.shared.status.AppStatus;
 import gov.nist.appvet.shared.validate.ValidateBase;
 
@@ -122,9 +123,13 @@ public class AppVetPanel extends DockLayoutPanel {
 	public final Label statusMessageLabel = new Label("");
 	private String SERVLET_URL = null;
 	private String HOST_URL = null;
-	private String[] availableToolNames = null;
-	private String[] availableToolIDs = null;
-	private String[] availableToolTypes = null;
+	private String[] androidToolNames = null;
+	private String[] androidToolIDs = null;
+	private String[] androidToolTypes = null;
+	private String[] iosToolNames = null;
+	private String[] iosToolIDs = null;
+	private String[] iosToolTypes = null;
+	
 	private InlineLabel appsLabel = null;
 	private int iconVersion = 0;
 	private static double NORTH_PANEL_HEIGHT = 130.0;
@@ -147,7 +152,7 @@ public class AppVetPanel extends DockLayoutPanel {
 		public void onSelectionChange(SelectionChangeEvent event) {
 			final AppInfoGwt selectedApp = appSelectionModel.getSelectedObject();
 			if (selectedApp != null) {
-				appVetServiceAsync.getToolResults(sessionId, selectedApp.appId,
+				appVetServiceAsync.getToolResults(selectedApp.os, sessionId, selectedApp.appId,
 						new AsyncCallback<List<ToolStatusGwt>>() {
 
 					@Override
@@ -283,7 +288,7 @@ public class AppVetPanel extends DockLayoutPanel {
 				showMessageDialog("App Submission Error", "No file selected",
 						true);
 				event.setCancelled(true);
-			} else if (!ValidateBase.isLegalFileName(apkFileName)) {
+			} else if (!ValidateBase.isPrintable(apkFileName)) {
 				submitAppDialogBox.submitAppStatusLabel.setText("");
 				showMessageDialog("App Submission Error", "File \""
 						+ apkFileName + "\" contains an illegal character.",
@@ -317,13 +322,15 @@ public class AppVetPanel extends DockLayoutPanel {
 		ReportUploadDialogBox reportUploadDialogBox = null;
 		String username = null;
 		String appid = null;
+		AppInfoGwt selected = null;
 
 		public ReportUploadFormHandler(
 				ReportUploadDialogBox reportUploadDialogBox, String username,
-				String appid) {
+				AppInfoGwt selected) {
 			this.reportUploadDialogBox = reportUploadDialogBox;
+			this.selected = selected;
 			this.username = username;
-			this.appid = appid;
+			this.appid = selected.appId;
 		}
 
 		@Override
@@ -331,6 +338,17 @@ public class AppVetPanel extends DockLayoutPanel {
 		public void onSubmit(FormSubmitEvent event) {
 			String reportFileName = reportUploadDialogBox.fileUpload
 					.getFilename();
+			
+			String[] availableToolNames = null;
+			String[] availableToolTypes = null;
+			if (selected.os == DeviceOS.ANDROID) {
+				availableToolNames = androidToolNames;
+				availableToolTypes = androidToolTypes;
+			} else if (selected.os == DeviceOS.IOS) {
+				availableToolNames = iosToolNames;
+				availableToolTypes = iosToolTypes;
+			}
+			
 			if (reportFileName.length() == 0) {
 				showMessageDialog("Report Submission Error",
 						"No file selected", true);
@@ -378,8 +396,11 @@ public class AppVetPanel extends DockLayoutPanel {
 
 	public static void killDialogBox(DialogBox dialogBox) {
 		if (dialogBox != null) {
+			log.fine("Closing dialog box");
 			dialogBox.hide();
 			dialogBox = null;
+		} else {
+			log.fine("Can't close dialog box. dialogBox is null");
 		}
 	}
 
@@ -510,12 +531,15 @@ public class AppVetPanel extends DockLayoutPanel {
 		appSelectionModel = new SingleSelectionModel<AppInfoGwt>();
 		appSelectionModel.addSelectionChangeHandler(new AppListHandler(this,
 				configInfo));
-		if (configInfo.getAvailableToolNames() == null) {
-			log.severe("Available tools is null");
+		if (configInfo.getAndroidToolNames() == null) {
+			log.warning("Available tools is null");
 		}
-		availableToolNames = configInfo.getAvailableToolNames();
-		availableToolIDs = configInfo.getAvailableToolIDs();
-		availableToolTypes = configInfo.getAvailableToolTypes();
+		androidToolNames = configInfo.getAndroidToolNames();
+		androidToolIDs = configInfo.getAndroidToolIDs();
+		androidToolTypes = configInfo.getAndroidToolTypes();
+		iosToolNames = configInfo.getiOSToolNames();
+		iosToolIDs = configInfo.getiOSToolIDs();
+		iosToolTypes = configInfo.getiOSToolTypes();
 
 		final VerticalPanel northAppVetPanel = new VerticalPanel();
 		northAppVetPanel
@@ -1100,6 +1124,17 @@ public class AppVetPanel extends DockLayoutPanel {
 			public void onClick(ClickEvent event) {
 				final AppInfoGwt selected = appSelectionModel
 						.getSelectedObject();
+				
+				String[] availableToolNames = null;
+				String[] availableToolIDs = null;
+				if (selected.os == DeviceOS.ANDROID) {
+					availableToolNames = androidToolNames;
+					availableToolIDs = androidToolIDs;
+				} else if (selected.os == DeviceOS.IOS) {
+					availableToolNames = iosToolNames;
+					availableToolIDs = iosToolIDs;
+				}
+				
 				if (selected == null) {
 					showMessageDialog("AppVet Error", "No app is selected", true);
 				} else {
@@ -1121,7 +1156,7 @@ public class AppVetPanel extends DockLayoutPanel {
 					reportUploadDialogBox.uploadReportForm
 					.addFormHandler(new ReportUploadFormHandler(
 							reportUploadDialogBox, userName,
-							selected.appId));
+							selected));
 				}
 			}
 		});
@@ -1165,7 +1200,7 @@ public class AppVetPanel extends DockLayoutPanel {
 					public void onClick(ClickEvent event) {
 						killDialogBox(deleteConfirmDialogBox);
 						if (selected != null) {
-							deleteApp(selected.appId, userName);
+							deleteApp(selected.os, selected.appId, userName);
 						}
 					}
 
@@ -1257,8 +1292,8 @@ public class AppVetPanel extends DockLayoutPanel {
 		scheduleResize();
 	}
 
-	public void deleteApp(final String appid, final String username) {
-		appVetServiceAsync.deleteApp(appid, username,
+	public void deleteApp(final DeviceOS os, final String appid, final String username) {
+		appVetServiceAsync.deleteApp(os, appid, username,
 				new AsyncCallback<Boolean>() {
 
 			@Override
@@ -1493,15 +1528,6 @@ public class AppVetPanel extends DockLayoutPanel {
 			}
 		}
 	}
-
-//	public boolean toolInstalled(String toolName) {
-//		for (final String availableTool : availableToolNames) {
-//			if (toolName.equals(availableTool)) {
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
 
 	public synchronized void updateSessionExpiration() {
 		appVetServiceAsync.updateSessionTimeout(sessionId, sessionExpirationLong,

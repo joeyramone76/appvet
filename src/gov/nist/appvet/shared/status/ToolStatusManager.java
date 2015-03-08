@@ -21,6 +21,7 @@ package gov.nist.appvet.shared.status;
 
 import gov.nist.appvet.properties.AppVetProperties;
 import gov.nist.appvet.shared.Database;
+import gov.nist.appvet.shared.os.DeviceOS;
 import gov.nist.appvet.toolmgr.ToolServiceAdapter;
 
 public class ToolStatusManager {
@@ -28,32 +29,51 @@ public class ToolStatusManager {
 	private ToolStatusManager() {
 	}
 
-	private synchronized static String getToolStatusName (String appid, 
+	public synchronized static ToolStatus getToolStatus(DeviceOS os, String appid, 
 			String toolId) {
-		return Database.getString("SELECT " + toolId + " FROM toolstatus " 
-				+ "where appid='" + appid + "'");
-	}
-
-	public synchronized static ToolStatus getToolStatus(String appid, 
-			String toolId) {
-		String toolStatusName = getToolStatusName(appid, toolId);
+		String toolStatusName = getToolStatusName(os, appid, toolId);
 		return ToolStatus.getStatus(toolStatusName);
+	}
+	
+	private synchronized static String getToolStatusName (DeviceOS os, String appid, 
+			String toolId) {
+		if (os == DeviceOS.ANDROID) {
+			// Android
+			return Database.getString("SELECT " + toolId + " FROM androidtoolstatus " 
+					+ "where appid='" + appid + "'");
+		} else if (os == DeviceOS.IOS) {
+			// iOS
+			return Database.getString("SELECT " + toolId + " FROM iostoolstatus " 
+					+ "where appid='" + appid + "'");
+		} else {
+			return null;
+		}
 	}
 
 	// Update tool status and overall app status
-	public synchronized static void setToolStatus(String appId, String toolId,
+	public synchronized static void setToolStatus(DeviceOS os, String appId, String toolId,
 			ToolStatus toolStatus) {
-		Database.update("UPDATE toolstatus SET " + toolId + "='"
-				+ toolStatus.name() + "' where appid='" + appId + "'");
-		Database.setLastUpdate(appId);
+		if (os == DeviceOS.ANDROID) {
+			Database.update("UPDATE androidtoolstatus SET " + toolId + "='"
+					+ toolStatus.name() + "' where appid='" + appId + "'");
+			Database.setLastUpdate(appId);
 
-		computeAppStatus(appId);
+			computeAppStatus(os, appId);
+		} else if (os == DeviceOS.IOS) {
+			Database.update("UPDATE iostoolstatus SET " + toolId + "='"
+					+ toolStatus.name() + "' where appid='" + appId + "'");
+			Database.setLastUpdate(appId);
+
+			computeAppStatus(os, appId);
+		}
+
 	}
 
-	private synchronized static void computeAppStatus(String appId) {
+	private synchronized static void computeAppStatus(DeviceOS os, String appId) {
 		// Registration
-		ToolServiceAdapter tool = ToolServiceAdapter.getById("registration");
-		ToolStatus toolStatus = getToolStatus(appId, tool.id);
+		ToolServiceAdapter tool = ToolServiceAdapter.getByToolId(os, "registration");
+
+		ToolStatus toolStatus = getToolStatus(os, appId, tool.id);
 		if (toolStatus == ToolStatus.ERROR) {
 			AppStatusManager.setAppStatus(appId, AppStatus.ERROR);
 			return;
@@ -64,9 +84,9 @@ public class ToolStatusManager {
 				return;
 			}
 		}
-		// Android Manifest
-		tool = ToolServiceAdapter.getById("appinfo");
-		toolStatus = getToolStatus(appId, tool.id);
+		// Manifest
+		tool = ToolServiceAdapter.getByToolId(os, "appinfo");
+		toolStatus = getToolStatus(os, appId, tool.id);
 		if (toolStatus == ToolStatus.ERROR) {
 			AppStatusManager.setAppStatus(appId, AppStatus.ERROR);
 			return;
@@ -88,10 +108,20 @@ public class ToolStatusManager {
 		int numToolWarnings = 0;
 		int numToolPasses = 0;
 		int numToolsSubmitted = 0;
-		int numTools = AppVetProperties.availableTools.size();
+		int numTools = 0;
+		if (os == DeviceOS.ANDROID) {
+			numTools = AppVetProperties.androidTools.size();
+		} else if (os == DeviceOS.IOS) {
+			numTools = AppVetProperties.iosTools.size();
+		}
 		for (int i = 0; i < numTools; i++) {
-			tool = AppVetProperties.availableTools.get(i);
-			toolStatus = getToolStatus(appId, tool.id);
+			tool = null;
+			if (os == DeviceOS.ANDROID) {
+				tool = AppVetProperties.androidTools.get(i);
+			} else if (os == DeviceOS.IOS) {
+				tool = AppVetProperties.iosTools.get(i);
+			}
+			toolStatus = getToolStatus(os, appId, tool.id);
 			if (toolStatus == ToolStatus.ERROR) {
 				numToolErrors++;
 			} else if (toolStatus == ToolStatus.FAIL) {

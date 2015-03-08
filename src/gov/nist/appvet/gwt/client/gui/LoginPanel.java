@@ -283,7 +283,7 @@ public class LoginPanel extends DockLayoutPanel {
 			@Override
 			public void onFailure(Throwable caught) {
 				caught.printStackTrace();
-				showMessageDialog("AppVet Error", "Apps list retrieval error",
+				showMessageDialog("AppVet Error", "Apps list retrieval error: " + caught.getMessage(),
 						true);
 				return;
 			}

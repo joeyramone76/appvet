@@ -25,18 +25,15 @@ import gov.nist.appvet.shared.FileUtil;
 import gov.nist.appvet.shared.Logger;
 import gov.nist.appvet.shared.MemoryUtil;
 import gov.nist.appvet.shared.app.AppInfo;
+import gov.nist.appvet.shared.os.DeviceOS;
 import gov.nist.appvet.shared.status.AppStatus;
 import gov.nist.appvet.shared.status.AppStatusManager;
 import gov.nist.appvet.shared.status.ToolStatus;
 import gov.nist.appvet.shared.status.ToolStatusManager;
-import gov.nist.appvet.shared.validate.ValidateBase;
-import gov.nist.appvet.tools.preprocessor.AndroidManifest;
+import gov.nist.appvet.tools.preprocessor.AndroidMetadata;
+import gov.nist.appvet.tools.preprocessor.IOSMetadata;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
@@ -62,8 +59,7 @@ public class ToolMgr implements Runnable {
 	}
 
 	public void cleanUpFiles(AppInfo appInfo) {
-		final String projectPath = appInfo.getIdPath() + "/"
-				+ appInfo.getProjectName();
+		final String projectPath = appInfo.getProjectPath();
 		final File projectDirectory = new File(projectPath);
 		if (projectDirectory.exists()) {
 			FileUtil.deleteDirectory(projectDirectory);
@@ -73,83 +69,22 @@ public class ToolMgr implements Runnable {
 		}
 		if (AppVetProperties.KEEP_APPS == false) {
 			// Delete app file
-			String appPath = appInfo.getIdPath() + "/" + appInfo.fileName;
-			FileUtil.deleteFile(appPath);
+			String appFilePath = appInfo.getAppFilePath();
+			FileUtil.deleteFile(appFilePath);
 		}
 		appInfo.log.close();
 		System.gc();
 	}
+	
 
 	private synchronized boolean getAppMetaData(AppInfo appInfo) {
-		log.debug("Start AndroidManifest preprocessing for appID="
-				+ appInfo.appId);
-		final ToolServiceAdapter appinfoTool = ToolServiceAdapter
-				.getById("appinfo");
-		final String reportsPath = appInfo.getReportsPath();
-		final String appinfoReportPath = reportsPath + "/"
-				+ appinfoTool.reportName;
-		// TODO: Move appinfo report code to appvet.tools.preprocessor.AndroidManifest.java
-		BufferedWriter appinfoReport = null;
-		final String apkFilePath = appInfo.getIdPath() + "/" + appInfo.fileName;
-		try {
-			appinfoReport = new BufferedWriter(
-					new FileWriter(appinfoReportPath));
-			appinfoReport.write("<HTML>\n");
-			appinfoReport.write("<head>\n");
-			appinfoReport.write("<style type=\"text/css\">\n");
-			appinfoReport.write("h3 {font-family:arial;}\n");
-			appinfoReport.write("p {font-family:arial;}\n");
-			appinfoReport.write("</style>\n");
-			appinfoReport.write("<title>Android Manifest Report</title>\n");
-			appinfoReport.write("</head>\n");
-			appinfoReport.write("<body>\n");
-			String appVetImagesUrl = AppVetProperties.URL + "/images/appvet_logo.png";
-			appinfoReport.write("<img border=\"0\" width=\"192px\" src=\"" + appVetImagesUrl + "\" alt=\"appvet\" />");
-			appinfoReport.write("<HR>\n");
-			appinfoReport.write("<h3>AndroidManifest Pre-Processing Report</h3>\n");
-			appinfoReport.write("<pre>\n");
-			final Date date = new Date();
-			final SimpleDateFormat format = new SimpleDateFormat(
-					"yyyy-MM-dd' 'HH:mm:ss.SSSZ");
-			final String currentDate = format.format(date);
-			appinfoReport.write("File: \t\t" + appInfo.fileName + "\n");
-			appinfoReport.write("Date: \t\t" + currentDate + "\n\n");
-			appinfoReport.write("App ID: \t" + appInfo.appId + "\n");
-			if (ValidateBase.hasValidAppFileExtension(appInfo.fileName)) {
-				ToolStatusManager.setToolStatus(appInfo.appId, appinfoTool.id, ToolStatus.SUBMITTED);
-				if (!AndroidManifest.decodeApk(appInfo, apkFilePath, appinfoReport)) {
-					return false;
-				}
-				if (!AndroidManifest.getManifestInfo(appInfo, appinfoReport, true)) {
-					return false;
-				}
-			} else {
-				appInfo.log.error("File " + appInfo.fileName + " is invalid");
-				ToolStatusManager.setToolStatus(appInfo.appId, appinfoTool.id, ToolStatus.ERROR);
-				return false;
-			}
-			
-			ToolStatusManager.setToolStatus(appInfo.appId, appinfoTool.id, ToolStatus.PASS);
-			appinfoReport
-			.write("\nStatus:\t\t<font color=\"green\">PASS</font>\n");
-			log.debug("End AndroidManifest preprocessing for appID="
-					+ appInfo.appId);
-			return true;
-		} catch (final IOException e) {
-			appInfo.log.error(e.getMessage());
+		if (appInfo.os == DeviceOS.ANDROID) {
+			return AndroidMetadata.getAndroidMetaData(appInfo, log);
+		} else if (appInfo.os == DeviceOS.IOS) {
+			return IOSMetadata.getIosMetaData(appInfo, log);
+		} else {
+			log.error("Unknown OS");
 			return false;
-		} finally {
-			try {
-				if (appinfoReport != null) {
-					appinfoReport.write("</pre>\n");
-					appinfoReport.write("</body>\n");
-					appinfoReport.write("</HTML>\n");
-					appinfoReport.close();
-					appinfoReport = null;
-				}
-			} catch (final IOException e) {
-				appInfo.log.error(e.getMessage());
-			}
 		}
 	}
 
@@ -163,14 +98,19 @@ public class ToolMgr implements Runnable {
 				log.debug(MemoryUtil.getFreeHeap("ToolMgr.run()"));
 				appInfo = new AppInfo(appid);
 				if (!getAppMetaData(appInfo)) {
+					System.exit(0);
 					cleanUpFiles(appInfo);
 					continue mainLoop;
 				}
 				delay();
 
 				// Run available tools
-				ArrayList<ToolServiceAdapter> availableTools = 
-						AppVetProperties.availableTools;
+				ArrayList<ToolServiceAdapter> availableTools = null;
+				if (appInfo.os == DeviceOS.ANDROID) {
+					availableTools = AppVetProperties.androidTools;
+				} else if (appInfo.os == DeviceOS.IOS) {
+					availableTools = AppVetProperties.iosTools;
+				}
 				for (int i = 0; i < availableTools.size(); i++) {
 					staggerStart(AppVetProperties.TOOL_MGR_STAGGER_INTERVAL);
 					final ToolServiceAdapter tool = availableTools.get(i);
@@ -254,7 +194,7 @@ public class ToolMgr implements Runnable {
 		} catch (final InterruptedException e) {
 			appInfo.log.error("Tool timed out after "
 					+ AppVetProperties.TOOL_TIMEOUT + "ms");
-			ToolStatusManager.setToolStatus(appInfo.appId, tool.id, ToolStatus.ERROR);
+			ToolStatusManager.setToolStatus(appInfo.os, appInfo.appId, tool.id, ToolStatus.ERROR);
 		}
 	}
 }

@@ -25,6 +25,7 @@ import gov.nist.appvet.shared.ErrorMessage;
 import gov.nist.appvet.shared.FileUtil;
 import gov.nist.appvet.shared.Logger;
 import gov.nist.appvet.shared.app.AppInfo;
+import gov.nist.appvet.shared.os.DeviceOS;
 import gov.nist.appvet.shared.status.AppStatus;
 import gov.nist.appvet.shared.status.AppStatusManager;
 import gov.nist.appvet.shared.status.ToolStatus;
@@ -32,7 +33,6 @@ import gov.nist.appvet.shared.status.ToolStatusManager;
 import gov.nist.appvet.toolmgr.ToolServiceAdapter;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -41,10 +41,10 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Registration {
-	
+
 	private static final Logger log = AppVetProperties.log;
 	private AppInfo appInfo = null;
-	
+
 	public Registration(AppInfo appInfo) {
 		this.appInfo = appInfo;
 	}
@@ -54,9 +54,9 @@ public class Registration {
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		BufferedWriter regReportWriter = null;
-		ToolServiceAdapter registrationTool = ToolServiceAdapter.getById("registration");
-		String reportsPath = appInfo.getReportsPath();
-		String registrationReportPath = reportsPath + "/"
+		ToolServiceAdapter registrationTool = ToolServiceAdapter.getByToolId(
+				appInfo.os, "registration");
+		String registrationReportPath = appInfo.getReportsPath() + "/"
 				+ registrationTool.reportName;
 		try {
 			regReportWriter = new BufferedWriter(new FileWriter(
@@ -70,8 +70,10 @@ public class Registration {
 			regReportWriter.write("<title>Registration Report</title>\n");
 			regReportWriter.write("</head>\n");
 			regReportWriter.write("<body>\n");
-			String appVetImagesUrl = AppVetProperties.URL + "/images/appvet_logo.png";
-			regReportWriter.write("<img border=\"0\" width=\"192px\" src=\"" + appVetImagesUrl + "\" alt=\"appvet\" />");
+			String appVetImagesUrl = AppVetProperties.URL
+					+ "/images/appvet_logo.png";
+			regReportWriter.write("<img border=\"0\" width=\"192px\" src=\""
+					+ appVetImagesUrl + "\" alt=\"appvet\" />");
 			regReportWriter.write("<HR>\n");
 			regReportWriter.write("<h3>Registration Report</h3>\n");
 			regReportWriter.write("<pre>\n");
@@ -82,29 +84,30 @@ public class Registration {
 			connection = Database.getConnection();
 			AppStatus appStatus = AppStatusManager.getAppStatus(appInfo.appId);
 			if (appStatus == null) {
-				
-				//--------------------------------------------------------------
+
+				// --------------------------------------------------------------
 				// Add entry to apps table
-				//--------------------------------------------------------------
+				// --------------------------------------------------------------
 				preparedStatement = connection
 						.prepareStatement("REPLACE INTO apps (appid, appname, packagename, "
 								+ "versioncode, versionname, filename, "
 								+ "submittime, appstatus, "
-								+ "statustime, username, clienthost"
+								+ "statustime, username, clienthost, os"
 								+ ") "
-								+ "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+								+ "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 				// Set app ID
 				preparedStatement.setString(1, appInfo.appId);
 				// Set app name
-				preparedStatement.setString(2, "Unknown");
+				preparedStatement.setString(2, appInfo.appName);
 				// Set package name
 				preparedStatement.setString(3, null);
 				// Set version code
 				preparedStatement.setString(4, null);
 				// Set version name
 				preparedStatement.setString(5, null);
-				// Set file name
-				preparedStatement.setString(6, appInfo.fileName);
+				// Set file name (note that filename uses underscores to
+				// replace spaces
+				preparedStatement.setString(6, appInfo.appFileName);
 				final java.sql.Timestamp timeStamp = new java.sql.Timestamp(
 						new java.util.Date().getTime());
 				// Set submission timestamp
@@ -117,58 +120,67 @@ public class Registration {
 				preparedStatement.setString(10, appInfo.userName);
 				// Set client hostname
 				preparedStatement.setString(11, appInfo.clientHost);
+				// OS/platform
+				preparedStatement.setString(12, appInfo.os.name());
 
 				preparedStatement.executeUpdate();
 				preparedStatement.close();
-				
-				//--------------------------------------------------------------
+
+				// --------------------------------------------------------------
 				// Add entry to toolstatus table
-				//--------------------------------------------------------------
-				preparedStatement = connection
-						.prepareStatement("REPLACE INTO toolstatus (appid) "
-								+ "values (?)");
+				// --------------------------------------------------------------
+
+				if (appInfo.os == DeviceOS.ANDROID) {
+					preparedStatement = connection
+							.prepareStatement("REPLACE INTO androidtoolstatus (appid) "
+									+ "values (?)");
+				} else if (appInfo.os == DeviceOS.IOS) {
+					preparedStatement = connection
+							.prepareStatement("REPLACE INTO iostoolstatus (appid) "
+									+ "values (?)");
+				}
+
 				preparedStatement.setString(1, appInfo.appId);
 				preparedStatement.executeUpdate();
 				preparedStatement.close();
 
-				final ArrayList<ToolServiceAdapter> availableTools = AppVetProperties.availableTools;
+				ArrayList<ToolServiceAdapter> availableTools = null;
+				if (appInfo.os == DeviceOS.ANDROID) {
+					availableTools = AppVetProperties.androidTools;
+				} else if (appInfo.os == DeviceOS.IOS) {
+					availableTools = AppVetProperties.iosTools;
+				}
+
 				for (int i = 0; i < availableTools.size(); i++) {
 					final ToolServiceAdapter tool = availableTools.get(i);
 					setToolStartStatus(appInfo, tool, connection,
 							preparedStatement);
 				}
 				Database.setLastUpdate(appInfo.appId);
-				if (!FileUtil.saveFileUpload(appInfo.appId, appInfo.fileItem)) {
+				if (!FileUtil.saveFileUpload(appInfo)) {
 					regReportWriter.write("<font color=\"red\">"
 							+ ErrorMessage.ERROR_SAVING_UPLOADED_FILE
-							.getDescription() + "</font>");
-					appInfo.log.error(ErrorMessage.ERROR_SAVING_UPLOADED_FILE.getDescription());
-					ToolStatusManager.setToolStatus(appInfo.appId, registrationTool.id,
-							ToolStatus.ERROR);
+									.getDescription() + "</font>");
+					appInfo.log.error(ErrorMessage.ERROR_SAVING_UPLOADED_FILE
+							.getDescription());
+					ToolStatusManager.setToolStatus(appInfo.os, appInfo.appId,
+							registrationTool.id, ToolStatus.ERROR);
 					return false;
 				}
 				appInfo.log.debug("Saved received file\tOK");
+				appInfo.log.debug("Got project name: " + appInfo.appName
+						+ "\tOK");
 
-				final int extensionIndex = appInfo.fileName.toLowerCase()
-						.indexOf(".apk");
-				final String projectName = appInfo.fileName.substring(0,
-						extensionIndex);
-				appInfo.setProjectName(projectName);
-				appInfo.appName = projectName;
-				appInfo.log.debug("Got project name: " + projectName + "\tOK");
-
-				regReportWriter.write("File: \t\t" + appInfo.fileName + "\n");
+				regReportWriter.write("File: \t\t" + appInfo.appFileName + "\n");
 				regReportWriter.write("Date: \t\t" + currentDate + "\n\n");
-				final File file = new File(appInfo.getIdPath() + "/"
-						+ appInfo.fileName);
 				regReportWriter.write("App ID: \t" + appInfo.appId + "\n");
-				regReportWriter
-				.write("Submitter: \t" + appInfo.userName + "\n\n");
+				regReportWriter.write("Submitter: \t" + appInfo.userName
+						+ "\n\n");
 
-				ToolStatusManager.setToolStatus(appInfo.appId, registrationTool.id,
-						ToolStatus.PASS);
+				ToolStatusManager.setToolStatus(appInfo.os, appInfo.appId,
+						registrationTool.id, ToolStatus.PASS);
 				regReportWriter
-				.write("Status:\t\t<font color=\"green\">PASS</font>\n");
+						.write("Status:\t\t<font color=\"green\">PASS</font>\n");
 				log.debug("End registration for appID=" + appInfo.appId);
 				regReportWriter.write("</pre>\n");
 				regReportWriter.write("</body>\n");
@@ -176,11 +188,12 @@ public class Registration {
 				return true;
 			} else {
 				regReportWriter.write("<font color=\"red\">"
-						+ ErrorMessage.ERROR_APP_ALREADY_REGISTERED.getDescription()
-						+ "</font>");
-				appInfo.log.error(ErrorMessage.ERROR_APP_ALREADY_REGISTERED.getDescription());
-				ToolStatusManager.setToolStatus(appInfo.appId, registrationTool.id,
-						ToolStatus.ERROR);
+						+ ErrorMessage.ERROR_APP_ALREADY_REGISTERED
+								.getDescription() + "</font>");
+				appInfo.log.error(ErrorMessage.ERROR_APP_ALREADY_REGISTERED
+						.getDescription());
+				ToolStatusManager.setToolStatus(appInfo.os, appInfo.appId,
+						registrationTool.id, ToolStatus.ERROR);
 				return false;
 			}
 		} catch (final Exception e) {
@@ -188,18 +201,24 @@ public class Registration {
 			return false;
 		} finally {
 			registrationTool = null;
-			reportsPath = null;
 			registrationReportPath = null;
 			Database.cleanUpBufferedWriter(regReportWriter);
 			Database.cleanUpPreparedStatement(preparedStatement);
 			Database.cleanUpConnection(connection);
 		}
 	}
-	
-	private static void setToolStartStatus(AppInfo appInfo, ToolServiceAdapter tool,
-			Connection connection, PreparedStatement ps) {
-		final String command = "UPDATE toolstatus SET " + tool.id + "='NA' " + "WHERE appid='" + appInfo.appId
-				+ "'";
+
+	private static void setToolStartStatus(AppInfo appInfo,
+			ToolServiceAdapter tool, Connection connection, PreparedStatement ps) {
+		String command = null;
+		if (appInfo.os == DeviceOS.ANDROID) {
+			command = "UPDATE androidtoolstatus SET " + tool.id + "='NA' "
+					+ "WHERE appid='" + appInfo.appId + "'";
+		} else if (appInfo.os == DeviceOS.IOS) {
+			command = "UPDATE iostoolstatus SET " + tool.id + "='NA' "
+					+ "WHERE appid='" + appInfo.appId + "'";
+		}
+
 		if (!Database.update(command)) {
 			appInfo.log.error("Failed to update tool start status");
 		}

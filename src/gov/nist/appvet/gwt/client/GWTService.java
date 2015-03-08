@@ -23,6 +23,7 @@ import gov.nist.appvet.gwt.shared.AppInfoGwt;
 import gov.nist.appvet.gwt.shared.ConfigInfoGwt;
 import gov.nist.appvet.gwt.shared.ToolStatusGwt;
 import gov.nist.appvet.gwt.shared.UserInfoGwt;
+import gov.nist.appvet.shared.os.DeviceOS;
 
 import java.util.List;
 
@@ -38,16 +39,19 @@ public interface GWTService extends RemoteService {
     ConfigInfoGwt authenticate(String username, String password)
 	    throws IllegalArgumentException;
 
-    Boolean deleteApp(String appId, String username)
+    Boolean deleteApp(DeviceOS os, String appId, String username)
 	    throws IllegalArgumentException;
 
     Boolean deleteUser(String username) throws IllegalArgumentException;
 
     List<AppInfoGwt> getAllApps(String username)
 	    throws IllegalArgumentException;
+    
+    List<ToolStatusGwt> getToolResults(DeviceOS os, String sessionId, String appId)
+    	    throws IllegalArgumentException;
 
-    List<ToolStatusGwt> getToolResults(String sessionId, String appId)
-	    throws IllegalArgumentException;
+//    List<ToolStatusGwt> getAndroidToolResults(String sessionId, String appId)
+//	    throws IllegalArgumentException;
 
     List<AppInfoGwt> getUpdatedApps(long lastClientUpdate, String username)
 	    throws IllegalArgumentException;
@@ -60,5 +64,8 @@ public interface GWTService extends RemoteService {
 	    throws IllegalArgumentException;
 
     boolean updateSelf(UserInfoGwt userInfo) throws IllegalArgumentException;
+
+//	List<ToolStatusGwt> getiOSToolResults(String sessionId, String appId)
+//			throws IllegalArgumentException;
 
 }

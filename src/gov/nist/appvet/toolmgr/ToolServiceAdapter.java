@@ -25,6 +25,7 @@ import gov.nist.appvet.shared.ErrorMessage;
 import gov.nist.appvet.shared.Logger;
 import gov.nist.appvet.shared.ReportFileType;
 import gov.nist.appvet.shared.app.AppInfo;
+import gov.nist.appvet.shared.os.DeviceOS;
 import gov.nist.appvet.shared.status.ToolStatus;
 import gov.nist.appvet.shared.status.ToolStatusManager;
 import gov.nist.appvet.xml.XmlUtil;
@@ -98,16 +99,52 @@ public class ToolServiceAdapter implements Runnable {
 
 	};
 
-	public static ToolServiceAdapter getById(String toolId) {
-		for (int i = 0; i < AppVetProperties.availableTools.size(); i++) {
-			final ToolServiceAdapter adapter = AppVetProperties.availableTools.get(i);
-			if (adapter.id.equals(toolId)) {
-				return adapter;
+	public static ToolServiceAdapter getByToolId(DeviceOS os, String toolId) {
+		if (os == DeviceOS.ANDROID) {
+			for (int i = 0; i < AppVetProperties.androidTools.size(); i++) {
+				final ToolServiceAdapter adapter = AppVetProperties.androidTools.get(i);
+				if (adapter.id.equals(toolId)) {
+					return adapter;
+				}
 			}
+			log.error("Android tool id '" + toolId + "' does not exist!");
+			return null;
+		} else if (os == DeviceOS.IOS) {
+			for (int i = 0; i < AppVetProperties.iosTools.size(); i++) {
+				final ToolServiceAdapter adapter = AppVetProperties.iosTools.get(i);
+				if (adapter.id.equals(toolId)) {
+					return adapter;
+				}
+			}
+			log.error("iOS tool id '" + toolId + "' does not exist!");
+			return null;
+		} else {
+			log.error("Invalid OS: " + os);
+			return null;
 		}
-		log.error("Tool id '" + toolId + "' does not exist!");
-		return null;
 	}
+	
+//	public static ToolServiceAdapter getByAndroidToolId(String toolId) {
+//		for (int i = 0; i < AppVetProperties.androidTools.size(); i++) {
+//			final ToolServiceAdapter adapter = AppVetProperties.androidTools.get(i);
+//			if (adapter.id.equals(toolId)) {
+//				return adapter;
+//			}
+//		}
+//		log.error("Android tool id '" + toolId + "' does not exist!");
+//		return null;
+//	}
+//	
+//	public static ToolServiceAdapter getByiOSToolId(String toolId) {
+//		for (int i = 0; i < AppVetProperties.iosTools.size(); i++) {
+//			final ToolServiceAdapter adapter = AppVetProperties.iosTools.get(i);
+//			if (adapter.id.equals(toolId)) {
+//				return adapter;
+//			}
+//		}
+//		log.error("iOS tool ID " + toolId + "' does not exist!");
+//		return null;
+//	}
 
 
 	public static String getHtmlReportString(String reportPath, AppInfo appInfo) {
@@ -274,7 +311,7 @@ public class ToolServiceAdapter implements Runnable {
 					+ " is still alive.  Interrupting...");
 			thread.interrupt();
 			appInfo.log.error(ErrorMessage.TOOL_TIMEOUT_ERROR.getDescription());
-			ToolStatusManager.setToolStatus(appInfo.appId, this.id, ToolStatus.ERROR);
+			ToolStatusManager.setToolStatus(appInfo.os, appInfo.appId, this.id, ToolStatus.ERROR);
 		}
 		thread = null;
 	}
@@ -326,7 +363,7 @@ public class ToolServiceAdapter implements Runnable {
 				}
 			}
 			final String apkFilePath = appInfo.getIdPath() + "/"
-					+ appInfo.fileName;
+					+ appInfo.appFileName;
 			appInfo.log.debug("Sending file: " + apkFilePath);
 			apkFile = new File(apkFilePath);
 			fileBody = new FileBody(apkFile);
@@ -376,7 +413,7 @@ public class ToolServiceAdapter implements Runnable {
 			Date startDate = new Date();
 			final long startTime = startDate.getTime();
 			startDate = null;
-			ToolStatusManager.setToolStatus(appInfo.appId, this.id, ToolStatus.SUBMITTED);
+			ToolStatusManager.setToolStatus(appInfo.os, appInfo.appId, this.id, ToolStatus.SUBMITTED);
 			HttpParams httpParameters = new BasicHttpParams();
 			HttpConnectionParams.setConnectionTimeout(httpParameters,
 					AppVetProperties.CONNECTION_TIMEOUT);
@@ -387,7 +424,7 @@ public class ToolServiceAdapter implements Runnable {
 			MultipartEntity entity = getMultipartEntity();
 			if (entity == null) {
 				appInfo.log.error("MultipartEntity is null. Aborting " + name);
-				ToolStatusManager.setToolStatus(appInfo.appId, this.id, ToolStatus.ERROR);
+				ToolStatusManager.setToolStatus(appInfo.os, appInfo.appId, this.id, ToolStatus.ERROR);
 				return;
 			}
 			HttpPost httpPost = new HttpPost(URL);
@@ -430,10 +467,10 @@ public class ToolServiceAdapter implements Runnable {
 				if (toolStatus == null) {
 					appInfo.log.error("Error "
 							+ "reading report");
-					ToolStatusManager.setToolStatus(appInfo.appId, this.id, ToolStatus.ERROR);
+					ToolStatusManager.setToolStatus(appInfo.os, appInfo.appId, this.id, ToolStatus.ERROR);
 					return;
 				} else {
-					ToolStatusManager.setToolStatus(appInfo.appId, this.id, toolStatus);
+					ToolStatusManager.setToolStatus(appInfo.os, appInfo.appId, this.id, toolStatus);
 				}
 
 			} else if (protocol == Protocol.ASYNCHRONOUS) {
@@ -447,7 +484,7 @@ public class ToolServiceAdapter implements Runnable {
 					appInfo.log.error("Tool '" + id + "' received: "
 							+ httpResponseVal
 							+ ". Could not process app. Aborting");
-					ToolStatusManager.setToolStatus(appInfo.appId, this.id, ToolStatus.ERROR);
+					ToolStatusManager.setToolStatus(appInfo.os, appInfo.appId, this.id, ToolStatus.ERROR);
 
 				}
 			}
@@ -464,7 +501,7 @@ public class ToolServiceAdapter implements Runnable {
 		} catch (final Exception e) {
 			e.printStackTrace();
 			appInfo.log.error(e.getMessage());
-			ToolStatusManager.setToolStatus(appInfo.appId, this.id, ToolStatus.ERROR);
+			ToolStatusManager.setToolStatus(appInfo.os, appInfo.appId, this.id, ToolStatus.ERROR);
 		}
 	}
 

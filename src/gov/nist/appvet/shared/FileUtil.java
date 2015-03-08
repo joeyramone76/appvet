@@ -20,6 +20,7 @@
 package gov.nist.appvet.shared;
 
 import gov.nist.appvet.properties.AppVetProperties;
+import gov.nist.appvet.shared.app.AppInfo;
 
 import java.io.File;
 import java.io.IOException;
@@ -102,6 +103,11 @@ public class FileUtil {
 		}
 	}
 
+	/**
+	 * Remove the prepended path of the file name.
+	 * @param filePath
+	 * @return
+	 */
 	public static synchronized String getNormalizedFileName(String filePath) {
 		final int forwardSlashIndex = filePath.lastIndexOf("/");
 		final int backSlashIndex = filePath.lastIndexOf("\\");
@@ -114,15 +120,13 @@ public class FileUtil {
 		}
 	}
 
-	public static synchronized boolean saveFileUpload(String appId,
-			FileItem fileItem) {
+	public static synchronized boolean saveFileUpload(AppInfo appInfo) {
 		File file = null;
 		try {
-			final String fileName = getNormalizedFileName(fileItem.getName());
-			final String outputFilePath = AppVetProperties.APPS_ROOT + "/"
-					+ appId + "/" + fileName;
-			file = new File(outputFilePath);
-			fileItem.write(file);
+			// Note that if appInfo.fileItem.name contained spaces then those
+			// spaces are replaced with underscores for appInfo.fileName.
+			file = new File(appInfo.getAppFilePath());
+			appInfo.fileItem.write(file);
 			return true;
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -131,6 +135,10 @@ public class FileUtil {
 		} finally {
 			file = null;
 		}
+	}
+	
+	public static String replaceSpaceWithUnderscore(String str) {
+		return str.replaceAll(" ", "_");
 	}
 
 	public static synchronized boolean saveReportUpload(String appId,

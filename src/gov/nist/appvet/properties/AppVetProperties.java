@@ -22,6 +22,7 @@ package gov.nist.appvet.properties;
 
 import gov.nist.appvet.shared.Database;
 import gov.nist.appvet.shared.Logger;
+import gov.nist.appvet.shared.os.DeviceOS;
 import gov.nist.appvet.shared.validate.Validate;
 import gov.nist.appvet.toolmgr.ToolServiceAdapter;
 import gov.nist.appvet.xml.XmlUtil;
@@ -108,7 +109,9 @@ public class AppVetProperties {
 	public static boolean KEEP_APPS = false;
 
 	// Tools
-	public static ArrayList<ToolServiceAdapter> availableTools = null;
+	public static ArrayList<ToolServiceAdapter> androidTools = null;
+	public static ArrayList<ToolServiceAdapter> iosTools = null;
+
 	public static String STATUS_MESSAGE = null;
 	static {
 		CONFIG_FILE_PATH = APPVET_FILES_HOME + "/conf/AppVetProperties.xml";
@@ -223,11 +226,16 @@ public class AppVetProperties {
 		System.setProperty(
 				"org.apache.commons.logging.simplelog.log.org.apache.http.wire",
 				"ERROR");
-		availableTools = new ArrayList<ToolServiceAdapter>();
+		androidTools = new ArrayList<ToolServiceAdapter>();
+		iosTools = new ArrayList<ToolServiceAdapter>();
+		
 		if (!Database.adminExists()) {
 			log.error("No AppVet administrator found in database.");
 		}
-		setupTools();
+		
+		setupTools(DeviceOS.ANDROID);
+		setupTools(DeviceOS.IOS);
+		
 		log.debug("---------- END AppVet PROPERTIES -------------------");
 	}
 
@@ -242,43 +250,167 @@ public class AppVetProperties {
 			log.debug(parameter + ": \t" + obj.toString());
 		}
 	}
+	
+	private static void setupTools(DeviceOS os) {
+		File folder = null;
 
-	private static void setupTools() {
-		File folder = new File(TOOLS_CONF_ROOT);
+		if (os == DeviceOS.ANDROID){
+			folder = new File(TOOLS_CONF_ROOT + "/android");
+		} else if (os == DeviceOS.IOS){
+			folder = new File(TOOLS_CONF_ROOT + "/ios");
+		}
+		
 		File[] listOfFiles = folder.listFiles();
 		for (final File toolConfigFile : listOfFiles) {
 			if (toolConfigFile.isFile()) {
 				final String toolConfigFileName = toolConfigFile.getName();
 				if (toolConfigFileName.endsWith(".xml")) {
 					final ToolServiceAdapter adapter = new ToolServiceAdapter(toolConfigFile);
-					log.debug("Adding tool " + adapter.name);
-					availableTools.add(adapter);
+					if (os == DeviceOS.ANDROID){
+						log.debug("Adding Android tool " + adapter.name);
+						androidTools.add(adapter);
+					} else if (os == DeviceOS.IOS){
+						log.debug("Adding iOS tool " + adapter.name);
+						iosTools.add(adapter);					}
 				}
 			}
 		}
 		listOfFiles = null;
 		folder = null;
-		// Check that all available tools have a column in the toolstatus table.
-		ArrayList<String> tableColumnNames = Database
-				.getTableColumnNames("toolstatus");
-		if (tableColumnNames == null) {
-			log.error("Could not get table column names");
-			return;
-		}
-		for (int i = 0; i < availableTools.size(); i++) {
-			final ToolServiceAdapter tool = availableTools.get(i);
-			if (!tableColumnNames.contains(tool.id)) {
-				// Add to table "toolstatus"
-				tableColumnNames.add(tool.id);
-				if (Database.addTableColumn("toolstatus", tool.id, "VARCHAR (120)")) {
-					log.debug("Added tool '" + tool.id + "' to toolstatus table");
-				} else {
-					log.error("Could not add tool '" + tool.id
-							+ "' to toolstatus table");
+		
+		ArrayList<String> tableColumnNames = null;
+		if (os == DeviceOS.ANDROID){
+			
+			folder = new File(TOOLS_CONF_ROOT + "/android");
+			tableColumnNames = Database
+					.getTableColumnNames("androidtoolstatus");
+			// Check that all Android tools have a column in the androidtoolstatus table.
+			if (tableColumnNames == null) {
+				log.error("Could not get androidtoolstatus column names");
+				return;
+			}
+			for (int i = 0; i < androidTools.size(); i++) {
+				final ToolServiceAdapter tool = androidTools.get(i);
+				if (!tableColumnNames.contains(tool.id)) {
+					// Add to table "androidtoolstatus"
+					tableColumnNames.add(tool.id);
+					if (Database.addTableColumn("androidtoolstatus", tool.id, "VARCHAR (120)")) {
+						log.debug("Added Android tool '" + tool.id + "' to androidtoolstatus table");
+					} else {
+						log.error("Could not add Android tool '" + tool.id
+								+ "' to androidtoolstatus table");
+					}
 				}
 			}
+			tableColumnNames = null;
+			log.debug("Found " + androidTools.size() + " Android tools");
+			
+		} else if (os == DeviceOS.IOS){
+			
+			folder = new File(TOOLS_CONF_ROOT + "/ios");
+			tableColumnNames = Database
+					.getTableColumnNames("iostoolstatus");
+			// Check that all iOS tools have a column in the iostoolstatus table.
+			if (tableColumnNames == null) {
+				log.error("Could not get iostoolstatus column names");
+				return;
+			}
+			for (int i = 0; i < iosTools.size(); i++) {
+				final ToolServiceAdapter tool = iosTools.get(i);
+				if (!tableColumnNames.contains(tool.id)) {
+					// Add to table "iostools"
+					tableColumnNames.add(tool.id);
+					if (Database.addTableColumn("iostoolstatus", tool.id, "VARCHAR (120)")) {
+						log.debug("Added iOS tool '" + tool.id + "' to iostoolstatus table");
+					} else {
+						log.error("Could not add iOS tool '" + tool.id
+								+ "' to iostoolstatus table");
+					}
+				}
+			}
+			tableColumnNames = null;
+			log.debug("Found " + iosTools.size() + " iOS tools");
+			
 		}
-		tableColumnNames = null;
+
 	}
 
+//	private static void setupAndroidTools() {
+//		File folder = new File(TOOLS_CONF_ROOT + "/android");
+//		File[] listOfFiles = folder.listFiles();
+//		for (final File toolConfigFile : listOfFiles) {
+//			if (toolConfigFile.isFile()) {
+//				final String toolConfigFileName = toolConfigFile.getName();
+//				if (toolConfigFileName.endsWith(".xml")) {
+//					final ToolServiceAdapter adapter = new ToolServiceAdapter(toolConfigFile);
+//					log.debug("Adding Android tool " + adapter.name);
+//					androidTools.add(adapter);
+//				}
+//			}
+//		}
+//		listOfFiles = null;
+//		folder = null;
+//		// Check that all Android tools have a column in the toolstatus table.
+//		ArrayList<String> tableColumnNames = Database
+//				.getTableColumnNames("androidtoolstatus");
+//		if (tableColumnNames == null) {
+//			log.error("Could not get androidtoolstatus column names");
+//			return;
+//		}
+//		for (int i = 0; i < androidTools.size(); i++) {
+//			final ToolServiceAdapter tool = androidTools.get(i);
+//			if (!tableColumnNames.contains(tool.id)) {
+//				// Add to table "androidtoolstatus"
+//				tableColumnNames.add(tool.id);
+//				if (Database.addTableColumn("androidtoolstatus", tool.id, "VARCHAR (120)")) {
+//					log.debug("Added Android tool '" + tool.id + "' to androidtoolstatus table");
+//				} else {
+//					log.error("Could not add Android tool '" + tool.id
+//							+ "' to androidtoolstatus table");
+//				}
+//			}
+//		}
+//		tableColumnNames = null;
+//		log.debug("Found " + androidTools.size() + " Android tools");
+//	}
+//
+//	private static void setupiOSTools() {
+//		File folder = new File(TOOLS_CONF_ROOT + "/ios");
+//		File[] listOfFiles = folder.listFiles();
+//		for (final File toolConfigFile : listOfFiles) {
+//			if (toolConfigFile.isFile()) {
+//				final String toolConfigFileName = toolConfigFile.getName();
+//				if (toolConfigFileName.endsWith(".xml")) {
+//					final ToolServiceAdapter adapter = new ToolServiceAdapter(toolConfigFile);
+//					log.debug("Adding iOS tool " + adapter.name);
+//					iosTools.add(adapter);
+//				}
+//			}
+//		}
+//		listOfFiles = null;
+//		folder = null;
+//		// Check that all available tools have a column in the toolstatus table.
+//		ArrayList<String> tableColumnNames = Database
+//				.getTableColumnNames("iostoolstatus");
+//		if (tableColumnNames == null) {
+//			log.error("Could not get iostoolstatus column names");
+//			return;
+//		}
+//		for (int i = 0; i < iosTools.size(); i++) {
+//			final ToolServiceAdapter tool = iosTools.get(i);
+//			if (!tableColumnNames.contains(tool.id)) {
+//				// Add to table "iostoolstatus"
+//				tableColumnNames.add(tool.id);
+//				if (Database.addTableColumn("iostoolstatus", tool.id, "VARCHAR (120)")) {
+//					log.debug("Added iOS tool '" + tool.id + "' to iostoolstatus table");
+//				} else {
+//					log.error("Could not add iOS tool '" + tool.id
+//							+ "' to iostoolstatus table");
+//				}
+//			}
+//		}
+//		tableColumnNames = null;
+//		log.debug("Found " + iosTools.size() + " iOS tools");
+//
+//	}
 }

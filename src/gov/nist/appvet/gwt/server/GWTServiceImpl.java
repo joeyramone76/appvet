@@ -29,6 +29,7 @@ import gov.nist.appvet.shared.Authenticate;
 import gov.nist.appvet.shared.Database;
 import gov.nist.appvet.shared.FileUtil;
 import gov.nist.appvet.shared.Logger;
+import gov.nist.appvet.shared.os.DeviceOS;
 import gov.nist.appvet.shared.status.ToolStatus;
 import gov.nist.appvet.shared.status.ToolStatusManager;
 import gov.nist.appvet.toolmgr.ToolServiceAdapter;
@@ -113,47 +114,83 @@ public class GWTServiceImpl extends RemoteServiceServlet implements GWTService {
 		configInfo.setGetUpdatesDelay(AppVetProperties.GET_UPDATES_DELAY);
 		configInfo.setSessionExpirationLong(sessionExpiration);
 		configInfo.setSystemMessage(AppVetProperties.STATUS_MESSAGE);
-		final ArrayList<ToolServiceAdapter> availableTools = AppVetProperties.availableTools;
-		if ((availableTools != null) && !availableTools.isEmpty()) {
-			final ArrayList<String> availableToolNames = new ArrayList<String>();
-			final ArrayList<String> availableToolIDs = new ArrayList<String>();
-			final ArrayList<String> availableToolReportFileTypes = new ArrayList<String>();
-			for (int i = 0; i < availableTools.size(); i++) {
-				final ToolServiceAdapter tool = availableTools.get(i);
-				if ((tool != null)
-						&& ((tool.id != null) & !tool.id.equals("registration"))
-						&& !tool.id.equals("appinfo") && !tool.id.isEmpty()) {
-					availableToolNames.add(tool.name);
-					availableToolIDs.add(tool.id);
-					availableToolReportFileTypes.add(tool.reportFileType.name());
+		
+		// Get Android tools
+		final ArrayList<ToolServiceAdapter> androidTools = AppVetProperties.androidTools;
+		if ((androidTools != null) && !androidTools.isEmpty()) {
+			final ArrayList<String> androidToolNames = new ArrayList<String>();
+			final ArrayList<String> androidToolIDs = new ArrayList<String>();
+			final ArrayList<String> androidToolReportFileTypes = new ArrayList<String>();
+			for (int i = 0; i < androidTools.size(); i++) {
+				final ToolServiceAdapter androidTool = androidTools.get(i);
+				if ((androidTool != null)
+						&& ((androidTool.id != null) & !androidTool.id.equals("registration"))
+						&& !androidTool.id.equals("appinfo") && !androidTool.id.isEmpty()) {
+					androidToolNames.add(androidTool.name);
+					androidToolIDs.add(androidTool.id);
+					androidToolReportFileTypes.add(androidTool.reportFileType.name());
 				}
 			}
-			String[] toolNames = new String[availableToolNames.size()];
-			toolNames = availableToolNames.toArray(toolNames);
-			configInfo.setAvailableToolNames(toolNames);
-			String[] toolIDs = new String[availableToolIDs.size()];
-			toolIDs = availableToolIDs.toArray(toolIDs);
-			configInfo.setAvailableToolIDs(toolIDs);
-			String[] toolReportFileTypes = new String[availableToolReportFileTypes
+			String[] toolNames = new String[androidToolNames.size()];
+			toolNames = androidToolNames.toArray(toolNames);
+			configInfo.setAndroidToolNames(toolNames);
+			String[] toolIDs = new String[androidToolIDs.size()];
+			toolIDs = androidToolIDs.toArray(toolIDs);
+			configInfo.setAndroidToolIDs(toolIDs);
+			String[] toolReportFileTypes = new String[androidToolReportFileTypes
 			                                      .size()];
-			toolReportFileTypes = availableToolReportFileTypes.toArray(toolReportFileTypes);
-			configInfo.setAvailableToolsType(toolReportFileTypes);
+			toolReportFileTypes = androidToolReportFileTypes.toArray(toolReportFileTypes);
+			configInfo.setAndroidToolType(toolReportFileTypes);
 		} else {
 			log.error("GWT DataProvider cannot read "
 					+ "tool names from AppVetProperties");
 			return null;
 		}
+		
+		// Get iOS tools
+		final ArrayList<ToolServiceAdapter> iosTools = AppVetProperties.iosTools;
+		if ((iosTools != null) && !iosTools.isEmpty()) {
+			final ArrayList<String> iosToolNames = new ArrayList<String>();
+			final ArrayList<String> iosToolIDs = new ArrayList<String>();
+			final ArrayList<String> iosToolReportFileTypes = new ArrayList<String>();
+			for (int i = 0; i < iosTools.size(); i++) {
+				final ToolServiceAdapter iosTool = iosTools.get(i);
+				if ((iosTool != null)
+						&& ((iosTool.id != null) & !iosTool.id.equals("registration"))
+						&& !iosTool.id.equals("appinfo") && !iosTool.id.isEmpty()) {
+					iosToolNames.add(iosTool.name);
+					iosToolIDs.add(iosTool.id);
+					iosToolReportFileTypes.add(iosTool.reportFileType.name());
+				}
+			}
+			String[] toolNames = new String[iosToolNames.size()];
+			toolNames = iosToolNames.toArray(toolNames);
+			configInfo.setiOSToolNames(toolNames);
+			String[] toolIDs = new String[iosToolIDs.size()];
+			toolIDs = iosToolIDs.toArray(toolIDs);
+			configInfo.setiOSToolIDs(toolIDs);
+			String[] toolReportFileTypes = new String[iosToolReportFileTypes
+			                                      .size()];
+			toolReportFileTypes = iosToolReportFileTypes.toArray(toolReportFileTypes);
+			configInfo.setiOSToolTypes(toolReportFileTypes);
+		} else {
+			log.error("GWT DataProvider cannot read "
+					+ "tool names from AppVetProperties");
+			return null;
+		}
+		
+		
 		return configInfo;
 	}
 
 	@Override
-	public Boolean deleteApp(String appid, String username)
+	public Boolean deleteApp(DeviceOS os, String appid, String username)
 			throws IllegalArgumentException {
 		// TODO: Deleting an app will not be immediately reflected to other
 		// users until a new AppVet session is started. A better approach is to
 		// simply update the app's status to "DELETED" and update users'
 		// display.
-		final boolean deletedDbEntries = Database.deleteApp(appid);
+		final boolean deletedDbEntries = Database.deleteApp(os, appid);
 		if (deletedDbEntries) {
 			final String appIdPath = AppVetProperties.APPS_ROOT + "/" + appid;
 			final File appDirectory = new File(appIdPath);
@@ -190,9 +227,9 @@ public class GWTServiceImpl extends RemoteServiceServlet implements GWTService {
 	}
 
 	@Override
-	public List<ToolStatusGwt> getToolResults(String sessionId, String appId)
+	public List<ToolStatusGwt> getToolResults(DeviceOS os, String sessionId, String appId)
 			throws IllegalArgumentException {
-		return getToolsStatuses(sessionId, appId);
+		return getToolStatuses(os, sessionId, appId);
 	}
 
 	@Override
@@ -236,35 +273,160 @@ public class GWTServiceImpl extends RemoteServiceServlet implements GWTService {
 		}
 	}
 
-	public static List<ToolStatusGwt> getToolsStatuses(String sessionId,
+	public static List<ToolStatusGwt> getToolStatuses(DeviceOS os, String sessionId,
 			String appId) {
+		
+		
 		final ArrayList<ToolStatusGwt> toolStatusList = new ArrayList<ToolStatusGwt>();
-		ToolServiceAdapter tool = ToolServiceAdapter.getById("registration");
-		ToolStatusGwt toolStatus = getToolStatusHtml(sessionId, appId, tool);
+		ToolServiceAdapter tool = ToolServiceAdapter.getByToolId(os, "registration");
+		ToolStatusGwt toolStatus = getToolStatusHtml(os, sessionId, appId, tool);
 		if (toolStatus != null) {
 			toolStatusList.add(toolStatus);
 		}
-		tool = ToolServiceAdapter.getById("appinfo");
-		toolStatus = getToolStatusHtml(sessionId, appId, tool);
+		tool = ToolServiceAdapter.getByToolId(os, "appinfo");
+		toolStatus = getToolStatusHtml(os, sessionId, appId, tool);
 		if (toolStatus != null) {
 			toolStatusList.add(toolStatus);
 		}
 
-		final ArrayList<ToolServiceAdapter> tools = AppVetProperties.availableTools;
+		ArrayList<ToolServiceAdapter> tools = null;
+		if (os == DeviceOS.ANDROID) {
+			tools = AppVetProperties.androidTools;
+		} else if (os == DeviceOS.IOS) {
+			tools = AppVetProperties.iosTools;
+		}
+		
 		for (int i = 0; i < tools.size(); i++) {
 			tool = tools.get(i);
 			if (!tool.id.equals("registration") && !tool.id.equals("appinfo")
 					&& !tool.id.equals("override")) {
-				toolStatus = getToolStatusHtml(sessionId, appId, tool);
+				toolStatus = getToolStatusHtml(os, sessionId, appId, tool);
 				if (toolStatus != null) {
 					toolStatusList.add(toolStatus);
 				}
 			}
 		}
 		return toolStatusList;
-	}
+		
+		
+//		///////////////
+//		if (os == DeviceOS.ANDROID) {
+//			final ArrayList<ToolStatusGwt> toolStatusList = new ArrayList<ToolStatusGwt>();
+//			ToolServiceAdapter tool = ToolServiceAdapter.getByToolId(os, "registration");
+//			ToolStatusGwt toolStatus = getToolStatusHtml(os, sessionId, appId, tool);
+//			if (toolStatus != null) {
+//				toolStatusList.add(toolStatus);
+//			}
+//			tool = ToolServiceAdapter.getByToolId(os, "appinfo");
+//			toolStatus = getToolStatusHtml(os, sessionId, appId, tool);
+//			if (toolStatus != null) {
+//				toolStatusList.add(toolStatus);
+//			}
+//
+//			final ArrayList<ToolServiceAdapter> tools = AppVetProperties.androidTools;
+//			for (int i = 0; i < tools.size(); i++) {
+//				tool = tools.get(i);
+//				if (!tool.id.equals("registration") && !tool.id.equals("appinfo")
+//						&& !tool.id.equals("override")) {
+//					toolStatus = getToolStatusHtml(os, sessionId, appId, tool);
+//					if (toolStatus != null) {
+//						toolStatusList.add(toolStatus);
+//					}
+//				}
+//			}
+//			return toolStatusList;
+//		} else if (os == DeviceOS.IOS){
+//			final ArrayList<ToolStatusGwt> toolStatusList = new ArrayList<ToolStatusGwt>();
+//			ToolServiceAdapter tool = ToolServiceAdapter.getByToolId(os, "registration");
+//			ToolStatusGwt toolStatus = getToolStatusHtml(os, sessionId, appId, tool);
+//			if (toolStatus != null) {
+//				toolStatusList.add(toolStatus);
+//			}
+//			tool = ToolServiceAdapter.getByToolId(os, "appinfo");
+//			toolStatus = getToolStatusHtml(os, sessionId, appId, tool);
+//			if (toolStatus != null) {
+//				toolStatusList.add(toolStatus);
+//			}
+//
+//			final ArrayList<ToolServiceAdapter> tools = AppVetProperties.iosTools;
+//			for (int i = 0; i < tools.size(); i++) {
+//				tool = tools.get(i);
+//				if (!tool.id.equals("registration") && !tool.id.equals("appinfo")
+//						&& !tool.id.equals("override")) {
+//					toolStatus = getToolStatusHtml(os, sessionId, appId, tool);
+//					if (toolStatus != null) {
+//						toolStatusList.add(toolStatus);
+//					}
+//				}
+//			}
+//			return toolStatusList;
+//			
+//		} else {
+//			log.error("Unknown OS");
+//			return null;
+//		}
 
-	private static ToolStatusGwt getToolStatusHtml(String sessionId, String appId,
+	}
+	
+//	public static List<ToolStatusGwt> getAndroidToolStatuses(String sessionId,
+//			String appId) {
+//		final ArrayList<ToolStatusGwt> toolStatusList = new ArrayList<ToolStatusGwt>();
+//		ToolServiceAdapter tool = ToolServiceAdapter.getByAndroidToolId("registration");
+//		ToolStatusGwt toolStatus = getToolStatusHtml("android", sessionId, appId, tool);
+//		if (toolStatus != null) {
+//			toolStatusList.add(toolStatus);
+//		}
+//		tool = ToolServiceAdapter.getByAndroidToolId("appinfo");
+//		toolStatus = getToolStatusHtml("android", sessionId, appId, tool);
+//		if (toolStatus != null) {
+//			toolStatusList.add(toolStatus);
+//		}
+//
+//		final ArrayList<ToolServiceAdapter> tools = AppVetProperties.androidTools;
+//		for (int i = 0; i < tools.size(); i++) {
+//			tool = tools.get(i);
+//			if (!tool.id.equals("registration") && !tool.id.equals("appinfo")
+//					&& !tool.id.equals("override")) {
+//				toolStatus = getToolStatusHtml("android", sessionId, appId, tool);
+//				if (toolStatus != null) {
+//					toolStatusList.add(toolStatus);
+//				}
+//			}
+//		}
+//		return toolStatusList;
+//	}
+	
+//	public static List<ToolStatusGwt> getiOSToolStatuses(String sessionId,
+//			String appId) {
+//		final ArrayList<ToolStatusGwt> toolStatusList = new ArrayList<ToolStatusGwt>();
+//		ToolServiceAdapter tool = ToolServiceAdapter.getByiOSToolId("registration");
+//		ToolStatusGwt toolStatus = getToolStatusHtml("ios", sessionId, appId, tool);
+//		if (toolStatus != null) {
+//			toolStatusList.add(toolStatus);
+//		}
+//		tool = ToolServiceAdapter.getByiOSToolId("appinfo");
+//		toolStatus = getToolStatusHtml("ios", sessionId, appId, tool);
+//		if (toolStatus != null) {
+//			toolStatusList.add(toolStatus);
+//		}
+//
+//		final ArrayList<ToolServiceAdapter> tools = AppVetProperties.iosTools;
+//		for (int i = 0; i < tools.size(); i++) {
+//			tool = tools.get(i);
+//			if (!tool.id.equals("registration") && !tool.id.equals("appinfo")
+//					&& !tool.id.equals("override")) {
+//				toolStatus = getToolStatusHtml("ios", sessionId, appId, tool);
+//				if (toolStatus != null) {
+//					toolStatusList.add(toolStatus);
+//				}
+//			}
+//		}
+//		return toolStatusList;
+//	}
+	
+	
+
+	private static ToolStatusGwt getToolStatusHtml(DeviceOS os, String sessionId, String appId,
 			ToolServiceAdapter tool) {
 		if (tool == null) {
 			log.error("Tool is null");
@@ -284,7 +446,7 @@ public class GWTServiceImpl extends RemoteServiceServlet implements GWTService {
 		toolStatusGwt.setTool(websiteHrefTag);
 		boolean toolCompleted = false;
 		final ToolStatus toolStatus = 
-				ToolStatusManager.getToolStatus(appId, tool.id);
+				ToolStatusManager.getToolStatus(os, appId, tool.id);
 		if (toolStatus == null) {
 			log.warn(appId + ", " + tool.id + "-status: null!");
 		}
@@ -293,7 +455,7 @@ public class GWTServiceImpl extends RemoteServiceServlet implements GWTService {
 			// Status for a tool may be null if it was recently installed
 			// but not run for previously submitted apps. In such cases,
 			// we return an NA status.
-			ToolStatusManager.setToolStatus(appId, tool.id, ToolStatus.NA);
+			ToolStatusManager.setToolStatus(os, appId, tool.id, ToolStatus.NA);
 			toolCompleted = true;
 			toolStatusGwt
 			.setStatusDescription(

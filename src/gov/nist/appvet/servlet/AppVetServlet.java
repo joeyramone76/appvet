@@ -27,7 +27,7 @@ import gov.nist.appvet.shared.FileUtil;
 import gov.nist.appvet.shared.Logger;
 import gov.nist.appvet.shared.Zip;
 import gov.nist.appvet.shared.app.AppInfo;
-import gov.nist.appvet.shared.role.Role;
+import gov.nist.appvet.shared.os.DeviceOS;
 import gov.nist.appvet.shared.status.AppStatus;
 import gov.nist.appvet.shared.status.AppStatusManager;
 import gov.nist.appvet.shared.status.ToolStatus;
@@ -70,24 +70,24 @@ public class AppVetServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) {
-		/* Used for all GET commands.*/
+		/* Used for all GET commands. */
 		String userName = request.getParameter("username");
-		/* Used for all GET commands.*/
+		/* Used for all GET commands. */
 		String password = request.getParameter("password");
-		/* Used for all GET commands.*/
+		/* Used for all GET commands. */
 		String sessionId = request.getParameter("sessionid");
-		/* Used for all GET commands.*/
+		/* Used for all GET commands. */
 		String commandStr = request.getParameter("command");
-		/* Used for all GET commands except GET_APPVET_LOG.*/
+		/* Used for all GET commands except GET_APPVET_LOG. */
 		String appId = request.getParameter("appid");
-		/* Used only for GET_TOOL_REPORT command.*/
+		/* Used only for GET_TOOL_REPORT command. */
 		String report = request.getParameter("report");
-		/* Used only for DOWNLOAD_APP command.*/
+		/* Used only for DOWNLOAD_APP command. */
 		String appName = request.getParameter("appname");
 		String clientIpAddress = request.getRemoteAddr();
 
 		try {
-			//-------------------------- Authenticate --------------------------
+			// ------------------------- Authenticate --------------------------
 			if (isAuthenticated(sessionId, userName, password, clientIpAddress,
 					commandStr)) {
 				if (sessionId != null) {
@@ -97,67 +97,73 @@ public class AppVetServlet extends HttpServlet {
 			} else {
 				log.debug("User '" + userName + "' could not be authenticated.");
 				sendHttpResponse(userName, appId, commandStr, clientIpAddress,
-						ErrorMessage.AUTHENTICATION_ERROR.getDescription(), response,
-						HttpServletResponse.SC_BAD_REQUEST, true);
+						ErrorMessage.AUTHENTICATION_ERROR.getDescription(),
+						response, HttpServletResponse.SC_BAD_REQUEST, true);
 				return;
 			}
 
-			//------------------------- Handle command -------------------------
-			final AppVetServletCommand command = AppVetServletCommand.getCommand(commandStr);
+			// ----------------------- Handle command  -------------------------
+			final AppVetServletCommand command = AppVetServletCommand
+					.getCommand(commandStr);
 			switch (command) {
 
-//			case AUTHENTICATE:
-//				log.debug("AUTHENTICATIN!");
-//				sessionId = Database.setSession(userName, clientIpAddress);
-//				sendHttpResponse(userName, appId, command.name(), clientIpAddress,
-//						"SESSIONID=" + sessionId, response,
-//						HttpServletResponse.SC_OK, false);
-//				return;
 			case GET_STATUS:
-				/* Get the current processing status of the app. Used only
-				 * by non-GUI clients. GUI clients get status via GWT RPC.
+				/*
+				 * Get the current processing status of the app. Used only by
+				 * non-GUI clients. GUI clients get status via GWT RPC.
 				 */
-				log.debug(userName + " invoked " + command.name()
-						+ " on app " + appId);
-				final AppStatus currentStatus = AppStatusManager.getAppStatus(appId);
-				sendHttpResponse(userName, appId, command.name(), clientIpAddress,
+				log.debug(userName + " invoked " + command.name() + " on app "
+						+ appId);
+				final AppStatus currentStatus = AppStatusManager
+						.getAppStatus(appId);
+				sendHttpResponse(userName, appId, command.name(),
+						clientIpAddress,
 						"CURRENT_STATUS=" + currentStatus.name(), response,
 						HttpServletResponse.SC_OK, false);
 				break;
 			case GET_TOOL_REPORT:
-				/* Get the processing status of the selected app. Used by GUI 
-				 * and non-GUI clients.*/
-				log.debug(userName + " invoked " + command.name()
-						+ " of " + report + " on app " + appId);
+				/*
+				 * Get the processing status of the selected app. Used by GUI
+				 * and non-GUI clients.
+				 */
+				log.debug(userName + " invoked " + command.name() + " of "
+						+ report + " on app " + appId);
 				returnReport(response, appId, report, clientIpAddress);
 				break;
 			case GET_APP_LOG:
-				/* Get the log of the selected app. Used by GUI and non-GUI 
-				 * clients.*/
-				log.debug(userName + " invoked " + command.name()
-						+ " on app " + appId);
+				/*
+				 * Get the log of the selected app. Used by GUI and non-GUI
+				 * clients.
+				 */
+				log.debug(userName + " invoked " + command.name() + " on app "
+						+ appId);
 				returnAppLog(response, appId, clientIpAddress);
 				break;
 			case GET_APPVET_LOG:
-				/* Get the main AppVet log. Used by GUI and non-GUI 
-				 * clients.*/
+				/*
+				 * Get the main AppVet log. Used by GUI and non-GUI clients.
+				 */
 				log.debug(userName + " invoked " + command.name());
 				returnAppVetLog(response, clientIpAddress);
 				break;
 			case DOWNLOAD_APP:
-				/* Download the selected app. Used by GUI and non-GUI 
-				 * clients.*/
-				log.debug(userName + " invoked " + command.name()
-						+ " on app " + appId);
+				/*
+				 * Download the selected app. Used by GUI and non-GUI clients.
+				 */
+				log.debug(userName + " invoked " + command.name() + " on app "
+						+ appId);
 				downloadApp(response, appId, appName, clientIpAddress);
 				break;
 			case DOWNLOAD_REPORTS:
-				/* Download reports for the selected app. Reports can only be
-				 * downloaded if the app has completed processing. Used by GUI 
-				 * and non-GUI clients.*/
-				log.debug(userName + " invoked " + command.name()
-						+ " on " + "app " + appId);
-				final AppStatus appStatus = AppStatusManager.getAppStatus(appId);
+				/*
+				 * Download reports for the selected app. Reports can only be
+				 * downloaded if the app has completed processing. Used by GUI
+				 * and non-GUI clients.
+				 */
+				log.debug(userName + " invoked " + command.name() + " on "
+						+ "app " + appId);
+				final AppStatus appStatus = AppStatusManager
+						.getAppStatus(appId);
 				if (appStatus != null) {
 					if (appStatus == AppStatus.ERROR
 							|| appStatus == AppStatus.FAIL
@@ -168,7 +174,7 @@ public class AppVetServlet extends HttpServlet {
 					} else {
 						sendHttpResponse(userName, appId, command.name(),
 								clientIpAddress, "App " + appId
-								+ " has not finished processing",
+										+ " has not finished processing",
 								response, HttpServletResponse.SC_BAD_REQUEST,
 								true);
 					}
@@ -196,7 +202,7 @@ public class AppVetServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) {
-		
+
 		AppVetServletCommand command = null;
 		String commandStr = null;
 		String userName = null;
@@ -226,37 +232,36 @@ public class AppVetServlet extends HttpServlet {
 					incomingParameter = item.getFieldName();
 					incomingValue = item.getString();
 					if (incomingParameter.equals("command")) {
-						/* Used for all POST commands.*/
+						/* Used for all POST commands. */
 						commandStr = incomingValue;
 						log.debug("commandStr: " + commandStr);
 					} else if (incomingParameter.equals("username")) {
-						/* Used for all POST commands.*/
+						/* Used for all POST commands. */
 						userName = incomingValue;
 						log.debug("userName: " + userName);
 					} else if (incomingParameter.equals("password")) {
-						/* Used for all POST commands.*/
+						/* Used for all POST commands. */
 						password = incomingValue;
 						log.debug("password: " + password);
 					} else if (incomingParameter.equals("sessionid")) {
-						/* Used for all POST commands.*/
+						/* Used for all POST commands. */
 						sessionId = incomingValue;
 						log.debug("sessionId: " + sessionId);
 					} else if (incomingParameter.equals("toolid")) {
-						/* Used only for submit report command.*/
+						/* Used only for submit report command. */
 						toolId = incomingValue;
 						log.debug("toolid: " + toolId);
 					} else if (incomingParameter.equals("toolrisk")) {
-						/* Used only for submit report command.*/
+						/* Used only for submit report command. */
 						toolRisk = incomingValue;
 						log.debug("toolrisk: " + toolRisk);
 					} else if (incomingParameter.equals("appid")) {
-						/* Used only for submit report command.*/
+						/* Used only for submit report command. */
 						appId = incomingValue;
 						log.debug("appId: " + appId);
 					} else {
-						log.warn("Received unknown parameter: "
-								+ incomingValue + " from IP: "
-								+ clientIpAddress);
+						log.warn("Received unknown parameter: " + incomingValue
+								+ " from IP: " + clientIpAddress);
 					}
 				} else {
 					// item should now hold the received file
@@ -265,8 +270,8 @@ public class AppVetServlet extends HttpServlet {
 			}
 			incomingParameter = null;
 			incomingValue = null;
-			
-			//-------------------------- Authenticate --------------------------
+
+			// ----------------------- Authenticate --------------------------
 			if (isAuthenticated(sessionId, userName, password, clientIpAddress,
 					commandStr)) {
 				if (sessionId != null) {
@@ -276,50 +281,54 @@ public class AppVetServlet extends HttpServlet {
 			} else {
 				log.debug("User '" + userName + "' could not be authenticated.");
 				sendHttpResponse(userName, appId, commandStr, clientIpAddress,
-						ErrorMessage.AUTHENTICATION_ERROR.getDescription(), response,
-						HttpServletResponse.SC_BAD_REQUEST, true);
+						ErrorMessage.AUTHENTICATION_ERROR.getDescription(),
+						response, HttpServletResponse.SC_BAD_REQUEST, true);
 				return;
 			}
 
-			//--------------------- Verify file attachment ---------------------
+			// ------------------- Verify file attachment ---------------------
 			if (fileItem == null) {
 				sendHttpResponse(userName, appId, commandStr, clientIpAddress,
 						ErrorMessage.MISSING_FILE.getDescription(), response,
 						HttpServletResponse.SC_BAD_REQUEST, true);
 				return;
 			}
-			if (!ValidateBase.isLegalFileName(fileItem.getName())) {
+			if (!ValidateBase.isPrintable(fileItem.getName())) {
 				sendHttpResponse(userName, appId, commandStr, clientIpAddress,
 						ErrorMessage.ILLEGAL_CHAR_IN_UPLOADED_FILENAME_ERROR
-						.getDescription(), response,
+								.getDescription(), response,
 						HttpServletResponse.SC_BAD_REQUEST, true);
 				return;
 			}
 
-			
-			//------------------------- Handle command -------------------------
+			// ----------------------- Handle command -------------------------
 			AppInfo appInfo = null;
 			command = AppVetServletCommand.valueOf(commandStr);
 			switch (command) {
 			case SUBMIT_APP:
-				/* Submit a new app for processing. Used by GUI and non-GUI 
-				 * clients. */
+				/*
+				 * Submit a new app for processing. Used by GUI and non-GUI
+				 * clients.
+				 */
 				log.debug(userName + " invoked " + command.name()
 						+ " with file " + fileItem.getName());
 				if (!ValidateBase.hasValidAppFileExtension(fileItem.getName())) {
-					sendHttpResponse(userName, appId, commandStr, clientIpAddress,
-							ErrorMessage.INVALID_APP_FILE_EXTENSION.getDescription(),
-							response, HttpServletResponse.SC_BAD_REQUEST, true);
+					sendHttpResponse(userName, appId, commandStr,
+							clientIpAddress,
+							ErrorMessage.INVALID_APP_FILE_EXTENSION
+									.getDescription(), response,
+							HttpServletResponse.SC_BAD_REQUEST, true);
 					return;
 				} else {
-					appInfo = createAppInfo(userName, sessionId,
-							fileItem, clientIpAddress, request);
+					appInfo = createAppInfo(userName, sessionId, fileItem,
+							clientIpAddress, request);
 					if (appInfo == null)
 						return;
 					else {
-						sendHttpResponse(userName, appInfo.appId, commandStr, clientIpAddress,
-								"appid=" + appInfo.appId, response,
-								HttpServletResponse.SC_ACCEPTED, false);
+						sendHttpResponse(userName, appInfo.appId, commandStr,
+								clientIpAddress, "appid=" + appInfo.appId,
+								response, HttpServletResponse.SC_ACCEPTED,
+								false);
 						Registration registration = new Registration(appInfo);
 						registration.registerApp();
 					}
@@ -327,19 +336,22 @@ public class AppVetServlet extends HttpServlet {
 				break;
 			case SUBMIT_REPORT:
 				/* Submit a tool report. Used by GUI and non-GUI clients. */
-				log.debug(userName + " invoked " + command.name()
-						+ " on app " + appId + " with report " + fileItem.getName());
-				if (!ValidateBase.hasValidReportFileExtension(fileItem.getName())) {
-					sendHttpResponse(userName, appId, commandStr, clientIpAddress,
-							ErrorMessage.INVALID_REPORT_FILE_EXTENSION.getDescription(),
-							response, HttpServletResponse.SC_BAD_REQUEST, true);
+				log.debug(userName + " invoked " + command.name() + " on app "
+						+ appId + " with report " + fileItem.getName());
+				if (!ValidateBase.hasValidReportFileExtension(fileItem
+						.getName())) {
+					sendHttpResponse(userName, appId, commandStr,
+							clientIpAddress,
+							ErrorMessage.INVALID_REPORT_FILE_EXTENSION
+									.getDescription(), response,
+							HttpServletResponse.SC_BAD_REQUEST, true);
 					return;
 				} else {
-					sendHttpResponse(userName, appId, commandStr, clientIpAddress,
-							"HTTP/1.1 202 Accepted", response,
+					sendHttpResponse(userName, appId, commandStr,
+							clientIpAddress, "HTTP/1.1 202 Accepted", response,
 							HttpServletResponse.SC_ACCEPTED, false);
-					appInfo = createAppInfo(appId, userName, commandStr, toolId,
-							toolRisk, fileItem, clientIpAddress, 
+					appInfo = createAppInfo(appId, userName, commandStr,
+							toolId, toolRisk, fileItem, clientIpAddress,
 							response);
 					if (appInfo == null)
 						return;
@@ -371,14 +383,26 @@ public class AppVetServlet extends HttpServlet {
 			upload = null;
 			items = null;
 			iter = null;
-			item = null; 
-			System.gc();	    
+			item = null;
+			System.gc();
 		}
 	}
 
+	/** This method creates an app information object for a tool report
+	 * submission.
+	 * @param appId
+	 * @param userName
+	 * @param commandStr
+	 * @param toolId
+	 * @param toolRisk
+	 * @param fileItem
+	 * @param clientIpAddress
+	 * @param response
+	 * @return
+	 */
 	private AppInfo createAppInfo(String appId, String userName,
 			String commandStr, String toolId, String toolRisk,
-			FileItem fileItem, String clientIpAddress, 
+			FileItem fileItem, String clientIpAddress,
 			HttpServletResponse response) {
 		if (Database.appExists(appId)) {
 			AppInfo appInfo = new AppInfo(appId);
@@ -395,15 +419,45 @@ public class AppVetServlet extends HttpServlet {
 		}
 	}
 
+	/** This method creates an app information object for an app submission.
+	 * @param userName
+	 * @param sessionId
+	 * @param fileItem
+	 * @param clientIpAddress
+	 * @param request
+	 * @return
+	 */
 	private AppInfo createAppInfo(String userName, String sessionId,
 			FileItem fileItem, String clientIpAddress,
 			HttpServletRequest request) {
+
 		String appId = generateAppid();
 		AppInfo appInfo = new AppInfo(appId, true);
 		appInfo.userName = userName;
 		appInfo.sessionId = sessionId;
 		appInfo.fileItem = fileItem;
-		appInfo.fileName = FileUtil.getNormalizedFileName(fileItem.getName());
+		String origFileName = FileUtil
+				.getNormalizedFileName(fileItem.getName());
+		// Note that if the original fileItem name contained whitespace then
+		// appInfo.fileName will replace those spaces with underscore
+		// characters.
+		appInfo.appFileName = FileUtil.replaceSpaceWithUnderscore(origFileName);
+		
+		String fileNameUpperCase = appInfo.appFileName.toUpperCase();
+		if (fileNameUpperCase.endsWith(".APK")) {
+			appInfo.os = DeviceOS.ANDROID;
+		} else if (fileNameUpperCase.endsWith(".IPA")) {
+			appInfo.os = DeviceOS.IOS;
+		}
+		
+		int extensionIndex = -1;
+		if (appInfo.os == DeviceOS.ANDROID) {
+			extensionIndex = appInfo.appFileName.toUpperCase().indexOf(".APK");
+		} else if (appInfo.os == DeviceOS.IOS) {
+			extensionIndex = appInfo.appFileName.toUpperCase().indexOf(".IPA");
+		}
+		appInfo.appName = appInfo.appFileName.substring(0, extensionIndex);
+
 		InetAddress addr;
 		try {
 			addr = InetAddress.getByName(request.getRemoteHost());
@@ -438,8 +492,8 @@ public class AppVetServlet extends HttpServlet {
 		}
 		File appFile = null;
 		try {
-			final String appFilePath = AppVetProperties.APPS_ROOT + "/"
-					+ appid + "/" + appname;
+			final String appFilePath = AppVetProperties.APPS_ROOT + "/" + appid
+					+ "/" + appname;
 			appFile = new File(appFilePath);
 			if (!appFile.exists()) {
 				sendHttpResponse(null, null, null, clientIpAddress,
@@ -465,13 +519,13 @@ public class AppVetServlet extends HttpServlet {
 		boolean zipped = false;
 		String destinationZipPath = null;
 		String contentDisposition = "";
-		
-		
+
 		if (appid != null) {
-			String sourceDirPath = AppVetProperties.APPS_ROOT + "/" + appid + "/reports";
+			String sourceDirPath = AppVetProperties.APPS_ROOT + "/" + appid
+					+ "/reports";
 			destinationZipPath = AppVetProperties.APPS_ROOT + "/" + appid
 					+ "/AppVet_Reports_App-" + appid + "_SID-" + sessionId
-					+ ".zip";	
+					+ ".zip";
 			Zip zip = new Zip();
 			zipped = zip.zipDir(sourceDirPath, destinationZipPath);
 		} else {
@@ -499,7 +553,7 @@ public class AppVetServlet extends HttpServlet {
 				file = null;
 				if (appid != null) {
 					FileUtil.deleteFile(destinationZipPath);
-				} 
+				}
 			} catch (final Exception e) {
 				log.error(e.getMessage());
 				e.printStackTrace();
@@ -521,9 +575,8 @@ public class AppVetServlet extends HttpServlet {
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-		log.info("*** Starting AppVet service "
-				+ AppVetProperties.VERSION + " on "
-				+ AppVetProperties.SERVLET_URL);
+		log.info("*** Starting AppVet service " + AppVetProperties.VERSION
+				+ " on " + AppVetProperties.SERVLET_URL);
 		toolMgr = new ToolMgr();
 		toolMgrThread = new Thread(toolMgr);
 		toolMgrThread.start();
@@ -532,7 +585,7 @@ public class AppVetServlet extends HttpServlet {
 	// TODO: Remove commandStr and clientIpAddress if not needed!
 	private boolean isAuthenticated(String sessionId, String userName,
 			String password, String clientIpAddress, String commandStr) {
-		
+
 		// Session IDs are only used by AppVet GUI users. All other clients
 		// authenticate via username and password and do not use session IDs.
 		log.debug("Validating session...");
@@ -541,7 +594,7 @@ public class AppVetServlet extends HttpServlet {
 				return true;
 			}
 		}
-		
+
 		log.debug("Session invalid. Verifying username and password...");
 
 		// If sessionID was not validated, validate username and password
@@ -555,29 +608,26 @@ public class AppVetServlet extends HttpServlet {
 			return false;
 		}
 
-		
-/*		log.debug("User authenticated. Checking login command for other clients...");
-
-		// Username and password authenticated, so check if request is for
-		// login authentication. Note that all AppVet users except
-		// third-party clients will authenticate via RPC with GWTServiceImpl.
-		final Role role = Database.getRole(userName);
-		final AppVetServletCommand command = AppVetServletCommand.getCommand(commandStr);
-		if ((command == AppVetServletCommand.AUTHENTICATE)
-				&& (role == Role.OTHER_CLIENT)) {
-			return true;
-		}
-		
-		log.debug("Verifying role for login authentication... ");
-
-		// If request is not for login authentication, check if user is an
-		// app store or third-party analysis provider
-		if (role == Role.TOOL_SERVICE_PROVIDER ||
-				role == Role.ANALYST) {   // This is for Kryptowire
-			return true;
-		} else {
-			return false;
-		}*/
+		/*
+		 * log.debug(
+		 * "User authenticated. Checking login command for other clients...");
+		 * 
+		 * // Username and password authenticated, so check if request is for //
+		 * login authentication. Note that all AppVet users except //
+		 * third-party clients will authenticate via RPC with GWTServiceImpl.
+		 * final Role role = Database.getRole(userName); final
+		 * AppVetServletCommand command =
+		 * AppVetServletCommand.getCommand(commandStr); if ((command ==
+		 * AppVetServletCommand.AUTHENTICATE) && (role == Role.OTHER_CLIENT)) {
+		 * return true; }
+		 * 
+		 * log.debug("Verifying role for login authentication... ");
+		 * 
+		 * // If request is not for login authentication, check if user is an //
+		 * app store or third-party analysis provider if (role ==
+		 * Role.TOOL_SERVICE_PROVIDER || role == Role.ANALYST) { // This is for
+		 * Kryptowire return true; } else { return false; }
+		 */
 	}
 
 	private void returnAppLog(HttpServletResponse response, String appid,
@@ -595,7 +645,8 @@ public class AppVetServlet extends HttpServlet {
 			try {
 				if (!file.exists()) {
 					sendHttpResponse(null, null, null, clientIpAddress,
-							"Could not locate app log at: " + filePath, response,
+							"Could not locate app log at: " + filePath,
+							response,
 							HttpServletResponse.SC_INTERNAL_SERVER_ERROR, true);
 					return;
 				}
@@ -713,7 +764,7 @@ public class AppVetServlet extends HttpServlet {
 						+ report);
 				response.setHeader("Cache-Control", "max-age=0");
 				response.setContentLength((int) file.length());
-				returnFile(response, file);	    
+				returnFile(response, file);
 			} finally {
 				file = null;
 			}
@@ -738,20 +789,19 @@ public class AppVetServlet extends HttpServlet {
 
 			out.flush();
 			if (errorMessage) {
-				log.error("Returned HTTP " + httpResponseCode
-						+ "\n" + "message = " + message + "\n" + "username = "
+				log.error("Returned HTTP " + httpResponseCode + "\n"
+						+ "message = " + message + "\n" + "username = "
 						+ userName + "\n" + "appid = " + appId + "\n"
 						+ "command = " + commandStr + "\n"
 						+ "clientIpAddress = '" + clientIpAddress + "'");
 			} else {
-				log.debug("Returned HTTP " + httpResponseCode
-						+ " to " + clientIpAddress);
+				log.debug("Returned HTTP " + httpResponseCode + " to "
+						+ clientIpAddress);
 			}
 			return true;
 		} catch (final IOException e) {
 			log.error(e.getMessage().toString());
-			log.error("No HTTP response code sent to "
-					+ clientIpAddress);
+			log.error("No HTTP response code sent to " + clientIpAddress);
 			return false;
 		} finally {
 			if (out != null) {
@@ -761,9 +811,10 @@ public class AppVetServlet extends HttpServlet {
 		}
 	}
 
-	private void submitReport(String submitterUserName, AppInfo appInfo, HttpServletResponse response) {
-		final ToolServiceAdapter tool = 
-				ToolServiceAdapter.getById(appInfo.toolId);
+	private void submitReport(String submitterUserName, AppInfo appInfo,
+			HttpServletResponse response) {
+		final ToolServiceAdapter tool = ToolServiceAdapter.getByToolId(
+				appInfo.os, appInfo.toolId);
 		String reportName = null;
 		if (appInfo.toolId == null) {
 			appInfo.log.error("appInfo.reportType is null");
@@ -779,15 +830,17 @@ public class AppVetServlet extends HttpServlet {
 		if (reportSaved) {
 			// Override reports override the final PASS/FAIL decision.
 			if (appInfo.toolRisk.equals("FAIL")) {
-				ToolStatusManager.setToolStatus(appInfo.appId, tool.id, ToolStatus.FAIL);
+				ToolStatusManager.setToolStatus(appInfo.os, appInfo.appId,
+						tool.id, ToolStatus.FAIL);
 			} else if (appInfo.toolRisk.equals("WARNING")) {
-				ToolStatusManager.setToolStatus(appInfo.appId, tool.id, ToolStatus.WARNING);
+				ToolStatusManager.setToolStatus(appInfo.os, appInfo.appId,
+						tool.id, ToolStatus.WARNING);
 			} else if (appInfo.toolRisk.equals("PASS")) {
-				ToolStatusManager.setToolStatus(appInfo.appId, tool.id, ToolStatus.PASS);
+				ToolStatusManager.setToolStatus(appInfo.os, appInfo.appId,
+						tool.id, ToolStatus.PASS);
 			} else {
-				appInfo.log.error("Unknown report type '"
-						+ appInfo.toolRisk + "' received from "
-						+ appInfo.userName);
+				appInfo.log.error("Unknown report type '" + appInfo.toolRisk
+						+ "' received from " + appInfo.userName);
 			}
 
 			appInfo.log.info(submitterUserName + " invoked SUBMIT_REPORT for "

@@ -22,6 +22,7 @@ package gov.nist.appvet.shared.app;
 import gov.nist.appvet.properties.AppVetProperties;
 import gov.nist.appvet.shared.Database;
 import gov.nist.appvet.shared.Logger;
+import gov.nist.appvet.shared.os.DeviceOS;
 
 import java.io.File;
 
@@ -36,25 +37,33 @@ public class AppInfo extends AppInfoBase {
 	public FileItem fileItem = null;
 	public String toolId = null;	// Used only for submitting tool report
 	public String toolRisk = null;  // Used only for submitting tool risk
-	public String projectName = null;
+	//public String projectName = null;
 	public String idPath = null;
 	public Logger log = null;
 
 	// Use only for retrieving existing apps.
 	public AppInfo(String appId) {
 		this.appId = appId;
+		appName = Database.getAppName(appId);
 		log = new Logger(getLogPath(appId));
 		userName = Database.getOwner(appId);
-		fileName = Database.getAppFileName(appId);
+		String osName = Database.getOs(appId);
+		os = DeviceOS.getOS(osName);
+		appFileName = Database.getAppFileName(appId);
 		clientHost = Database.getClientIPAddress(appId);
-		projectName = Database.getAppName(appId);
-		String fileNameUpperCase = fileName.toUpperCase();
-		if (fileNameUpperCase.endsWith("APK")) {
-			final int extensionIndex = fileNameUpperCase.indexOf(".APK");
-			if (extensionIndex > 0) {
-				projectName = fileName.substring(0, extensionIndex);
-			}
-		}
+		//projectName = Database.getAppName(appId);
+//		String fileNameUpperCase = appFileName.toUpperCase();
+//		if (fileNameUpperCase.endsWith("APK")) {
+//			final int extensionIndex = fileNameUpperCase.indexOf(".APK");
+//			if (extensionIndex > 0) {
+//				//projectName = appFileName.substring(0, extensionIndex);
+//			}
+//		} else if (fileNameUpperCase.endsWith("IPA")) {
+//			final int extensionIndex = fileNameUpperCase.indexOf(".IPA");
+//			if (extensionIndex > 0) {
+//				//projectName = appFileName.substring(0, extensionIndex);
+//			}
+//		} 
 	}
 
 	//Use only for registering new apps and reports.
@@ -88,19 +97,31 @@ public class AppInfo extends AppInfoBase {
 		return AppVetProperties.APPS_ROOT + "/" + appId;
 	}
 
-	public String getProjectName() {
-		return projectName;
-	}
-
+//	/** This method returns a project name which is identical to appInfo.appName.
+//	 * @return
+//	 */
+//	public String getProjectName() {
+//		return appName;
+//	}
+//
+	
+//	public String getAppPath() {
+//		return AppVetProperties.APPS_ROOT + "/" + appId;
+//	}
+	
 	public String getProjectPath() {
-		return AppVetProperties.APPS_ROOT + "/" + appId + "/" + projectName;
+		return AppVetProperties.APPS_ROOT + "/" + appId + "/" + appName;
 	}
 
 	public String getReportsPath() {
 		return AppVetProperties.APPS_ROOT + "/" + appId + "/reports";
 	}
-
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
+	
+	public String getAppFilePath() {
+		return AppVetProperties.APPS_ROOT + "/" + appId + "/" + appFileName;
 	}
+
+//	public void setProjectName(String projectName) {
+//		this.projectName = projectName;
+//	}
 }

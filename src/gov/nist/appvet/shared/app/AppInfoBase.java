@@ -19,6 +19,7 @@
  */
 package gov.nist.appvet.shared.app;
 
+import gov.nist.appvet.shared.os.DeviceOS;
 import gov.nist.appvet.shared.status.AppStatus;
 
 import java.io.Serializable;
@@ -27,11 +28,17 @@ import java.io.Serializable;
 public class AppInfoBase implements Serializable {
     private static final long serialVersionUID = 1L;
     public String appId = null;
-    public String appName = null;
     public String packageName = null;
     public String versionCode = null;
     public String versionName = null;
-    public String fileName = null;
+    public DeviceOS os = null;
+    // Note that if the original fileItem name contains whitespace then
+	// appFileName will replace those spaces with underscore characters.*/
+    public String appFileName = null;
+    // The file name of the app minus the file extension. Note that the app
+    // name uses underscores in place of spaces.
+    public String appName = null;
+    
     public long submitTime = 0;
     public AppStatus appStatus = null;
     public long statusTime = 0;
@@ -58,7 +65,10 @@ public class AppInfoBase implements Serializable {
 	if (versionName.toLowerCase().indexOf(lowerCaseToken) > -1) {
 	    return true;
 	}
-	if (fileName.toLowerCase().indexOf(lowerCaseToken) > -1) {
+    if (os.name().toLowerCase().indexOf(lowerCaseToken) > -1) {
+        return true;
+    }
+	if (appFileName.toLowerCase().indexOf(lowerCaseToken) > -1) {
 	    return true;
 	}
 	if (appStatus.name().toLowerCase().indexOf(lowerCaseToken) > -1) {

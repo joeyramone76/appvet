@@ -30,15 +30,23 @@ public class ConfigInfoGwt implements IsSerializable {
     private String appVetUrl = null;
     private String appVetServletUrl = null;
     private String appVetVersion = null;
-    private String appVetBuild = null;
-    private String lastUpdated = null;
+//    private String appVetBuild = null;
+//    private String lastUpdated = null;
     private String sessionId = null;
     private long maxIdleTime = 0;
     private int getUpdatesDelay = 0;
     private long sessionExpirationLong = 0;
-    private String[] availableToolNames = null;
-    private String[] availableToolIDs = null;
-    private String[] availableToolsType = null;
+    
+    // Android tools
+    private String[] androidToolNames = null;
+    private String[] androidToolIDs = null;
+    private String[] androidToolTypes = null;
+    
+    // iOS tools
+    private String[] iOSToolNames = null;
+    private String[] iOSToolIDs = null;
+    private String[] iOSToolTypes = null;
+    
     private String systemMessage = null;
 
     public ConfigInfoGwt() {
@@ -64,12 +72,12 @@ public class ConfigInfoGwt implements IsSerializable {
 	return appVetVersion;
     }
 
-    public String[] getAvailableToolNames() {
-	return availableToolNames;
+    public String[] getAndroidToolNames() {
+	return androidToolNames;
     }
 
-    public String[] getAvailableToolTypes() {
-	return availableToolsType;
+    public String[] getAndroidToolTypes() {
+	return androidToolTypes;
     }
 
     public String getHostname() {
@@ -124,12 +132,12 @@ public class ConfigInfoGwt implements IsSerializable {
 	this.appVetVersion = appvetVersion;
     }
 
-    public void setAvailableToolNames(String[] availableToolNames) {
-	this.availableToolNames = availableToolNames;
+    public void setAndroidToolNames(String[] androidToolNames) {
+	this.androidToolNames = androidToolNames;
     }
 
-    public void setAvailableToolsType(String[] availableToolsType) {
-	this.availableToolsType = availableToolsType;
+    public void setAndroidToolType(String[] androidToolTypes) {
+	this.androidToolTypes = androidToolTypes;
     }
 
     public void setGetUpdatesDelay(int value) {
@@ -164,11 +172,35 @@ public class ConfigInfoGwt implements IsSerializable {
 	this.userInfo = userInfo;
     }
 
-	public String[] getAvailableToolIDs() {
-		return availableToolIDs;
+	public String[] getAndroidToolIDs() {
+		return androidToolIDs;
 	}
 
-	public void setAvailableToolIDs(String[] availableToolIDs) {
-		this.availableToolIDs = availableToolIDs;
+	public void setAndroidToolIDs(String[] androidToolIDs) {
+		this.androidToolIDs = androidToolIDs;
+	}
+
+	public String[] getiOSToolNames() {
+		return iOSToolNames;
+	}
+
+	public void setiOSToolNames(String[] iOSToolNames) {
+		this.iOSToolNames = iOSToolNames;
+	}
+
+	public String[] getiOSToolIDs() {
+		return iOSToolIDs;
+	}
+
+	public void setiOSToolIDs(String[] iOSToolIDs) {
+		this.iOSToolIDs = iOSToolIDs;
+	}
+
+	public String[] getiOSToolTypes() {
+		return iOSToolTypes;
+	}
+
+	public void setiOSToolTypes(String[] iOSToolTypes) {
+		this.iOSToolTypes = iOSToolTypes;
 	}
 }

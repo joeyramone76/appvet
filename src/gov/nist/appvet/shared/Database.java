@@ -22,6 +22,7 @@ package gov.nist.appvet.shared;
 import gov.nist.appvet.gwt.shared.AppInfoGwt;
 import gov.nist.appvet.gwt.shared.UserInfoGwt;
 import gov.nist.appvet.properties.AppVetProperties;
+import gov.nist.appvet.shared.os.DeviceOS;
 import gov.nist.appvet.shared.role.Role;
 import gov.nist.appvet.shared.status.AppStatus;
 
@@ -600,17 +601,16 @@ public class Database {
 			appInfo.packageName = getAttributeValue(resultSet.getString(3));
 			appInfo.versionCode = getAttributeValue(resultSet.getString(4));
 			appInfo.versionName = getAttributeValue(resultSet.getString(5));
-			final String fileName = resultSet.getString(6);
-			appInfo.fileName = fileName;
+			//final String appFileName = resultSet.getString(6);
+			appInfo.appFileName = resultSet.getString(6);
 			appInfo.submitTime = resultSet.getTimestamp(7).getTime();
 			String appStatusString = resultSet.getString(8);
 			appInfo.appStatus = AppStatus.getStatus(appStatusString);
 			appInfo.statusTime = resultSet.getTimestamp(9).getTime();
 			appInfo.userName = getAttributeValue(resultSet.getString(10));
 			appInfo.clientHost = getAttributeValue(resultSet.getString(11));
-//			appInfo.minSdk = getAttributeValue(resultSet.getString(12));
-//			appInfo.maxSdk = getAttributeValue(resultSet.getString(13));
-//			appInfo.targetSdk = getAttributeValue(resultSet.getString(14));
+			String osName = getAttributeValue(resultSet.getString(12));
+			appInfo.os = DeviceOS.getOS(osName);
 		} catch (final SQLException e) {
 			e.printStackTrace();
 		}
@@ -628,6 +628,11 @@ public class Database {
 
 	public synchronized static String getOwner(String appid) {
 		return getString("SELECT username FROM apps " + "where appid='" + appid
+				+ "'");
+	}
+	
+	public synchronized static String getOs(String appid) {
+		return getString("SELECT os FROM apps " + "where appid='" + appid
 				+ "'");
 	}
 
@@ -891,11 +896,18 @@ public class Database {
 	// started. A better but more complex approach is to
 	// update the app's status to "DELETED" and update users' display. However,
 	// it is not clear when the app should be deleted.
-	public static boolean deleteApp(String appid) {
+	public static boolean deleteApp(DeviceOS os, String appid) {
 		final boolean appDeleted = update("DELETE FROM apps " + "where appid='"
 				+ appid + "'");
-		final boolean statusDeleted = update("DELETE FROM toolstatus "
-				+ "where appid='" + appid + "'");
+		boolean statusDeleted = false;
+		if (os == DeviceOS.ANDROID) {
+			statusDeleted = update("DELETE FROM androidtoolstatus "
+					+ "where appid='" + appid + "'");
+		} else {
+			statusDeleted = update("DELETE FROM iostoolstatus "
+					+ "where appid='" + appid + "'");
+		}
+
 		if (appDeleted && statusDeleted) {
 			return true;
 		} else {

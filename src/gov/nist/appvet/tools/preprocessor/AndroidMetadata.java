@@ -25,7 +25,9 @@ import gov.nist.appvet.servlet.shared.TimeoutException;
 import gov.nist.appvet.shared.Database;
 import gov.nist.appvet.shared.ErrorMessage;
 import gov.nist.appvet.shared.FileUtil;
+import gov.nist.appvet.shared.Logger;
 import gov.nist.appvet.shared.app.AppInfo;
+import gov.nist.appvet.shared.os.DeviceOS;
 import gov.nist.appvet.shared.status.ToolStatus;
 import gov.nist.appvet.shared.status.ToolStatusManager;
 import gov.nist.appvet.toolmgr.ToolServiceAdapter;
@@ -33,31 +35,107 @@ import gov.nist.appvet.xml.XmlUtil;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-public class AndroidManifest {
+public class AndroidMetadata {
 	
 	public static final String APKTOOL_WINDOWS_COMMAND = "apktool.bat";
 	public static final String APKTOOL_LINUX_COMMAND = "apktool";
 
 	private static ToolServiceAdapter appinfoTool = ToolServiceAdapter
-			.getById("appinfo");
+			.getByToolId(DeviceOS.ANDROID, "appinfo");
 
+	public static synchronized boolean getAndroidMetaData(AppInfo appInfo, Logger log) {
+		log.debug("Start AndroidMetadata preprocessing for appID="
+				+ appInfo.appId);
+		final ToolServiceAdapter appinfoTool = ToolServiceAdapter
+				.getByToolId(appInfo.os, "appinfo");
+		final String reportsPath = appInfo.getReportsPath();
+		final String appinfoReportPath = reportsPath + "/"
+				+ appinfoTool.reportName;
+		BufferedWriter appinfoReport = null;
+		try {
+			appinfoReport = new BufferedWriter(
+					new FileWriter(appinfoReportPath));
+			appinfoReport.write("<HTML>\n");
+			appinfoReport.write("<head>\n");
+			appinfoReport.write("<style type=\"text/css\">\n");
+			appinfoReport.write("h3 {font-family:arial;}\n");
+			appinfoReport.write("p {font-family:arial;}\n");
+			appinfoReport.write("</style>\n");
+			appinfoReport.write("<title>Android Manifest Report</title>\n");
+			appinfoReport.write("</head>\n");
+			appinfoReport.write("<body>\n");
+			String appVetImagesUrl = AppVetProperties.URL + "/images/appvet_logo.png";
+			appinfoReport.write("<img border=\"0\" width=\"192px\" src=\"" + appVetImagesUrl + "\" alt=\"appvet\" />");
+			appinfoReport.write("<HR>\n");
+			appinfoReport.write("<h3>AndroidMetadata Pre-Processing Report</h3>\n");
+			appinfoReport.write("<pre>\n");
+			final Date date = new Date();
+			final SimpleDateFormat format = new SimpleDateFormat(
+					"yyyy-MM-dd' 'HH:mm:ss.SSSZ");
+			final String currentDate = format.format(date);
+			appinfoReport.write("File: \t\t" + appInfo.appFileName + "\n");
+			appinfoReport.write("Date: \t\t" + currentDate + "\n\n");
+			appinfoReport.write("App ID: \t" + appInfo.appId + "\n");
+			final String fileNameUpperCase = appInfo.appFileName.toUpperCase();
+			if (fileNameUpperCase.endsWith(".APK")) {
+				ToolStatusManager.setToolStatus(appInfo.os, appInfo.appId, appinfoTool.id, ToolStatus.SUBMITTED);
+				if (!decodeApk(appInfo, appinfoReport)) {
+					return false;
+				}
+				if (!getManifestInfo(appInfo, appinfoReport, true)) {
+					return false;
+				}
+			} else {
+				appInfo.log.error("File " + appInfo.appFileName + " is invalid");
+				ToolStatusManager.setToolStatus(appInfo.os, appInfo.appId, appinfoTool.id, ToolStatus.ERROR);
+				return false;
+			}
+			
+			ToolStatusManager.setToolStatus(appInfo.os, appInfo.appId, appinfoTool.id, ToolStatus.PASS);
+			appinfoReport
+			.write("\nStatus:\t\t<font color=\"green\">PASS</font>\n");
+			log.debug("End AndroidMetadata preprocessing for appID="
+					+ appInfo.appId);
+			return true;
+		} catch (final IOException e) {
+			appInfo.log.error(e.getMessage());
+			return false;
+		} finally {
+			try {
+				if (appinfoReport != null) {
+					appinfoReport.write("</pre>\n");
+					appinfoReport.write("</body>\n");
+					appinfoReport.write("</HTML>\n");
+					appinfoReport.close();
+					appinfoReport = null;
+				}
+			} catch (final IOException e) {
+				appInfo.log.error(e.getMessage());
+			}
+		}
+	}
+	
 	public static synchronized boolean decodeApk(AppInfo appInfo,
-			String apkPath, BufferedWriter appinfoReport) {
-		final String projectPath = appInfo.getProjectPath();
-		String os = Native.os;
+			BufferedWriter appinfoReport) {
+		
+		String appvetOS = Native.os;
 		String apktoolCommand = null;
-		if (os.toLowerCase().indexOf("win") > -1) {
+		if (appvetOS.toUpperCase().indexOf("WIN") > -1) {
 			apktoolCommand = APKTOOL_WINDOWS_COMMAND;
-		} else if (os.toLowerCase().indexOf("nux") > -1) {
+		} else if (appvetOS.toUpperCase().indexOf("NUX") > -1) {
 			apktoolCommand = APKTOOL_LINUX_COMMAND;
 		}
+		
 		final String decodeCmd = apktoolCommand
 				+ " d "
-				+ apkPath
+				+ appInfo.getAppFilePath()
 				+ " "
-				+ projectPath;
+				+ appInfo.getProjectPath();
 		try {
 			final StringBuilder outputBuffer = new StringBuilder();
 			final StringBuilder errorBuffer = new StringBuilder();
@@ -65,9 +143,6 @@ public class AndroidManifest {
 				appInfo.log.info("Decoded APK:\tOK");
 				return true;
 			} else {
-				//appInfo.log.error("OutputBuffer: " + outputBuffer.toString() + "|");
-				//appInfo.log.error("ErrorBuffer: " + errorBuffer.toString() + "||");
-
 				if (outputBuffer.indexOf("FileNotFound") >= 0 ||
 						outputBuffer.indexOf("was not found or was not readable") >= 0) {
 					// Anti-virus on system may have removed app if it was malware
@@ -76,7 +151,7 @@ public class AndroidManifest {
 							+ ErrorMessage.FILE_NOT_FOUND.getDescription()
 							+ " (File removed by system; file may be malware)</font>");
 					appInfo.log.error(ErrorMessage.FILE_NOT_FOUND.getDescription());
-					ToolStatusManager.setToolStatus(appInfo.appId, appinfoTool.id,
+					ToolStatusManager.setToolStatus(appInfo.os, appInfo.appId, appinfoTool.id,
 							ToolStatus.ERROR);
 				} else {
 					appInfo.log.error(outputBuffer.toString());
@@ -84,15 +159,14 @@ public class AndroidManifest {
 							+ ErrorMessage.ANDROID_APK_DECODE_ERROR.getDescription()
 							+ " (File may be corrupted)</font>");
 					appInfo.log.error(ErrorMessage.ANDROID_APK_DECODE_ERROR.getDescription());
-					ToolStatusManager.setToolStatus(appInfo.appId, appinfoTool.id,
+					ToolStatusManager.setToolStatus(appInfo.os, appInfo.appId, appinfoTool.id,
 							ToolStatus.ERROR);
 				}
-
 				return false;
 			}
 		} catch (final TimeoutException e) {
 			appInfo.log.error(e.getMessage());
-			ToolStatusManager.setToolStatus(appInfo.appId, appinfoTool.id,
+			ToolStatusManager.setToolStatus(appInfo.os, appInfo.appId, appinfoTool.id,
 					ToolStatus.ERROR);
 			try {
 				appinfoReport.write("\n<font color=\"red\">"
@@ -104,7 +178,7 @@ public class AndroidManifest {
 			return false;
 		} catch (final IOException e) {
 			appInfo.log.error(e.getMessage());
-			ToolStatusManager.setToolStatus(appInfo.appId, appinfoTool.id,
+			ToolStatusManager.setToolStatus(appInfo.os, appInfo.appId, appinfoTool.id,
 					ToolStatus.ERROR);
 			try {
 				appinfoReport.write("\n<font color=\"red\">"
@@ -126,7 +200,7 @@ public class AndroidManifest {
 		print(appInfo, "Version code", appInfo.versionCode, appinfoReport);
 		appInfo.versionName = xml.getXPathValue("/manifest/@versionName");
 		print(appInfo, "Version name", appInfo.versionName, appinfoReport);
-		Database.updateApp(appInfo.appId, appInfo.getProjectName(),
+		Database.updateApp(appInfo.appId, appInfo.appName,
 				appInfo.packageName, appInfo.versionCode, appInfo.versionName);
 		String minSdk = xml.getXPathValue("/manifest/uses-sdk/@minSdkVersion");
 		print(appInfo, "Min SDK", minSdk, appinfoReport);
@@ -175,18 +249,20 @@ public class AndroidManifest {
 			File manifestFile = new File(projectPath + "/AndroidManifest.xml");
 			try {
 				if (!manifestFile.exists()) {
+					appInfo.log.error("Could not locate MANIFEST FILE!!! === " + manifestFile);
+
 					if (apktoolGenerated) {
 						appinfoReport
 						.write("\n<font color=\"red\">"
 								+ ErrorMessage.MISSING_ANDROID_MANIFEST_ERROR
 								.getDescription()
 								+ " (apktool did not generate manifest file).</font>");
-						ToolStatusManager.setToolStatus(appInfo.appId, appinfoTool.id,
+						ToolStatusManager.setToolStatus(appInfo.os, appInfo.appId, appinfoTool.id,
 								ToolStatus.ERROR);
 					}
 					return false;
 				}
-				appInfo.log.debug("Found AndroidManifest.xml file\tOK");
+				appInfo.log.debug("Found AndroidMetadata.xml file\tOK");
 				getElementValues(appInfo, manifestFile, appinfoReport);
 				return true;
 			} finally {
@@ -198,7 +274,7 @@ public class AndroidManifest {
 				appinfoReport.write("\n<font color=\"red\">" + appinfoTool.name
 						+ " " + ErrorMessage.ANDROID_MANIFEST_ERROR.getDescription()
 						+ "</font>");
-				ToolStatusManager.setToolStatus(appInfo.appId, appinfoTool.id,
+				ToolStatusManager.setToolStatus(appInfo.os, appInfo.appId, appinfoTool.id,
 						ToolStatus.ERROR);
 			} catch (final IOException e1) {
 				appInfo.log.error(e1.getMessage());
@@ -210,7 +286,7 @@ public class AndroidManifest {
 	public static synchronized boolean print(AppInfo appInfo, String parameter,
 			String value, BufferedWriter appinfoReport) {
 		if ((value == null) || value.isEmpty()) {
-			appInfo.log.warn(parameter + " not found in AndroidManifest manifest");
+			appInfo.log.warn(parameter + " not found in AndroidMetadata manifest");
 			return true;
 		} else {
 			appInfo.log.info(parameter + ": \t" + value);
@@ -251,11 +327,12 @@ public class AndroidManifest {
 		// can be referenced quickly by URL
 		File destFile = new File(AppVetProperties.APP_IMAGES + "/"
 				+ appInfo.appId + ".png");
+		appInfo.log.debug("Writing icon to " + destFile.getAbsolutePath());
 		if (iconFile != null && destFile != null) {
 			FileUtil.copyFile(iconFile, destFile);
 		}
 	}
 
-	private AndroidManifest() {
+	private AndroidMetadata() {
 	}
 }

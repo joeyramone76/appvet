@@ -23,6 +23,7 @@ import gov.nist.appvet.gwt.shared.AppInfoGwt;
 import gov.nist.appvet.gwt.shared.ConfigInfoGwt;
 import gov.nist.appvet.gwt.shared.ToolStatusGwt;
 import gov.nist.appvet.gwt.shared.UserInfoGwt;
+import gov.nist.appvet.shared.os.DeviceOS;
 
 import java.util.List;
 
@@ -36,7 +37,7 @@ public interface GWTServiceAsync {
     void authenticate(String username, String password,
 	    AsyncCallback<ConfigInfoGwt> callback) throws IllegalArgumentException;
 
-    void deleteApp(String appId, String username,
+    void deleteApp(DeviceOS os, String appId, String username,
 	    AsyncCallback<Boolean> callback) throws IllegalArgumentException;
 
     void deleteUser(String username, AsyncCallback<Boolean> callback)
@@ -45,10 +46,10 @@ public interface GWTServiceAsync {
     void getAllApps(String username, AsyncCallback<List<AppInfoGwt>> callback)
 	    throws IllegalArgumentException;
 
-    void getToolResults(String sessionId, String appId,
+    void getToolResults(DeviceOS os, String sessionId, String appId,
 	    AsyncCallback<List<ToolStatusGwt>> callback)
 	    throws IllegalArgumentException;
-
+    
     void getUpdatedApps(long lastClientUpdate, String username,
 	    AsyncCallback<List<AppInfoGwt>> callback)
 	    throws IllegalArgumentException;

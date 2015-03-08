@@ -26,7 +26,8 @@
 	<inherits name='gov.nist.appvet.shared.validate' />
 	<inherits name='gov.nist.appvet.shared.role' />
 	<inherits name='gov.nist.appvet.shared.status' />
-	
+	<inherits name='gov.nist.appvet.shared.os' />
+		
 	<!-- Specify the app entry point class. -->
 	<entry-point class='gov.nist.appvet.gwt.client.AppVet' />
 
