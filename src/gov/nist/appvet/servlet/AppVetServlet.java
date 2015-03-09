@@ -101,17 +101,28 @@ public class AppVetServlet extends HttpServlet {
 						response, HttpServletResponse.SC_BAD_REQUEST, true);
 				return;
 			}
-
-			// ----------------------- Handle command  -------------------------
+			
+			// ----------------------- Verify App ID -------------------------
 			final AppVetServletCommand command = AppVetServletCommand
 					.getCommand(commandStr);
+			
+			if (appId != null && command != AppVetServletCommand.GET_APPVET_LOG) {
+				/* GET_APPVET_LOG does not require an app ID. */
+				boolean appExists = Database.appExists(appId);
+				if (!appExists) {
+					sendHttpResponse(userName, appId, commandStr, clientIpAddress,
+							ErrorMessage.INVALID_APPID.getDescription(),
+							response, HttpServletResponse.SC_BAD_REQUEST, true);
+				}
+			}
+
+			// ----------------------- Handle command  -------------------------
+
 			switch (command) {
 
 			case GET_STATUS:
-				/*
-				 * Get the current processing status of the app. Used only by
-				 * non-GUI clients. GUI clients get status via GWT RPC.
-				 */
+				/* Get the current processing status of the app. Used only by
+				 * non-GUI clients. GUI clients get status via GWT RPC. */
 				log.debug(userName + " invoked " + command.name() + " on app "
 						+ appId);
 				final AppStatus currentStatus = AppStatusManager
@@ -122,44 +133,34 @@ public class AppVetServlet extends HttpServlet {
 						HttpServletResponse.SC_OK, false);
 				break;
 			case GET_TOOL_REPORT:
-				/*
-				 * Get the processing status of the selected app. Used by GUI
-				 * and non-GUI clients.
-				 */
+				/* Get the processing status of the selected app. Used by GUI
+				 * and non-GUI clients. */
 				log.debug(userName + " invoked " + command.name() + " of "
 						+ report + " on app " + appId);
 				returnReport(response, appId, report, clientIpAddress);
 				break;
 			case GET_APP_LOG:
-				/*
-				 * Get the log of the selected app. Used by GUI and non-GUI
-				 * clients.
-				 */
+				/* Get the log of the selected app. Used by GUI and non-GUI
+				 * clients. */
 				log.debug(userName + " invoked " + command.name() + " on app "
 						+ appId);
 				returnAppLog(response, appId, clientIpAddress);
 				break;
 			case GET_APPVET_LOG:
-				/*
-				 * Get the main AppVet log. Used by GUI and non-GUI clients.
-				 */
+				/* Get the main AppVet log. Used by GUI and non-GUI clients. */
 				log.debug(userName + " invoked " + command.name());
 				returnAppVetLog(response, clientIpAddress);
 				break;
 			case DOWNLOAD_APP:
-				/*
-				 * Download the selected app. Used by GUI and non-GUI clients.
-				 */
+				/* Download the selected app. Used by GUI and non-GUI clients. */
 				log.debug(userName + " invoked " + command.name() + " on app "
 						+ appId);
 				downloadApp(response, appId, appName, clientIpAddress);
 				break;
 			case DOWNLOAD_REPORTS:
-				/*
-				 * Download reports for the selected app. Reports can only be
+				/* Download reports for the selected app. Reports can only be
 				 * downloaded if the app has completed processing. Used by GUI
-				 * and non-GUI clients.
-				 */
+				 * and non-GUI clients. */
 				log.debug(userName + " invoked " + command.name() + " on "
 						+ "app " + appId);
 				final AppStatus appStatus = AppStatusManager
@@ -347,16 +348,23 @@ public class AppVetServlet extends HttpServlet {
 							HttpServletResponse.SC_BAD_REQUEST, true);
 					return;
 				} else {
-					sendHttpResponse(userName, appId, commandStr,
-							clientIpAddress, "HTTP/1.1 202 Accepted", response,
-							HttpServletResponse.SC_ACCEPTED, false);
-					appInfo = createAppInfo(appId, userName, commandStr,
-							toolId, toolRisk, fileItem, clientIpAddress,
-							response);
-					if (appInfo == null)
-						return;
-					else
-						submitReport(userName, appInfo, response);
+					boolean appExists = Database.appExists(appId);
+					if (!appExists) {
+						sendHttpResponse(userName, appId, commandStr, clientIpAddress,
+								ErrorMessage.INVALID_APPID.getDescription(),
+								response, HttpServletResponse.SC_BAD_REQUEST, true);
+					} else {
+						sendHttpResponse(userName, appId, commandStr,
+								clientIpAddress, "HTTP/1.1 202 Accepted", response,
+								HttpServletResponse.SC_ACCEPTED, false);
+						appInfo = createAppInfo(appId, userName, commandStr,
+								toolId, toolRisk, fileItem, clientIpAddress,
+								response);
+						if (appInfo == null)
+							return;
+						else
+							submitReport(userName, appInfo, response);
+					}
 				}
 				break;
 			default:
