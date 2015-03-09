@@ -89,18 +89,9 @@ public class AppsListPagingDataGrid<T> extends PagingDataGrid<T> {
 					log.info("App status in table is: " + os);
 				}
 				if (os == DeviceOS.ANDROID) {
-//					final String iconPath = appVetHostUrl
-//							+ "/appvet_images/android_logo_black.png";
-
-					
 					sb.appendHtmlConstant("<img width=\"15\" src=\"images/android_logo_black.png\"  alt=\"\" />");
 				} else if (os == DeviceOS.IOS) {
-//					final String iconPath = appVetHostUrl
-//							+ "/appvet_images/apple_logo_black.png";
-//					sb.appendHtmlConstant("<img width=\"15\" src=\"" + iconPath
-//							+ "\" alt=\"\" />");
 					sb.appendHtmlConstant("<img width=\"15\" src=\"images/ios_logo_black.png\"  alt=\"\" />");
-
 				} 
 				return sb.toSafeHtml();
 			}
