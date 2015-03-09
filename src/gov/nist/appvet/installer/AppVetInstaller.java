@@ -39,18 +39,17 @@ import javax.swing.border.TitledBorder;
 
 public class AppVetInstaller implements ItemListener {
 
-	private final String INSTALLER_FILES_DIR = "appvet_installer_files";
 	private String APPVET_FILES_HOME = null;
 	private String CATALINA_HOME = null;
 	private String JAVA_HOME = null;
 	private String os = null;
 
-	// Host info
+	/* Host information */
 	private String ipAddr = null;
 	private String hostname = null;
 	private boolean keepApps = false;
 
-	// AppVet info
+	/* AppVet information */
 	private String appVetUserName = null;
 	private String appVetPassword = null;
 	private String appVetLastName = null;
@@ -58,20 +57,20 @@ public class AppVetInstaller implements ItemListener {
 	private String appVetOrganization = null;
 	private String appVetEmail = null;
 
-	// Tomcat info
+	/* Tomcat information */
 	private boolean tomcatSsl = false;
 	private String tomcatPort = null;
 
-	// MySQL info
+	/* MySQL information */
 	private String myqlUri = null;
 	private String mysqlUsername = null;
 	private String mysqlPassword = null;
 
-	// Processing
+	/* Processing information */
 	private JTextArea processingTextArea = null;
 	private JButton doneButton = null;
 
-	JPanel cards; // CardLayout panel
+	JPanel cards; /* CardLayout panel */
 	final static String STARTPANEL = "STARTPANEL";
 	final static String HOSTPANEL = "HOSTPANEL";
 	final static String APPVETPANEL = "APPVETPANEL";
@@ -176,6 +175,7 @@ public class AppVetInstaller implements ItemListener {
 		cards = new JPanel(new CardLayout());
 		pane.add(cards, BorderLayout.CENTER);
 
+		/*----------------------- CARD 1 - Main Panel ------------------------*/
 		JPanel card1 = new JPanel();
 		cards.add(card1, STARTPANEL);
 		card1.setLayout(new BorderLayout(0, 0));
@@ -188,25 +188,14 @@ public class AppVetInstaller implements ItemListener {
 		JLabel nistLabel = new JLabel("");
 		nistLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		logoPanel.add(nistLabel, BorderLayout.NORTH);
-		String path = null;
-		try {
-			path = new File(".").getCanonicalPath();
-		} catch (IOException e1) {
-			showErrorMessage(e1.getMessage());
-			e1.printStackTrace();
-		}
-		nistLabel.setIcon(new ImageIcon(path + "/" + INSTALLER_FILES_DIR + "/images/nist-gray.png"));
+
+		nistLabel.setIcon(new ImageIcon("images/nist-gray.png"));
 
 		JLabel appVetLogoLabel = new JLabel("");
 		logoPanel.add(appVetLogoLabel);
 		appVetLogoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		try {
-			path = new File(".").getCanonicalPath();
-		} catch (IOException e1) {
-			showErrorMessage(e1.getMessage());
-			e1.printStackTrace();
-		}
-		appVetLogoLabel.setIcon(new ImageIcon(path + "/" + INSTALLER_FILES_DIR + "/images/appvet_logo.png"));
+
+		appVetLogoLabel.setIcon(new ImageIcon("images/appvet_logo.png"));
 
 		JPanel startButtonPanel = new JPanel();
 		card1.add(startButtonPanel, BorderLayout.SOUTH);
@@ -238,6 +227,7 @@ public class AppVetInstaller implements ItemListener {
 		});
 		startButtonPanel.add(installButton);
 
+		/*----------------------- CARD 2 - IP Address Panel ------------------*/
 		JPanel card2 = new JPanel();
 		cards.add(card2, "HOSTPANEL");
 		card2.setLayout(new BorderLayout(0, 0));
@@ -469,6 +459,7 @@ public class AppVetInstaller implements ItemListener {
 		});
 		panel_3.add(btnNewButton_1);
 
+		/*-------------------- CARD 3 - AppVet Admin Panel -------------------*/
 		JPanel card3 = new JPanel();
 		cards.add(card3, APPVETPANEL);
 		card3.setLayout(new BorderLayout(0, 0));
@@ -718,6 +709,7 @@ public class AppVetInstaller implements ItemListener {
 		});
 		appVetButtonPanel.add(appVetNextButton);
 
+		/*------------------ CARD 4 - Tomcat and MySQL -----------------------*/
 		JPanel card4 = new JPanel();
 		cards.add(card4, TOMCATMYSQLPANEL);
 		card4.setLayout(new BorderLayout(0, 0));
@@ -932,6 +924,7 @@ public class AppVetInstaller implements ItemListener {
 		});
 		tomcatMysqlButtonPanel.add(appVetInstallButton);
 
+		/*------------------- CARD 5 - Processing Panel ----------------------*/
 		JPanel card5 = new JPanel();
 		cards.add(card5, PROCESSPANEL);
 		card5.setLayout(new BorderLayout(0, 0));
@@ -958,7 +951,6 @@ public class AppVetInstaller implements ItemListener {
 		});
 		doneButton.setEnabled(false);
 		panel_1.add(doneButton);
-
 	}
 
 	class Installer implements Runnable {
@@ -1141,8 +1133,7 @@ public class AppVetInstaller implements ItemListener {
 			// Copy appvet_images directory and default.png file
 			try {
 				String currentDirectory = System.getProperty("user.dir");
-				FileUtil.copyFile(new File(currentDirectory
-						+ "/" + INSTALLER_FILES_DIR + "/deploy/tomcat/webapps/appvet_images/default.png"), new File(
+				FileUtil.copyFile(new File("deploy/tomcat/webapps/appvet_images/default.png"), new File(
 								CATALINA_HOME + "/webapps/appvet_images/default.png"));
 			} catch (IOException e) {
 				System.out.println("Could not create default app icon: " + e.getMessage());
@@ -1154,11 +1145,9 @@ public class AppVetInstaller implements ItemListener {
 			// Copy registration and appinfo tool adapters
 			try {
 				String currentDirectory = System.getProperty("user.dir");
-				FileUtil.copyFile(new File(currentDirectory
-						+ "/" + INSTALLER_FILES_DIR + "/deploy/conf/tool_adapters/registration.xml"), new File(
+				FileUtil.copyFile(new File("deploy/conf/tool_adapters/registration.xml"), new File(
 								APPVET_FILES_HOME + "/conf/tool_adapters/registration.xml"));
-				FileUtil.copyFile(new File(currentDirectory
-						+ "/" + INSTALLER_FILES_DIR + "/deploy/conf/tool_adapters/appinfo.xml"), new File(
+				FileUtil.copyFile(new File("deploy/conf/tool_adapters/appinfo.xml"), new File(
 								APPVET_FILES_HOME + "/conf/tool_adapters/appinfo.xml"));		
 			} catch (IOException e) {
 				System.out.println("Could not create registration or tool adapters properties: " + e.getMessage());
@@ -1170,8 +1159,7 @@ public class AppVetInstaller implements ItemListener {
 			// Add complementary tools. These tools may be unavailable at time of deployment.
 			try {
 				String currentDirectory = System.getProperty("user.dir");
-				FileUtil.copyFile(new File(currentDirectory
-						+ "/" + INSTALLER_FILES_DIR + "/deploy/conf/unused_tool_adapters/androidcert.xml"), new File(
+				FileUtil.copyFile(new File("deploy/conf/unused_tool_adapters/androidcert.xml"), new File(
 								APPVET_FILES_HOME + "/conf/tool_adapters/androidcert.xml"));		
 			} catch (IOException e) {
 				System.out.println("Could not create tools properties: " + e.getMessage());
@@ -1252,9 +1240,7 @@ public class AppVetInstaller implements ItemListener {
 			// Install WAR file into $TOMCAT/webapps
 			try {
 				String currentDirectory = System.getProperty("user.dir");
-				String warFilePath = currentDirectory + "/" 
-						+ INSTALLER_FILES_DIR 
-						+ "/deploy/tomcat/webapps/appvet.war";
+				String warFilePath = "deploy/tomcat/webapps/appvet.war";
 				//System.out.println("warfFilepath: " + warFilePath);
 				File warFile = new File(warFilePath);
 				if (warFile.exists()) {
@@ -1300,19 +1286,13 @@ public class AppVetInstaller implements ItemListener {
 	 * invoked from the event dispatch thread.
 	 */
 	private void createAndShowGUI() {
-		String path = null;
-		try {
-			path = new File(".").getCanonicalPath();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
 
 		// Create and set up the window.
-		frame = new JFrame("AppVet Installer");
+		frame = new JFrame("AppVet 2.0 Installer");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(
-				path + "/" + INSTALLER_FILES_DIR + "/images/appvet_icon.png"));
-		frame.setTitle("AppVet Installer");
+				"images/appvet_icon.png"));
+		frame.setTitle("AppVet 2.0 Installer");
 		frame.setBounds(100, 100, 432, 332);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setVisible(true);
