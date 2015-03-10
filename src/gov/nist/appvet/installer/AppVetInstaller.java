@@ -37,6 +37,8 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 
+/* TODO: This file has not been modified for AppVet 2.0 */
+
 public class AppVetInstaller implements ItemListener {
 
 	private String APPVET_FILES_HOME = null;
@@ -100,7 +102,6 @@ public class AppVetInstaller implements ItemListener {
 			ipAddr = addr.getHostAddress();
 
 		} catch (UnknownHostException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
@@ -246,6 +247,22 @@ public class AppVetInstaller implements ItemListener {
 		gbl_panel_4.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panel_4.setLayout(gbl_panel_4);
 
+		String hostName = null;
+		InetAddress localHost = null;
+		try {
+			localHost = InetAddress.getLocalHost();
+			String canonical = localHost.getCanonicalHostName();
+			hostname = InetAddress.getLocalHost().getHostName();
+			JOptionPane.showMessageDialog(frame, "canonical:" + canonical + 
+					", Hostname is " + hostname, 
+					"Help", JOptionPane.INFORMATION_MESSAGE);
+			
+			
+			
+		} catch (UnknownHostException e1) {
+			e1.printStackTrace();
+		}
+		
 		final JRadioButton useHostNameCheckBox = new JRadioButton("Use FQDN:     ");
 		useHostNameCheckBox.addMouseListener(new MouseAdapter() {
 			@Override
@@ -269,7 +286,7 @@ public class AppVetInstaller implements ItemListener {
 		panel_4.add(hostNameTextField, gbc_hostNameTextField);
 		hostNameTextField.setColumns(10);
 
-		final JRadioButton useStaticIp = new JRadioButton("Use IP:    ");
+		final JRadioButton useStaticIp = new JRadioButton("Use IPv4:  ");
 
 		JButton useHostnameHelp = new JButton("?");
 		useHostnameHelp.addMouseListener(new MouseAdapter() {
@@ -277,8 +294,8 @@ public class AppVetInstaller implements ItemListener {
 			public void mouseClicked(MouseEvent e) {
 				JOptionPane.showMessageDialog(frame, "Select FQDN (Fully Qualified Domain Name) if "
 						+ "AppVet is running in a production/operational\n"
-						+ "environment. The selected FQDN must be used "
-						+ "to access the AppVet service.",
+						+ "environment. The selected FQDN must be used by all "
+						+ "clients to access the AppVet service.",
 						"Help", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
@@ -321,38 +338,7 @@ public class AppVetInstaller implements ItemListener {
 		gbc_useStaticIpHelp.gridx = 2;
 		gbc_useStaticIpHelp.gridy = 1;
 		panel_4.add(useStaticIpHelp, gbc_useStaticIpHelp);
-
-//		final JRadioButton useDHCP = new JRadioButton("Use DHCP");
-//		GridBagConstraints gbc_useDHCP = new GridBagConstraints();
-//		gbc_useDHCP.anchor = GridBagConstraints.WEST;
-//		gbc_useDHCP.insets = new Insets(0, 0, 5, 5);
-//		gbc_useDHCP.gridx = 0;
-//		gbc_useDHCP.gridy = 2;
-//		panel_4.add(useDHCP, gbc_useDHCP);
-//
-//		JButton useDHCPHelp = new JButton("?");
-//		useDHCPHelp.addMouseListener(new MouseAdapter() {
-//			@Override
-//			public void mouseClicked(MouseEvent e) {
-//				JOptionPane.showMessageDialog(frame, "Select DHCP if "
-//						+ "AppVet is running in a development environment with\n"
-//						+ "a dynamic IP address. This IP address will change\n"
-//						+ "over time.",
-//						"Help", JOptionPane.INFORMATION_MESSAGE);
-//			}
-//		});
-//		GridBagConstraints gbc_useDHCPHelp = new GridBagConstraints();
-//		gbc_useDHCPHelp.anchor = GridBagConstraints.WEST;
-//		gbc_useDHCPHelp.insets = new Insets(0, 0, 5, 5);
-//		gbc_useDHCPHelp.gridx = 1;
-//		gbc_useDHCPHelp.gridy = 2;
-//		panel_4.add(useDHCPHelp, gbc_useDHCPHelp);
-//		
-//        ButtonGroup group = new ButtonGroup();
-//        group.add(useHostNameCheckBox);
-//        group.add(useStaticIp);
-//        group.add(useDHCP);
-//        
+       
 		final JCheckBox keepAppsCheckBox = new JCheckBox("Keep Apps");
 		keepAppsCheckBox.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_keepAppsCheckBox = new GridBagConstraints();
@@ -1007,6 +993,7 @@ public class AppVetInstaller implements ItemListener {
 			processingTextArea.append("Created sessions table\n");
 
 			// Create apps table
+			// TODO: Add the os column for AppVet 2.0
 			sql = "CREATE TABLE apps (appid VARCHAR(32), PRIMARY KEY (appid), appname VARCHAR(120), packagename VARCHAR(120), versioncode VARCHAR(120), versionname VARCHAR(120), filename VARCHAR(120), submittime TIMESTAMP NULL, appstatus VARCHAR(120), statustime TIMESTAMP NULL, username VARCHAR(120), clienthost VARCHAR(120));";
 			try {
 				db.update(sql);
@@ -1019,6 +1006,7 @@ public class AppVetInstaller implements ItemListener {
 			processingTextArea.append("Created apps table\n");
 			
 			// Create toolstatus table
+			// TODO: In lieu of toolstatus, create androidtoolstatus and iostoolstatus tables
 			sql = "CREATE TABLE toolstatus (appid VARCHAR(32), PRIMARY KEY (appid), registration VARCHAR(120), appinfo VARCHAR(120));";
 			try {
 				db.update(sql);
@@ -1069,6 +1057,7 @@ public class AppVetInstaller implements ItemListener {
 			System.out.println("Created config directory: " + APPVET_FILES_HOME + "/conf");
 			processingTextArea.append("Created config directory: " + APPVET_FILES_HOME + "/conf\n");
 			
+			// TODO: Add android and ios tool_adapters folders
 			dirPath = APPVET_FILES_HOME + "/conf/tool_adapters";
 			f = new File(dirPath);
 			if (!f.exists()) {
@@ -1085,6 +1074,7 @@ public class AppVetInstaller implements ItemListener {
 			System.out.println("Created logs directory: " + APPVET_FILES_HOME + "/logs");
 			processingTextArea.append("Created logs directory: " + APPVET_FILES_HOME + "/logs\n");
 			
+			// TODO: Add android and ios icons into appvet_images
 			dirPath = CATALINA_HOME + "/webapps/appvet_images";
 			f = new File(dirPath);
 			if (!f.exists()) {
