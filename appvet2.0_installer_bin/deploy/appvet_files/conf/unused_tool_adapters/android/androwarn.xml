@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appvet:ToolServiceAdapter xmlns:appvet="http://csrc.nist.gov/projects/appvet" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://csrc.nist.gov/projects/appvet ToolServiceAdapter.xsd ">
+  <appvet:Description>
+    <appvet:Name>Androwarn</appvet:Name>
+    <appvet:Id>androwarn</appvet:Id>
+    <appvet:VendorName>Maaaaz</appvet:VendorName>
+    <appvet:VendorWebsite>https://github.com/maaaaz/androwarn</appvet:VendorWebsite>
+    <appvet:ReportFile>TXT</appvet:ReportFile>
+  </appvet:Description>
+  <appvet:Protocol>
+    <appvet:Type>SYNCHRONOUS</appvet:Type>
+    <appvet:Synchronous>
+      <appvet:Request>
+        <appvet:URL>http://gmuanalyzer.nist.gov/atptoolwrapper/SynchronousService</appvet:URL>
+        <appvet:Method>POST</appvet:Method>
+        <appvet:Parameter>
+          <appvet:Name>file</appvet:Name>
+          <appvet:Value>APP_FILE</appvet:Value>
+        </appvet:Parameter>
+      </appvet:Request>
+      <appvet:Response>
+        <appvet:AppVetRiskHeaderName>toolrisk
+        </appvet:AppVetRiskHeaderName>
+        <appvet:ReportPayload>true</appvet:ReportPayload>
+      </appvet:Response>
+    </appvet:Synchronous>
+  </appvet:Protocol>
+</appvet:ToolServiceAdapter>
