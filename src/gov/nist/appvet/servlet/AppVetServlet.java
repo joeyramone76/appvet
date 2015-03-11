@@ -71,26 +71,32 @@ public class AppVetServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) {
 		/* Used for all GET commands. */
-		String userName = request.getParameter("username");
+		String userName = request.getParameter(AppVetParameter.USERNAME.value);
 		/* Used for all GET commands. */
-		String password = request.getParameter("password");
+		String password = request.getParameter(AppVetParameter.PASSWORD.value);
 		/* Used for all GET commands. */
-		String sessionId = request.getParameter("sessionid");
+		String sessionId = request.getParameter(AppVetParameter.SESSIONID.value);
 		/* Used for all GET commands. */
-		String commandStr = request.getParameter("command");
+		String commandStr = request.getParameter(AppVetParameter.COMMAND.value);
 		/* Used for all GET commands except GET_APPVET_LOG. */
-		String appId = request.getParameter("appid");
+		String appId = request.getParameter(AppVetParameter.APPID.value);
+		
 		/* Used only for GET_TOOL_REPORT command. */
-		String report = request.getParameter("report");
+		// TODO Use toolid instead of report name!
+		
+		String report = request.getParameter(AppVetParameter.REPORT.value);
+		
 		/* Used only for DOWNLOAD_APP command. */
-		String appName = request.getParameter("appname");
+		// TODO Use appid instead of app name
+		String appName = request.getParameter(AppVetParameter.APPNAME.value);
+		
 		String clientIpAddress = request.getRemoteAddr();
 
 		try {
 			// ------------------------- Authenticate --------------------------
 			if (isAuthenticated(sessionId, userName, password, clientIpAddress,
 					commandStr)) {
-				if (sessionId != null) {
+				if (userName == null && sessionId != null) {
 					userName = Database.getSessionUser(sessionId);
 				}
 				log.debug("User '" + userName + "' is authenticated.");
@@ -232,31 +238,31 @@ public class AppVetServlet extends HttpServlet {
 				if (item.isFormField()) {
 					incomingParameter = item.getFieldName();
 					incomingValue = item.getString();
-					if (incomingParameter.equals("command")) {
+					if (incomingParameter.equals(AppVetParameter.COMMAND.value)) {
 						/* Used for all POST commands. */
 						commandStr = incomingValue;
 						log.debug("commandStr: " + commandStr);
-					} else if (incomingParameter.equals("username")) {
+					} else if (incomingParameter.equals(AppVetParameter.USERNAME.value)) {
 						/* Used for all POST commands. */
 						userName = incomingValue;
 						log.debug("userName: " + userName);
-					} else if (incomingParameter.equals("password")) {
+					} else if (incomingParameter.equals(AppVetParameter.PASSWORD.value)) {
 						/* Used for all POST commands. */
 						password = incomingValue;
 						log.debug("password: " + password);
-					} else if (incomingParameter.equals("sessionid")) {
+					} else if (incomingParameter.equals(AppVetParameter.SESSIONID.value)) {
 						/* Used for all POST commands. */
 						sessionId = incomingValue;
 						log.debug("sessionId: " + sessionId);
-					} else if (incomingParameter.equals("toolid")) {
+					} else if (incomingParameter.equals(AppVetParameter.TOOLID.value)) {
 						/* Used only for submit report command. */
 						toolId = incomingValue;
 						log.debug("toolid: " + toolId);
-					} else if (incomingParameter.equals("toolrisk")) {
+					} else if (incomingParameter.equals(AppVetParameter.TOOLRISK.value)) {
 						/* Used only for submit report command. */
 						toolRisk = incomingValue;
 						log.debug("toolrisk: " + toolRisk);
-					} else if (incomingParameter.equals("appid")) {
+					} else if (incomingParameter.equals(AppVetParameter.APPID.value)) {
 						/* Used only for submit report command. */
 						appId = incomingValue;
 						log.debug("appId: " + appId);
@@ -603,9 +609,9 @@ public class AppVetServlet extends HttpServlet {
 			}
 		}
 
-		log.debug("Session invalid. Verifying username and password...");
+		log.debug("Session non-existent or invalid. Authenticate using"
+				+ " username and password...");
 
-		// If sessionID was not validated, validate username and password
 		if (userName != null && password != null) {
 			if (Authenticate.isAuthenticated(userName, password)) {
 				return true;
