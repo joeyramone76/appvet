@@ -721,7 +721,12 @@ public class Database {
 	}
 
 
-
+	/** Check if current session is valid. This method does not update the
+	 * session expiration date/time.
+	 * @param sessionId
+	 * @param clientIpAddress
+	 * @return
+	 */
 	public synchronized static boolean isValidSession(String sessionId,
 			String clientIpAddress) {
 		Date date = null;
