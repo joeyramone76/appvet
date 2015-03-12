@@ -828,7 +828,7 @@ public class AppVetPanel extends DockLayoutPanel {
 						+ new Date().getTime();
 				final String url = SERVLET_URL + dateString + 
 						"&" + AppVetParameter.COMMAND.value + "=" + AppVetServletCommand.GET_APPVET_LOG.name() + "=" + 
-						"&" + AppVetParameter.SESSIONID + "=" + sessionId;
+						"&" + AppVetParameter.SESSIONID.value + "=" + sessionId;
 				Window.open(url, "_blank", "");
 			}
 
