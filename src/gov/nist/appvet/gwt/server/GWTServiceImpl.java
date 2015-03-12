@@ -29,7 +29,9 @@ import gov.nist.appvet.shared.Authenticate;
 import gov.nist.appvet.shared.Database;
 import gov.nist.appvet.shared.FileUtil;
 import gov.nist.appvet.shared.Logger;
+import gov.nist.appvet.shared.appvetparameters.AppVetParameter;
 import gov.nist.appvet.shared.os.DeviceOS;
+import gov.nist.appvet.shared.servletcommands.AppVetServletCommand;
 import gov.nist.appvet.shared.status.ToolStatus;
 import gov.nist.appvet.shared.status.ToolStatusManager;
 import gov.nist.appvet.toolmgr.ToolServiceAdapter;
@@ -227,9 +229,9 @@ public class GWTServiceImpl extends RemoteServiceServlet implements GWTService {
 	}
 
 	@Override
-	public List<ToolStatusGwt> getToolResults(DeviceOS os, String sessionId, String appId)
+	public List<ToolStatusGwt> getToolsResults(DeviceOS os, String sessionId, String appId)
 			throws IllegalArgumentException {
-		return getToolStatuses(os, sessionId, appId);
+		return getToolsStatuses(os, sessionId, appId);
 	}
 
 	@Override
@@ -273,7 +275,7 @@ public class GWTServiceImpl extends RemoteServiceServlet implements GWTService {
 		}
 	}
 
-	public static List<ToolStatusGwt> getToolStatuses(DeviceOS os, String sessionId,
+	public static List<ToolStatusGwt> getToolsStatuses(DeviceOS os, String sessionId,
 			String appId) {
 		
 		
@@ -308,126 +310,13 @@ public class GWTServiceImpl extends RemoteServiceServlet implements GWTService {
 		}
 		return toolStatusList;
 		
-		
-//		///////////////
-//		if (os == DeviceOS.ANDROID) {
-//			final ArrayList<ToolStatusGwt> toolStatusList = new ArrayList<ToolStatusGwt>();
-//			ToolServiceAdapter tool = ToolServiceAdapter.getByToolId(os, "registration");
-//			ToolStatusGwt toolStatus = getToolStatusHtml(os, sessionId, appId, tool);
-//			if (toolStatus != null) {
-//				toolStatusList.add(toolStatus);
-//			}
-//			tool = ToolServiceAdapter.getByToolId(os, "appinfo");
-//			toolStatus = getToolStatusHtml(os, sessionId, appId, tool);
-//			if (toolStatus != null) {
-//				toolStatusList.add(toolStatus);
-//			}
-//
-//			final ArrayList<ToolServiceAdapter> tools = AppVetProperties.androidTools;
-//			for (int i = 0; i < tools.size(); i++) {
-//				tool = tools.get(i);
-//				if (!tool.id.equals("registration") && !tool.id.equals("appinfo")
-//						&& !tool.id.equals("override")) {
-//					toolStatus = getToolStatusHtml(os, sessionId, appId, tool);
-//					if (toolStatus != null) {
-//						toolStatusList.add(toolStatus);
-//					}
-//				}
-//			}
-//			return toolStatusList;
-//		} else if (os == DeviceOS.IOS){
-//			final ArrayList<ToolStatusGwt> toolStatusList = new ArrayList<ToolStatusGwt>();
-//			ToolServiceAdapter tool = ToolServiceAdapter.getByToolId(os, "registration");
-//			ToolStatusGwt toolStatus = getToolStatusHtml(os, sessionId, appId, tool);
-//			if (toolStatus != null) {
-//				toolStatusList.add(toolStatus);
-//			}
-//			tool = ToolServiceAdapter.getByToolId(os, "appinfo");
-//			toolStatus = getToolStatusHtml(os, sessionId, appId, tool);
-//			if (toolStatus != null) {
-//				toolStatusList.add(toolStatus);
-//			}
-//
-//			final ArrayList<ToolServiceAdapter> tools = AppVetProperties.iosTools;
-//			for (int i = 0; i < tools.size(); i++) {
-//				tool = tools.get(i);
-//				if (!tool.id.equals("registration") && !tool.id.equals("appinfo")
-//						&& !tool.id.equals("override")) {
-//					toolStatus = getToolStatusHtml(os, sessionId, appId, tool);
-//					if (toolStatus != null) {
-//						toolStatusList.add(toolStatus);
-//					}
-//				}
-//			}
-//			return toolStatusList;
-//			
-//		} else {
-//			log.error("Unknown OS");
-//			return null;
-//		}
-
 	}
 	
-//	public static List<ToolStatusGwt> getAndroidToolStatuses(String sessionId,
-//			String appId) {
-//		final ArrayList<ToolStatusGwt> toolStatusList = new ArrayList<ToolStatusGwt>();
-//		ToolServiceAdapter tool = ToolServiceAdapter.getByAndroidToolId("registration");
-//		ToolStatusGwt toolStatus = getToolStatusHtml("android", sessionId, appId, tool);
-//		if (toolStatus != null) {
-//			toolStatusList.add(toolStatus);
-//		}
-//		tool = ToolServiceAdapter.getByAndroidToolId("appinfo");
-//		toolStatus = getToolStatusHtml("android", sessionId, appId, tool);
-//		if (toolStatus != null) {
-//			toolStatusList.add(toolStatus);
-//		}
-//
-//		final ArrayList<ToolServiceAdapter> tools = AppVetProperties.androidTools;
-//		for (int i = 0; i < tools.size(); i++) {
-//			tool = tools.get(i);
-//			if (!tool.id.equals("registration") && !tool.id.equals("appinfo")
-//					&& !tool.id.equals("override")) {
-//				toolStatus = getToolStatusHtml("android", sessionId, appId, tool);
-//				if (toolStatus != null) {
-//					toolStatusList.add(toolStatus);
-//				}
-//			}
-//		}
-//		return toolStatusList;
-//	}
-	
-//	public static List<ToolStatusGwt> getiOSToolStatuses(String sessionId,
-//			String appId) {
-//		final ArrayList<ToolStatusGwt> toolStatusList = new ArrayList<ToolStatusGwt>();
-//		ToolServiceAdapter tool = ToolServiceAdapter.getByiOSToolId("registration");
-//		ToolStatusGwt toolStatus = getToolStatusHtml("ios", sessionId, appId, tool);
-//		if (toolStatus != null) {
-//			toolStatusList.add(toolStatus);
-//		}
-//		tool = ToolServiceAdapter.getByiOSToolId("appinfo");
-//		toolStatus = getToolStatusHtml("ios", sessionId, appId, tool);
-//		if (toolStatus != null) {
-//			toolStatusList.add(toolStatus);
-//		}
-//
-//		final ArrayList<ToolServiceAdapter> tools = AppVetProperties.iosTools;
-//		for (int i = 0; i < tools.size(); i++) {
-//			tool = tools.get(i);
-//			if (!tool.id.equals("registration") && !tool.id.equals("appinfo")
-//					&& !tool.id.equals("override")) {
-//				toolStatus = getToolStatusHtml("ios", sessionId, appId, tool);
-//				if (toolStatus != null) {
-//					toolStatusList.add(toolStatus);
-//				}
-//			}
-//		}
-//		return toolStatusList;
-//	}
-	
 	
 
-	private static ToolStatusGwt getToolStatusHtml(DeviceOS os, String sessionId, String appId,
-			ToolServiceAdapter tool) {
+	private static ToolStatusGwt getToolStatusHtml(DeviceOS os, 
+			String sessionId, String appId, ToolServiceAdapter tool) {
+		
 		if (tool == null) {
 			log.error("Tool is null");
 			return null;
@@ -508,33 +397,16 @@ public class GWTServiceImpl extends RemoteServiceServlet implements GWTService {
 			final String reportsPath = AppVetProperties.APPS_ROOT + "/"
 					+ appId + "/reports";
 			File reportFile = new File(reportsPath + "/" + tool.reportName);
+			
 			if (reportFile.exists()) {
 				toolStatusGwt.setReport("<a href=\""
-						+ AppVetProperties.SERVLET_URL + dateString
-						+ "&command=GET_TOOL_REPORT&appid=" + appId
-						+ "&sessionid=" + sessionId + "&report="
-						+ tool.reportName + "\" target=\"_blank\">Results</a>");
-			} else {
-				String otherReportName;
-				if (tool.reportName.indexOf("override_security_report") > -1) {
-					otherReportName = "override_security_report.rtf";
-				} else {
-					// See if an old TXT version of the report exists
-					otherReportName = tool.id + "_security_report" + ".txt";
-				}
-				reportFile = new File(reportsPath + "/" + otherReportName);
-				if (reportFile.exists()) {
-					toolStatusGwt.setReport("<a href=\""
-							+ AppVetProperties.SERVLET_URL + dateString
-							+ "&command=GET_TOOL_REPORT&appid=" + appId
-							+ "&sessionid=" + sessionId + "&report="
-							+ otherReportName
-							+ "\" target=\"_blank\">Results</a>");
-				} else {
-					toolStatusGwt
-					.setReport("<div id=\"tabledim\" style='color: gray'>Unavailable</div>");
-				}
-			}
+						+ AppVetProperties.SERVLET_URL + dateString + 
+						"&" + AppVetParameter.COMMAND.value + "=" + AppVetServletCommand.GET_TOOL_REPORT.name() +
+						"&" + AppVetParameter.APPID.value + "=" + appId +
+						"&" + AppVetParameter.SESSIONID.value + "=" + sessionId + 
+						"&" + AppVetParameter.TOOLID.value + "=" + tool.id 
+						+ "\" target=\"_blank\">Results</a>");
+			} 
 		} else {
 			toolStatusGwt
 			.setReport("<div id=\"tabledim\" style='color: gray'>Unavailable</div>");

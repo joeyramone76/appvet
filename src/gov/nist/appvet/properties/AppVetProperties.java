@@ -271,7 +271,8 @@ public class AppVetProperties {
 						androidTools.add(adapter);
 					} else if (os == DeviceOS.IOS){
 						log.debug("Adding iOS tool " + adapter.name);
-						iosTools.add(adapter);					}
+						iosTools.add(adapter);					
+					}
 				}
 			}
 		}

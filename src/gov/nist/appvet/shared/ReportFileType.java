@@ -22,16 +22,22 @@ package gov.nist.appvet.shared;
 
 public enum ReportFileType {
     
-    PDF, 
-    HTML, 
-    TXT, 
-    RTF, 
-    XML;
+    PDF ("pdf"), 
+    HTML ("html"), 
+    TXT ("txt"), 
+    RTF ("rtf"), 
+    XML ("xml");
+    
+    public String value;
+    
+    private ReportFileType(String value) {
+        this.value = value;
+    }
 
-    public synchronized static ReportFileType getFileType(String fileTypeName) {
-	if (fileTypeName != null) {
+    public synchronized static ReportFileType getFileType(String value) {
+	if (value != null) {
 	    for (final ReportFileType f : ReportFileType.values()) {
-		if (fileTypeName.equalsIgnoreCase(f.name())) {
+		if (value.equalsIgnoreCase(f.name())) {
 		    return f;
 		}
 	    }

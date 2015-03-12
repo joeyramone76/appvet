@@ -224,7 +224,7 @@ public class ToolServiceAdapter implements Runnable {
 		checkNullString(configFileName, "reportFileTypeString",
 				reportFileTypeString);
 		reportFileType = ReportFileType.getFileType(reportFileTypeString);
-		reportName = getReportName();
+		reportName = generateReportName();
 		
 		// Protocol config
 		final String protocolName = xml.getXPathValue("/ToolServiceAdapter/Protocol/Type");
@@ -375,19 +375,19 @@ public class ToolServiceAdapter implements Runnable {
 		}
 	}
 
-	private String getReportName() {
+	private String generateReportName() {
 		final String reportSuffix = "_security_report";
 		switch (reportFileType) {
 		case TXT:
-			return id + reportSuffix + ".txt";
+			return id + reportSuffix + "." + ReportFileType.TXT.value;
 		case HTML:
-			return id + reportSuffix + ".html";
+			return id + reportSuffix + "." + ReportFileType.HTML.value;
 		case PDF:
-			return id + reportSuffix + ".pdf";
+			return id + reportSuffix + "." + ReportFileType.PDF.value;
 		case RTF:
-			return id + reportSuffix + ".rtf";
+			return id + reportSuffix + "." + ReportFileType.RTF.value;
 		case XML:
-			return id + reportSuffix + ".xml";
+			return id + reportSuffix + "." + ReportFileType.XML.value;
 		default:
 			return null;
 		}
@@ -444,7 +444,7 @@ public class ToolServiceAdapter implements Runnable {
 				final HttpEntity responseEntity = response.getEntity();
 				final InputStream inputStream = responseEntity.getContent();
 				final String reportPath = appInfo.getReportsPath() + "/"
-						+ getReportName();
+						+ generateReportName();
 				File fileOut = new File(reportPath);
 				FileOutputStream fileOutputStream = new FileOutputStream(
 						fileOut, false);

@@ -46,7 +46,7 @@ public interface GWTServiceAsync {
     void getAllApps(String username, AsyncCallback<List<AppInfoGwt>> callback)
 	    throws IllegalArgumentException;
 
-    void getToolResults(DeviceOS os, String sessionId, String appId,
+    void getToolsResults(DeviceOS os, String sessionId, String appId,
 	    AsyncCallback<List<ToolStatusGwt>> callback)
 	    throws IllegalArgumentException;
     

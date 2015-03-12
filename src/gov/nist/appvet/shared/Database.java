@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.Vector;
 
 
 public class Database {
@@ -407,8 +408,39 @@ public class Database {
 		return false;
 	}
 	
-
-    
+//	/** This method gets tool IDs from the database. This information is also
+//	 * available from AppVetProperties.androidtools and AppVetProperties.iostools.
+//	 * @param os
+//	 * @return
+//	 */
+//	public synchronized static ArrayList<String> getToolIDs(DeviceOS os) {
+//		Connection connection = null;
+//		Statement statement = null;
+//		ResultSet resultSet = null;
+//		String sql;
+//		if (os == DeviceOS.ANDROID) {
+//			sql = "SHOW COLUMNS FROM androidtoolstatus";
+//		} else {
+//			sql = "SHOW COLUMNS FROM iostoolstatus";
+//		}
+//		ArrayList<String> toolIDs = new ArrayList<String>();
+//		try {
+//			connection = getConnection();
+//			statement = connection.createStatement();
+//			resultSet = statement.executeQuery(sql);
+//			while (resultSet.next()) {
+//				//return resultSet.getString(1);
+//				toolIDs.add(resultSet.getString(1));
+//			}
+//		} catch (final SQLException e) {
+//			log.error(e.getMessage());
+//		} finally {
+//			cleanUpResultSet(resultSet);
+//			cleanUpStatement(statement);
+//			cleanUpConnection(connection);
+//		}
+//		return toolIDs;
+//	}
 
 	/**
 	 * Get the next app that has the given appstatus, in ascending order.
@@ -443,7 +475,15 @@ public class Database {
 				+ "'");
 	}
 
-
+	public synchronized static DeviceOS getAppOS(String appid) {
+		String appOSStr = getString("SELECT os FROM apps " + "where appid='" + appid
+				+ "'");
+		if (appOSStr == null) {
+			return null;
+		} else {
+			return DeviceOS.getOS(appOSStr);
+		}
+	}
 
 	public synchronized static String getClientIPAddress(String appid) {
 		return getString("SELECT clienthost FROM apps " + "where appid='"
@@ -601,7 +641,6 @@ public class Database {
 			appInfo.packageName = getAttributeValue(resultSet.getString(3));
 			appInfo.versionCode = getAttributeValue(resultSet.getString(4));
 			appInfo.versionName = getAttributeValue(resultSet.getString(5));
-			//final String appFileName = resultSet.getString(6);
 			appInfo.appFileName = resultSet.getString(6);
 			appInfo.submitTime = resultSet.getTimestamp(7).getTime();
 			String appStatusString = resultSet.getString(8);

@@ -27,6 +27,9 @@
 	<inherits name='gov.nist.appvet.shared.role' />
 	<inherits name='gov.nist.appvet.shared.status' />
 	<inherits name='gov.nist.appvet.shared.os' />
+	<inherits name='gov.nist.appvet.shared.appvetparameters' />
+	<inherits name='gov.nist.appvet.shared.servletcommands' />
+	
 		
 	<!-- Specify the app entry point class. -->
 	<entry-point class='gov.nist.appvet.gwt.client.AppVet' />

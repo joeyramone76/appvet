@@ -33,7 +33,9 @@ import gov.nist.appvet.gwt.shared.AppInfoGwt;
 import gov.nist.appvet.gwt.shared.ConfigInfoGwt;
 import gov.nist.appvet.gwt.shared.ToolStatusGwt;
 import gov.nist.appvet.gwt.shared.UserInfoGwt;
+import gov.nist.appvet.shared.appvetparameters.AppVetParameter;
 import gov.nist.appvet.shared.os.DeviceOS;
+import gov.nist.appvet.shared.servletcommands.AppVetServletCommand;
 import gov.nist.appvet.shared.status.AppStatus;
 import gov.nist.appvet.shared.validate.ValidateBase;
 
@@ -152,7 +154,7 @@ public class AppVetPanel extends DockLayoutPanel {
 		public void onSelectionChange(SelectionChangeEvent event) {
 			final AppInfoGwt selectedApp = appSelectionModel.getSelectedObject();
 			if (selectedApp != null) {
-				appVetServiceAsync.getToolResults(selectedApp.os, sessionId, selectedApp.appId,
+				appVetServiceAsync.getToolsResults(selectedApp.os, sessionId, selectedApp.appId,
 						new AsyncCallback<List<ToolStatusGwt>>() {
 
 					@Override
@@ -163,8 +165,8 @@ public class AppVetPanel extends DockLayoutPanel {
 					}
 
 					@Override
-					public void onSuccess(List<ToolStatusGwt> toolResults) {
-						if ((toolResults == null) || toolResults.isEmpty()) {
+					public void onSuccess(List<ToolStatusGwt> toolsResults) {
+						if ((toolsResults == null) || toolsResults.isEmpty()) {
 							showMessageDialog("AppVet Error",
 									"Could not retrieve app info", true);
 						} else {
@@ -232,7 +234,7 @@ public class AppVetPanel extends DockLayoutPanel {
 							}
 
 							final String htmlToolResults = getHtmlToolResults(
-									selectedApp.appId, toolResults);
+									selectedApp.appId, toolsResults);
 							toolResultsHtml.setHTML(htmlToolResults);
 							logButton.setEnabled(true);
 						}
@@ -824,8 +826,9 @@ public class AppVetPanel extends DockLayoutPanel {
 			public void execute() {
 				final String dateString = "?nocache"
 						+ new Date().getTime();
-				final String url = SERVLET_URL + dateString
-						+ "&command=GET_APPVET_LOG&sessionid=" + sessionId;
+				final String url = SERVLET_URL + dateString + 
+						"&" + AppVetParameter.COMMAND.value + "=" + AppVetServletCommand.GET_APPVET_LOG.name() + "=" + 
+						"&" + AppVetParameter.SESSIONID + "=" + sessionId;
 				Window.open(url, "_blank", "");
 			}
 
@@ -1047,61 +1050,12 @@ public class AppVetPanel extends DockLayoutPanel {
 					final String dateString = "?nocache"
 							+ new Date().getTime();
 					final String url = SERVLET_URL
-							+ dateString
-							+ "&command=DOWNLOAD_REPORTS&appid="
-							+ appId + "&sessionid="
-							+ sessionId;
+							+ dateString + 
+							"&" + AppVetParameter.COMMAND.value + "=" + AppVetServletCommand.DOWNLOAD_REPORTS.name() + 
+							"&" + AppVetParameter.APPID.value + "=" + appId +
+							"&" + AppVetParameter.SESSIONID.value + "=" + sessionId;
 					Window.open(url, "_self", "");
 					
-					
-//					downloadDialog = new DownloadDialogBox(sessionId, selected);
-//					downloadDialog.setText("Download reports");
-//					downloadDialog.center();
-//					downloadDialog.cancelButton.setFocus(true);
-//					downloadDialog.cancelButton
-//					.addClickHandler(new ClickHandler() {
-//						@Override
-//						public void onClick(ClickEvent event) {
-//							killDialogBox(downloadDialog);
-//						}
-//					});
-//					downloadDialog.downloadButton
-//					.addClickHandler(new ClickHandler() {
-//						@Override
-//						public void onClick(ClickEvent event) {
-//							if (downloadDialog.selected_apk_radio_button
-//									.isChecked()) {
-//								final AppInfoGwt selected = appSelectionModel
-//										.getSelectedObject();
-//								final String appId = selected.appId;
-//								final String apk = selected.appName;
-//								final String dateString = "?nocache"
-//										+ new Date().getTime();
-//								final String url = SERVLET_URL
-//										+ dateString
-//										+ "&command=DOWNLOAD_APP&appid="
-//										+ appId + "&sessionid="
-//										+ sessionId + "&appname=" + apk
-//										+ ".apk";
-//								Window.open(url, "_self", "");
-//								killDialogBox(downloadDialog);
-//							} else if (downloadDialog.selected_report_radio_button
-//									.isChecked()) {
-//								final AppInfoGwt selected = appSelectionModel
-//										.getSelectedObject();
-//								final String appId = selected.appId;
-//								final String dateString = "?nocache"
-//										+ new Date().getTime();
-//								final String url = SERVLET_URL
-//										+ dateString
-//										+ "&command=DOWNLOAD_REPORTS&appid="
-//										+ appId + "&sessionid="
-//										+ sessionId;
-//								Window.open(url, "_self", "");
-//								killDialogBox(downloadDialog);
-//							}
-//						}
-//					});
 				}
 			}
 		});
@@ -1224,9 +1178,10 @@ public class AppVetPanel extends DockLayoutPanel {
 				if (selected != null) {
 					final String appId = selected.appId;
 					final String dateString = "?nocache" + new Date().getTime();
-					final String url = SERVLET_URL + dateString
-							+ "&command=GET_APP_LOG&appid=" + appId
-							+ "&sessionid=" + sessionId;
+					final String url = SERVLET_URL + dateString +
+							"&" + AppVetParameter.COMMAND.value + "=" + AppVetServletCommand.GET_APP_LOG.name() +
+							"&" + AppVetParameter.APPID.value + "=" + appId + 
+							"&" + AppVetParameter.SESSIONID.value + "=" + sessionId;
 					Window.open(url, "_blank", "");
 				}
 			}

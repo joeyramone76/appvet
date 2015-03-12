@@ -17,16 +17,20 @@
  * Permission to use this software is contingent upon your acceptance
  * of the terms of this agreement.
  */
-package gov.nist.appvet.servlet;
+package gov.nist.appvet.shared.servletcommands;
+
+import java.io.Serializable;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 public enum AppVetServletCommand {
 
-	AUTHENTICATE,
 	GET_STATUS, 
+	GET_APP_TOOL_IDS,
+	GET_ALL_TOOL_IDS,
 	GET_TOOL_REPORT, 
 	GET_APP_LOG, 
 	GET_APPVET_LOG, 
-	DOWNLOAD_APP, 
 	DOWNLOAD_REPORTS, 
 	SUBMIT_APP, 
 	SUBMIT_REPORT;

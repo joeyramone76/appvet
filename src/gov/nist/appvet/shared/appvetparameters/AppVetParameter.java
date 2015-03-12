@@ -1,4 +1,5 @@
-package gov.nist.appvet.servlet;
+package gov.nist.appvet.shared.appvetparameters;
+
 
 /** Enumeration of possible incoming servlet parameters for both GET and POST
  * HTTP requests.
@@ -10,11 +11,10 @@ public enum AppVetParameter {
 	COMMAND ("command"),
 	APPID ("appid"),
 	REPORT ("report"),
-	APPNAME ("appname"),
 	TOOLID ("toolid"),
 	TOOLRISK ("toolrisk");
 
-	String value;
+	public String value;
 	
     private AppVetParameter(String value) {
         this.value = value;

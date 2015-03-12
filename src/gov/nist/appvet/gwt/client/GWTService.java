@@ -47,7 +47,7 @@ public interface GWTService extends RemoteService {
     List<AppInfoGwt> getAllApps(String username)
 	    throws IllegalArgumentException;
     
-    List<ToolStatusGwt> getToolResults(DeviceOS os, String sessionId, String appId)
+    List<ToolStatusGwt> getToolsResults(DeviceOS os, String sessionId, String appId)
     	    throws IllegalArgumentException;
 
 //    List<ToolStatusGwt> getAndroidToolResults(String sessionId, String appId)
