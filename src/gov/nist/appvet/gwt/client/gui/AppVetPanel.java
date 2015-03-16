@@ -827,7 +827,7 @@ public class AppVetPanel extends DockLayoutPanel {
 				final String dateString = "?nocache"
 						+ new Date().getTime();
 				final String url = SERVLET_URL + dateString + 
-						"&" + AppVetParameter.COMMAND.value + "=" + AppVetServletCommand.GET_APPVET_LOG.name() + "=" + 
+						"&" + AppVetParameter.COMMAND.value + "=" + AppVetServletCommand.GET_APPVET_LOG.name() + 
 						"&" + AppVetParameter.SESSIONID.value + "=" + sessionId;
 				Window.open(url, "_blank", "");
 			}

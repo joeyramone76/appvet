@@ -106,6 +106,8 @@ public class AppVetServlet extends HttpServlet {
 			}
 
 			// ----------------------- Verify App ID -------------------------
+			log.debug("commandStr: " + commandStr);
+			
 			final AppVetServletCommand command = AppVetServletCommand
 					.getCommand(commandStr);
 
