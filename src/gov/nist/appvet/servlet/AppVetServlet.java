@@ -89,6 +89,7 @@ public class AppVetServlet extends HttpServlet {
 		String toolId = request.getParameter(AppVetParameter.TOOLID.value);
 		String clientIpAddress = request.getRemoteAddr();
 
+		
 		try {
 			// ------------------------- Authenticate --------------------------
 			if (isAuthenticated(sessionId, userName, password, clientIpAddress,
