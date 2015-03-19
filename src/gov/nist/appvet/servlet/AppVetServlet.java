@@ -88,6 +88,8 @@ public class AppVetServlet extends HttpServlet {
 		/* Used only for GET_TOOL_REPORT command. */
 		String toolId = request.getParameter(AppVetParameter.TOOLID.value);
 		String clientIpAddress = request.getRemoteAddr();
+		
+		// GIT test from appsec
 
 		try {
 			// ------------------------- Authenticate --------------------------
