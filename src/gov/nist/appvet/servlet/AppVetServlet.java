@@ -737,14 +737,14 @@ public class AppVetServlet extends HttpServlet {
 		StringBuffer payload = new StringBuffer(
 				"AppVet Android and iOS tool IDs\n\n");
 
-		payload.append("Android tool IDs:\n");
+		payload.append("* Android tool IDs:\n");
 		ArrayList<ToolServiceAdapter> androidTools = AppVetProperties.androidTools;
 		for (int i = 0; i < androidTools.size(); i++) {
 			ToolServiceAdapter androidTool = androidTools.get(i);
 			payload.append(androidTool.id + "\n");
 		}
 
-		payload.append("iOS tool IDs:\n");
+		payload.append("* iOS tool IDs:\n");
 		ArrayList<ToolServiceAdapter> iosTools = AppVetProperties.iosTools;
 		for (int i = 0; i < iosTools.size(); i++) {
 			ToolServiceAdapter iosTool = iosTools.get(i);
