@@ -25,7 +25,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 public enum AppVetServletCommand {
 
-	GET_STATUS, 
+	GET_APP_STATUS, 
+	GET_APP_TOOLS_STATUS,
 	GET_APP_TOOL_IDS,
 	GET_ALL_TOOL_IDS,
 	GET_TOOL_REPORT, 

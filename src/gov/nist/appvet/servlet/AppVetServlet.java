@@ -64,6 +64,8 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
+import gov.nist.appvet.shared.role.Role;
+
 public class AppVetServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
@@ -128,7 +130,7 @@ public class AppVetServlet extends HttpServlet {
 
 			switch (command) {
 
-			case GET_STATUS:
+			case GET_APP_STATUS:
 				/*
 				 * Get the current processing status of the app. Used only by
 				 * non-GUI clients. GUI clients get status via GWT RPC.
@@ -174,7 +176,7 @@ public class AppVetServlet extends HttpServlet {
 			case GET_APPVET_LOG:
 				/* Get the main AppVet log. Used by GUI and non-GUI clients. */
 				log.debug(userName + " invoked " + command.name());
-				returnAppVetLog(response, clientIpAddress);
+				returnAppVetLog(userName, response, clientIpAddress);
 				break;
 			case DOWNLOAD_REPORTS:
 				/*
@@ -669,9 +671,17 @@ public class AppVetServlet extends HttpServlet {
 		}
 	}
 
-	private void returnAppVetLog(HttpServletResponse response,
+	private void returnAppVetLog(String userName, HttpServletResponse response,
 			String clientIpAddress) {
 		try {
+			Role userRole = Database.getRole(userName);
+			if (userRole != Role.ADMIN){
+				sendHttpResponse(null, null, null, clientIpAddress,
+						"Unauthorized access to AppVet log", response,
+						HttpServletResponse.SC_UNAUTHORIZED, true);
+				return;
+			}
+			
 			String appVetLogPath = AppVetProperties.LOG_PATH;
 			File logFile = new File(appVetLogPath);
 			try {
