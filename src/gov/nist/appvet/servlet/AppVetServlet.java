@@ -769,14 +769,14 @@ public class AppVetServlet extends HttpServlet {
 		DeviceOS appOS = Database.getAppOS(appid);
 
 		if (appOS == DeviceOS.ANDROID) {
-			payload.append("Android tool IDs for app: " + appid + "\n");
+			//payload.append("Android tool IDs for app: " + appid + "\n");
 			ArrayList<ToolServiceAdapter> androidTools = AppVetProperties.androidTools;
 			for (int i = 0; i < androidTools.size(); i++) {
 				ToolServiceAdapter androidTool = androidTools.get(i);
 				payload.append(androidTool.id + "\n");
 			}
 		} else if (appOS == DeviceOS.IOS) {
-			payload.append("iOS tool IDs for app: " + appid + "\n");
+			//payload.append("iOS tool IDs for app: " + appid + "\n");
 			ArrayList<ToolServiceAdapter> iosTools = AppVetProperties.iosTools;
 			for (int i = 0; i < iosTools.size(); i++) {
 				ToolServiceAdapter iosTool = iosTools.get(i);
