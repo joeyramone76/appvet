@@ -117,6 +117,7 @@ public class AppVetServlet extends HttpServlet {
 
 			if (appId != null && command != AppVetServletCommand.GET_APPVET_LOG) {
 				/* GET_APPVET_LOG does not require an app ID. */
+				log.debug("INCOMING APPID |" + appId + "|");
 				boolean appExists = Database.appExists(appId);
 				if (!appExists) {
 					sendHttpResponse(userName, appId, commandStr,
@@ -139,11 +140,50 @@ public class AppVetServlet extends HttpServlet {
 						+ appId);
 				final AppStatus currentStatus = AppStatusManager
 						.getAppStatus(appId);
+				if (currentStatus == null) 
+					log.warn("CURRENT STATUS IS NULL!");
+				else 
+					log.debug("CURRENT STATUS IS: " + currentStatus.name());
 				sendHttpResponse(userName, appId, command.name(),
 						clientIpAddress,
-						"CURRENT_STATUS=" + currentStatus.name(), response,
+						currentStatus.name(), response,
 						HttpServletResponse.SC_OK, false);
 				break;
+			case GET_APP_TOOLS_STATUS:
+				/*
+				 * Get the current processing status of the app. Used only by
+				 * non-GUI clients. GUI clients get status via GWT RPC.
+				 */
+				log.debug(userName + " invoked " + command.name() + " on app "
+						+ appId);
+				/* Get platform of the app given the appId */
+				DeviceOS appOS = Database.getAppOS(appId);
+				String toolStatuses = "";
+				
+				if (appOS == DeviceOS.ANDROID) {
+					for (int i = 0; i < AppVetProperties.androidTools.size(); i++) {
+						ToolServiceAdapter toolAdapter = AppVetProperties.androidTools.get(i);
+						String androidToolId = toolAdapter.id;
+						ToolStatus toolStatus = 
+								ToolStatusManager.getToolStatus(appOS, appId, androidToolId);
+						toolStatuses += androidToolId + "=" + toolStatus + "\n";
+					}
+				} else if (appOS == DeviceOS.IOS){
+					for (int i = 0; i < AppVetProperties.iosTools.size(); i++) {
+						ToolServiceAdapter toolAdapter = AppVetProperties.iosTools.get(i);
+						String iosToolId = toolAdapter.id;
+						ToolStatus toolStatus = 
+								ToolStatusManager.getToolStatus(appOS, appId, iosToolId);
+						toolStatuses += iosToolId + "=" + toolStatus + "\n";
+					}
+				}
+				
+				sendHttpResponse(userName, appId, command.name(),
+						clientIpAddress,
+						toolStatuses, response,
+						HttpServletResponse.SC_OK, false);
+				break;
+				
 			case GET_ALL_TOOL_IDS:
 				/* Get a list of tools associated with an app. */
 				log.debug(userName + " invoked " + command.name());
@@ -162,6 +202,29 @@ public class AppVetServlet extends HttpServlet {
 				 */
 				log.debug(userName + " invoked " + command.name() + " of "
 						+ toolId + " report on app " + appId);
+				
+				DeviceOS os = Database.getAppOS(appId);
+				ToolStatus toolStatus = 
+						ToolStatusManager.getToolStatus(os, appId, toolId);
+
+				if (toolStatus != null) {
+					if (toolStatus == ToolStatus.ERROR
+							|| toolStatus == ToolStatus.FAIL
+							|| toolStatus == ToolStatus.WARNING
+							|| toolStatus == ToolStatus.PASS) {
+						downloadReports(response, appId, sessionId,
+								clientIpAddress);
+					} else {
+						sendHttpResponse(userName, appId, command.name(),
+								clientIpAddress, "Tool " + toolId + " for app " + appId
+										+ " has not finished processing",
+								response, HttpServletResponse.SC_BAD_REQUEST,
+								true);
+					}
+				} else {
+					log.warn("Null appstatus for DOWNLOAD_REPORTS");
+				}
+				
 				returnReport(response, appId, toolId, clientIpAddress);
 				break;
 			case GET_APP_LOG:
@@ -203,7 +266,7 @@ public class AppVetServlet extends HttpServlet {
 								true);
 					}
 				} else {
-					log.warn("Null appstatus in doGet()");
+					log.warn("Null appstatus for DOWNLOAD_REPORTS");
 				}
 				break;
 			default:
@@ -353,12 +416,13 @@ public class AppVetServlet extends HttpServlet {
 					if (appInfo == null)
 						return;
 					else {
-						sendHttpResponse(userName, appInfo.appId, commandStr,
-								clientIpAddress, "appid=" + appInfo.appId,
-								response, HttpServletResponse.SC_ACCEPTED,
-								false);
 						Registration registration = new Registration(appInfo);
 						registration.registerApp();
+						
+						sendHttpResponse(userName, appInfo.appId, commandStr,
+								clientIpAddress, appInfo.appId,
+								response, HttpServletResponse.SC_ACCEPTED,
+								false);
 					}
 				}
 				break;
@@ -869,9 +933,9 @@ public class AppVetServlet extends HttpServlet {
 			response.setStatus(httpResponseCode);
 			response.setContentType("text/html");
 			// Return app ID for the new app submission
-			response.setHeader("appid", appId);
+			//response.setHeader("appid", appId);
 			out = response.getWriter();
-			out.println(message);
+			out.print(message);
 
 			out.flush();
 			if (errorMessage) {

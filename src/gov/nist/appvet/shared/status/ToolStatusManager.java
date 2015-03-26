@@ -29,6 +29,8 @@ public class ToolStatusManager {
 	private ToolStatusManager() {
 	}
 
+	// TODO: Change method call to remove os. We can compute os in this method
+	// via Database.getAppOS(appId).
 	public synchronized static ToolStatus getToolStatus(DeviceOS os, String appid, 
 			String toolId) {
 		String toolStatusName = getToolStatusName(os, appid, toolId);
