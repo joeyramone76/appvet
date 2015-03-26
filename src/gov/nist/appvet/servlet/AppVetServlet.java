@@ -416,13 +416,16 @@ public class AppVetServlet extends HttpServlet {
 					if (appInfo == null)
 						return;
 					else {
-						Registration registration = new Registration(appInfo);
-						registration.registerApp();
-						
+						// Send the response before completing the registration
 						sendHttpResponse(userName, appInfo.appId, commandStr,
 								clientIpAddress, appInfo.appId,
 								response, HttpServletResponse.SC_ACCEPTED,
 								false);
+						
+						Registration registration = new Registration(appInfo);
+						registration.registerApp();
+						
+
 					}
 				}
 				break;
