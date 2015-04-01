@@ -140,10 +140,6 @@ public class AppVetServlet extends HttpServlet {
 						+ appId);
 				final AppStatus currentStatus = AppStatusManager
 						.getAppStatus(appId);
-				if (currentStatus == null) 
-					log.warn("CURRENT STATUS IS NULL!");
-				else 
-					log.debug("CURRENT STATUS IS: " + currentStatus.name());
 				sendHttpResponse(userName, appId, command.name(),
 						clientIpAddress,
 						currentStatus.name(), response,
@@ -811,8 +807,7 @@ public class AppVetServlet extends HttpServlet {
 	public void returnAllToolIDs(HttpServletResponse response,
 			String clientIpAddress) {
 
-		StringBuffer payload = new StringBuffer(
-				"AppVet Android and iOS tool IDs\n\n");
+		StringBuffer payload = new StringBuffer("");
 
 		payload.append("* Android tool IDs:\n");
 		ArrayList<ToolServiceAdapter> androidTools = AppVetProperties.androidTools;
