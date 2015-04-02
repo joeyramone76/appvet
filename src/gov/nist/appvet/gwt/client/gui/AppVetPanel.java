@@ -132,7 +132,7 @@ public class AppVetPanel extends DockLayoutPanel {
 	private String[] iosToolNames = null;
 	private String[] iosToolIDs = null;
 	private String[] iosToolTypes = null;
-	
+
 	private InlineLabel appsLabel = null;
 	private int iconVersion = 0;
 	private static double NORTH_PANEL_HEIGHT = 130.0;
@@ -172,7 +172,7 @@ public class AppVetPanel extends DockLayoutPanel {
 									"Could not retrieve app info", true);
 						} else {
 							String appNameHtml = null;
-							
+
 							/* Set app icon */
 							appInfoIcon.setVisible(true);
 
@@ -247,36 +247,63 @@ public class AppVetPanel extends DockLayoutPanel {
 
 					public String getHtmlToolResults(String appId,
 							List<ToolStatusGwt> toolResults) {
-						
+
 						/* Get pre-processing analysis results */
 						String statuses = "<hr><div id=\"appInfoSectionHeader\">PreProcessing</div>\n";
+						int preprocessorToolCount = 0;
+
 						for (int i = 0; i < toolResults.size(); i++) {
 							AnalysisType analysisType = toolResults.get(i).getAnalysisType();
 							if (analysisType == AnalysisType.PREPROCESSOR) {
+								preprocessorToolCount++;
 								statuses += getToolStatusHtmlDisplay(toolResults.get(i));
 							}
 						}
-						
+						if (preprocessorToolCount == 0) {
+							statuses += getNAStatus();
+						}
+
 						/* Get analysis tool results. */
 						statuses += "<hr><div id=\"appInfoSectionHeader\">Tools</div>\n";
+						int analysisToolCount = 0;
 						for (int i = 0; i < toolResults.size(); i++) {
 							AnalysisType analysisType = toolResults.get(i).getAnalysisType();
 							if (analysisType == AnalysisType.ANALYSISTOOL) {
+								analysisToolCount++;
 								statuses += getToolStatusHtmlDisplay(toolResults.get(i));
 							}
+						}	
+						if (analysisToolCount == 0) {
+							statuses += getNAStatus();
 						}
-						
+
 						/* Get audit results */
 						statuses += "<hr><div id=\"appInfoSectionHeader\">Audit</div>\n";
+						int auditCount = 0;
 						for (int i = 0; i < toolResults.size(); i++) {
 							AnalysisType analysisType = toolResults.get(i).getAnalysisType();
 							if (analysisType == AnalysisType.AUDIT) {
+								auditCount++;
 								statuses += getToolStatusHtmlDisplay(toolResults.get(i));
 							}
 						}
+						if (auditCount == 0) {
+							statuses += getNAStatus();
+						}
+
 						return statuses;
 					}
-					
+
+					public String getNAStatus() {
+						return "<table>\n"
+								+ "<tr>\n"
+								+ "<td align=\"left\" style='color: darkslategray; size:18; weight: bold'width=\"185\">"
+								+ "N/A"
+								+ "</td>\n"
+								+ "</tr>\n"
+								+ "</table>\n";
+					}
+
 					public String getToolStatusHtmlDisplay(ToolStatusGwt toolStatus) {
 						return "<table>"
 								+ "<tr>\n"
@@ -296,7 +323,7 @@ public class AppVetPanel extends DockLayoutPanel {
 			}
 		}
 	}
-	
+
 
 	class AppUploadFormHandler implements FormHandler {
 		AppUploadDialogBox submitAppDialogBox = null;
@@ -368,7 +395,7 @@ public class AppVetPanel extends DockLayoutPanel {
 		public void onSubmit(FormSubmitEvent event) {
 			String reportFileName = reportUploadDialogBox.fileUpload
 					.getFilename();
-			
+
 			String[] availableToolNames = null;
 			String[] availableToolTypes = null;
 			if (selected.os == DeviceOS.ANDROID) {
@@ -378,7 +405,7 @@ public class AppVetPanel extends DockLayoutPanel {
 				availableToolNames = iosToolNames;
 				availableToolTypes = iosToolTypes;
 			}
-			
+
 			if (reportFileName.length() == 0) {
 				showMessageDialog("Report Submission Error",
 						"No file selected", true);
@@ -673,7 +700,7 @@ public class AppVetPanel extends DockLayoutPanel {
 				HasHorizontalAlignment.ALIGN_CENTER);
 		horizontalPanel_6.setCellVerticalAlignment(searchButton,
 				HasVerticalAlignment.ALIGN_MIDDLE);
-		
+
 		Image image = new Image("images/nist-gray.png");
 		horizontalPanel_5.add(image);
 		horizontalPanel_5.setCellHorizontalAlignment(image, HasHorizontalAlignment.ALIGN_RIGHT);
@@ -816,13 +843,13 @@ public class AppVetPanel extends DockLayoutPanel {
 
 		});
 
-		
+
 		final MenuItem documentationMenuItem = new MenuItem("Documentation", false,
 				new Command() {
 
 			@Override
 			public void execute() {
-	            Window.open("http://csrc.nist.gov/projects/appvet/", "_blank", null);
+				Window.open("http://csrc.nist.gov/projects/appvet/", "_blank", null);
 			}
 
 		});
@@ -831,7 +858,7 @@ public class AppVetPanel extends DockLayoutPanel {
 		appVetMenuBar.addItem(helpMenuItem);
 		helpMenuBar.addItem(aboutMenuItem);
 
-		
+
 		horizontalPanel_3.add(statusMessageLabel);
 		horizontalPanel_3.setCellVerticalAlignment(statusMessageLabel,
 				HasVerticalAlignment.ALIGN_MIDDLE);
@@ -906,16 +933,16 @@ public class AppVetPanel extends DockLayoutPanel {
 		addSouth(horizontalPanel_2, 35.0);
 		horizontalPanel_2.setSize("100%", "");
 
-//		final Label lastUpdatedLabel = new Label("Last updated: "
-//				+ configInfo.getLastUpdated());
-//		lastUpdatedLabel
-//		.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
-//		lastUpdatedLabel.setStyleName("lastUpdated");
-//		horizontalPanel_2.add(lastUpdatedLabel);
-//		lastUpdatedLabel.setWidth("200px");
-//		horizontalPanel_2.setCellWidth(lastUpdatedLabel, "100%");
-//		horizontalPanel_2.setCellVerticalAlignment(lastUpdatedLabel,
-//				HasVerticalAlignment.ALIGN_MIDDLE);
+		//		final Label lastUpdatedLabel = new Label("Last updated: "
+		//				+ configInfo.getLastUpdated());
+		//		lastUpdatedLabel
+		//		.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+		//		lastUpdatedLabel.setStyleName("lastUpdated");
+		//		horizontalPanel_2.add(lastUpdatedLabel);
+		//		lastUpdatedLabel.setWidth("200px");
+		//		horizontalPanel_2.setCellWidth(lastUpdatedLabel, "100%");
+		//		horizontalPanel_2.setCellVerticalAlignment(lastUpdatedLabel,
+		//				HasVerticalAlignment.ALIGN_MIDDLE);
 
 		final HorizontalSplitPanel centerAppVetSplitPanel = new HorizontalSplitPanel();
 		centerAppVetSplitPanel.setSplitPosition("64%");
@@ -1073,7 +1100,7 @@ public class AppVetPanel extends DockLayoutPanel {
 				if (selected == null) {
 					showMessageDialog("AppVet Error", "No app is selected", true);
 				} else {
-					
+
 					final String appId = selected.appId;
 					final String dateString = "?nocache"
 							+ new Date().getTime();
@@ -1083,7 +1110,7 @@ public class AppVetPanel extends DockLayoutPanel {
 							"&" + AppVetParameter.APPID.value + "=" + appId +
 							"&" + AppVetParameter.SESSIONID.value + "=" + sessionId;
 					Window.open(url, "_self", "");
-					
+
 				}
 			}
 		});
@@ -1106,7 +1133,7 @@ public class AppVetPanel extends DockLayoutPanel {
 			public void onClick(ClickEvent event) {
 				final AppInfoGwt selected = appSelectionModel
 						.getSelectedObject();
-				
+
 				String[] availableToolNames = null;
 				String[] availableToolIDs = null;
 				if (selected.os == DeviceOS.ANDROID) {
@@ -1116,7 +1143,7 @@ public class AppVetPanel extends DockLayoutPanel {
 					availableToolNames = iosToolNames;
 					availableToolIDs = iosToolIDs;
 				}
-				
+
 				if (selected == null) {
 					showMessageDialog("AppVet Error", "No app is selected", true);
 				} else {
@@ -1234,11 +1261,11 @@ public class AppVetPanel extends DockLayoutPanel {
 		addReportButton.setVisible(true);
 		logButton.setVisible(true);
 
-//		final Label lblNewLabel_1 = new Label("*See log for system errors");
-//		lblNewLabel_1.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
-//		appInfoVerticalPanel.add(lblNewLabel_1);
-//		lblNewLabel_1.setWidth("200px");
-//		appInfoVerticalPanel.setCellWidth(lblNewLabel_1, "100%");
+		//		final Label lblNewLabel_1 = new Label("*See log for system errors");
+		//		lblNewLabel_1.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+		//		appInfoVerticalPanel.add(lblNewLabel_1);
+		//		lblNewLabel_1.setWidth("200px");
+		//		appInfoVerticalPanel.setCellWidth(lblNewLabel_1, "100%");
 		toolResultsHtml = new HTML("", true);
 		appInfoVerticalPanel.add(toolResultsHtml);
 		appInfoVerticalPanel.setCellWidth(toolResultsHtml, "100%");
@@ -1463,7 +1490,7 @@ public class AppVetPanel extends DockLayoutPanel {
 	public synchronized void setUpdatedApps(List<AppInfoGwt> updatedAppsList) {
 		for (int i = 0; i < updatedAppsList.size(); i++) {
 			final AppInfoGwt updatedAppInfo = updatedAppsList.get(i);
-			
+
 			log.info("UPDATED APPSTATUS: " + updatedAppInfo.appStatus.name());
 			int matchIndex = -1;
 			for (int j = 0; j < allApps.size(); j++) {
