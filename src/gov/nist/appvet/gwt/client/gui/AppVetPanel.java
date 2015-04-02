@@ -297,7 +297,7 @@ public class AppVetPanel extends DockLayoutPanel {
 					public String getNAStatus() {
 						return "<table>\n"
 								+ "<tr>\n"
-								+ "<td align=\"left\" style='color: darkslategray; size:18; weight: bold'width=\"185\">"
+								+ "<td align=\"left\" style='color: dimgray; size:18; weight: bold'width=\"185\">"
 								+ "N/A"
 								+ "</td>\n"
 								+ "</tr>\n"
