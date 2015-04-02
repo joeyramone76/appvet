@@ -145,7 +145,9 @@ public class GWTServiceImpl extends RemoteServiceServlet implements GWTService {
 			configInfo.setAndroidToolType(toolReportFileTypes);
 		} else {
 			log.error("GWT DataProvider cannot read "
-					+ "tool names from AppVetProperties");
+					+ "Android tool names from AppVetProperties. Tools must include "
+					+ " at least 'appinfo'"
+					+ " and 'registration' tools.");
 			return null;
 		}
 		
@@ -177,10 +179,11 @@ public class GWTServiceImpl extends RemoteServiceServlet implements GWTService {
 			configInfo.setiOSToolTypes(toolReportFileTypes);
 		} else {
 			log.error("GWT DataProvider cannot read "
-					+ "tool names from AppVetProperties");
+					+ "iOS tool names from AppVetProperties. Tools must include "
+					+ " at least 'appinfo'"
+					+ " and 'registration' tools.");
 			return null;
 		}
-		
 		
 		return configInfo;
 	}
@@ -332,7 +335,8 @@ public class GWTServiceImpl extends RemoteServiceServlet implements GWTService {
 		} else {
 			websiteHrefTag = tool.name;
 		}
-		toolStatusGwt.setTool(websiteHrefTag);
+		toolStatusGwt.setAnalysisType(tool.analysisType);
+		toolStatusGwt.setToolDisplayName(websiteHrefTag);
 		boolean toolCompleted = false;
 		final ToolStatus toolStatus = 
 				ToolStatusManager.getToolStatus(os, appId, tool.id);

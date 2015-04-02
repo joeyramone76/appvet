@@ -211,7 +211,7 @@ public class AppVetProperties {
 		printVal("URL", URL);
 		SERVLET_URL = URL + "/AppVetServlet";
 		printVal("SERVLET_URL", SERVLET_URL);
-
+		
 		KEEP_APPS = new Boolean(xml.getXPathValue("/AppVet/Apps/KeepApps")).booleanValue();
 		printVal("KEEP_APPS", KEEP_APPS);
 
@@ -226,9 +226,11 @@ public class AppVetProperties {
 		System.setProperty(
 				"org.apache.commons.logging.simplelog.log.org.apache.http.wire",
 				"ERROR");
-		androidTools = new ArrayList<ToolServiceAdapter>();
-		iosTools = new ArrayList<ToolServiceAdapter>();
 		
+		androidTools = new ArrayList<ToolServiceAdapter>();
+
+		iosTools = new ArrayList<ToolServiceAdapter>();
+
 		if (!Database.adminExists()) {
 			log.error("No AppVet administrator found in database.");
 		}
@@ -255,21 +257,31 @@ public class AppVetProperties {
 		File folder = null;
 
 		if (os == DeviceOS.ANDROID){
+
 			folder = new File(TOOLS_CONF_ROOT + "/android");
 		} else if (os == DeviceOS.IOS){
+
 			folder = new File(TOOLS_CONF_ROOT + "/ios");
+		} else {
+			log.error("Unknown OS found");
 		}
 		
 		File[] listOfFiles = folder.listFiles();
+
 		for (final File toolConfigFile : listOfFiles) {
+
 			if (toolConfigFile.isFile()) {
+
 				final String toolConfigFileName = toolConfigFile.getName();
 				if (toolConfigFileName.endsWith(".xml")) {
+
 					final ToolServiceAdapter adapter = new ToolServiceAdapter(toolConfigFile);
 					if (os == DeviceOS.ANDROID){
+
 						log.debug("Adding Android tool " + adapter.name);
 						androidTools.add(adapter);
 					} else if (os == DeviceOS.IOS){
+
 						log.debug("Adding iOS tool " + adapter.name);
 						iosTools.add(adapter);					
 					}
@@ -281,7 +293,7 @@ public class AppVetProperties {
 		
 		ArrayList<String> tableColumnNames = null;
 		if (os == DeviceOS.ANDROID){
-			
+
 			folder = new File(TOOLS_CONF_ROOT + "/android");
 			tableColumnNames = Database
 					.getTableColumnNames("androidtoolstatus");
@@ -291,6 +303,7 @@ public class AppVetProperties {
 				return;
 			}
 			for (int i = 0; i < androidTools.size(); i++) {
+
 				final ToolServiceAdapter tool = androidTools.get(i);
 				if (!tableColumnNames.contains(tool.id)) {
 					// Add to table "androidtoolstatus"
@@ -336,82 +349,4 @@ public class AppVetProperties {
 
 	}
 
-//	private static void setupAndroidTools() {
-//		File folder = new File(TOOLS_CONF_ROOT + "/android");
-//		File[] listOfFiles = folder.listFiles();
-//		for (final File toolConfigFile : listOfFiles) {
-//			if (toolConfigFile.isFile()) {
-//				final String toolConfigFileName = toolConfigFile.getName();
-//				if (toolConfigFileName.endsWith(".xml")) {
-//					final ToolServiceAdapter adapter = new ToolServiceAdapter(toolConfigFile);
-//					log.debug("Adding Android tool " + adapter.name);
-//					androidTools.add(adapter);
-//				}
-//			}
-//		}
-//		listOfFiles = null;
-//		folder = null;
-//		// Check that all Android tools have a column in the toolstatus table.
-//		ArrayList<String> tableColumnNames = Database
-//				.getTableColumnNames("androidtoolstatus");
-//		if (tableColumnNames == null) {
-//			log.error("Could not get androidtoolstatus column names");
-//			return;
-//		}
-//		for (int i = 0; i < androidTools.size(); i++) {
-//			final ToolServiceAdapter tool = androidTools.get(i);
-//			if (!tableColumnNames.contains(tool.id)) {
-//				// Add to table "androidtoolstatus"
-//				tableColumnNames.add(tool.id);
-//				if (Database.addTableColumn("androidtoolstatus", tool.id, "VARCHAR (120)")) {
-//					log.debug("Added Android tool '" + tool.id + "' to androidtoolstatus table");
-//				} else {
-//					log.error("Could not add Android tool '" + tool.id
-//							+ "' to androidtoolstatus table");
-//				}
-//			}
-//		}
-//		tableColumnNames = null;
-//		log.debug("Found " + androidTools.size() + " Android tools");
-//	}
-//
-//	private static void setupiOSTools() {
-//		File folder = new File(TOOLS_CONF_ROOT + "/ios");
-//		File[] listOfFiles = folder.listFiles();
-//		for (final File toolConfigFile : listOfFiles) {
-//			if (toolConfigFile.isFile()) {
-//				final String toolConfigFileName = toolConfigFile.getName();
-//				if (toolConfigFileName.endsWith(".xml")) {
-//					final ToolServiceAdapter adapter = new ToolServiceAdapter(toolConfigFile);
-//					log.debug("Adding iOS tool " + adapter.name);
-//					iosTools.add(adapter);
-//				}
-//			}
-//		}
-//		listOfFiles = null;
-//		folder = null;
-//		// Check that all available tools have a column in the toolstatus table.
-//		ArrayList<String> tableColumnNames = Database
-//				.getTableColumnNames("iostoolstatus");
-//		if (tableColumnNames == null) {
-//			log.error("Could not get iostoolstatus column names");
-//			return;
-//		}
-//		for (int i = 0; i < iosTools.size(); i++) {
-//			final ToolServiceAdapter tool = iosTools.get(i);
-//			if (!tableColumnNames.contains(tool.id)) {
-//				// Add to table "iostoolstatus"
-//				tableColumnNames.add(tool.id);
-//				if (Database.addTableColumn("iostoolstatus", tool.id, "VARCHAR (120)")) {
-//					log.debug("Added iOS tool '" + tool.id + "' to iostoolstatus table");
-//				} else {
-//					log.error("Could not add iOS tool '" + tool.id
-//							+ "' to iostoolstatus table");
-//				}
-//			}
-//		}
-//		tableColumnNames = null;
-//		log.debug("Found " + iosTools.size() + " iOS tools");
-//
-//	}
 }

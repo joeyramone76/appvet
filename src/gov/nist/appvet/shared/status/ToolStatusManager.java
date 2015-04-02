@@ -21,14 +21,20 @@ package gov.nist.appvet.shared.status;
 
 import gov.nist.appvet.properties.AppVetProperties;
 import gov.nist.appvet.shared.Database;
+import gov.nist.appvet.shared.Logger;
+import gov.nist.appvet.shared.analysis.AnalysisType;
 import gov.nist.appvet.shared.os.DeviceOS;
 import gov.nist.appvet.toolmgr.ToolServiceAdapter;
 
 public class ToolStatusManager {
+	
+	private static final Logger log = AppVetProperties.log;
 
 	private ToolStatusManager() {
 	}
 
+	// TODO: Change method call to remove os. We can compute os in this method
+	// via Database.getAppOS(appId).
 	public synchronized static ToolStatus getToolStatus(DeviceOS os, String appid, 
 			String toolId) {
 		String toolStatusName = getToolStatusName(os, appid, toolId);
@@ -56,23 +62,41 @@ public class ToolStatusManager {
 		if (os == DeviceOS.ANDROID) {
 			Database.update("UPDATE androidtoolstatus SET " + toolId + "='"
 					+ toolStatus.name() + "' where appid='" + appId + "'");
-			Database.setLastUpdate(appId);
-
-			computeAppStatus(os, appId);
 		} else if (os == DeviceOS.IOS) {
 			Database.update("UPDATE iostoolstatus SET " + toolId + "='"
 					+ toolStatus.name() + "' where appid='" + appId + "'");
-			Database.setLastUpdate(appId);
-
-			computeAppStatus(os, appId);
 		}
-
+		Database.setLastUpdate(appId);
+		computeAppStatus(os, appId);
 	}
 
 	private synchronized static void computeAppStatus(DeviceOS os, String appId) {
-		// Registration
-		ToolServiceAdapter tool = ToolServiceAdapter.getByToolId(os, "registration");
+		// If audit report is not null, use this status as the app's status
+		ToolServiceAdapter tool = ToolServiceAdapter.getByToolId(os, "audit");
+		log.debug("### TOOL AUDIT: " + tool.id);
 
+		if (tool.analysisType != null) {
+			ToolStatus toolStatus = getToolStatus(os, appId, tool.id);
+			log.debug("### TOOL STATUS FOR AUDIT: " + toolStatus.name());
+			if (toolStatus == ToolStatus.PASS) {
+				AppStatusManager.setAppStatus(appId, AppStatus.PASS);
+				return;
+			} else if (toolStatus == ToolStatus.WARNING) {
+				AppStatusManager.setAppStatus(appId, AppStatus.WARNING);
+				return;
+			} else if (toolStatus == ToolStatus.FAIL) {
+				AppStatusManager.setAppStatus(appId, AppStatus.FAIL);
+				return;
+			} 
+		} else {
+			log.warn("Tool status for audit is null");
+		}
+
+		// Audit report has not been set, so compute app status from 
+		// preprocessing and analysis tools.
+		
+		// Registration
+		tool = ToolServiceAdapter.getByToolId(os, "registration");
 		ToolStatus toolStatus = getToolStatus(os, appId, tool.id);
 		if (toolStatus == ToolStatus.ERROR) {
 			AppStatusManager.setAppStatus(appId, AppStatus.ERROR);
@@ -110,10 +134,13 @@ public class ToolStatusManager {
 		int numToolsSubmitted = 0;
 		int numTools = 0;
 		if (os == DeviceOS.ANDROID) {
+			// Subtract 1 since we don't count the audit report
 			numTools = AppVetProperties.androidTools.size();
 		} else if (os == DeviceOS.IOS) {
+			// Subtract 1 since we don't count the audit report
 			numTools = AppVetProperties.iosTools.size();
 		}
+		
 		for (int i = 0; i < numTools; i++) {
 			tool = null;
 			if (os == DeviceOS.ANDROID) {
@@ -121,23 +148,34 @@ public class ToolStatusManager {
 			} else if (os == DeviceOS.IOS) {
 				tool = AppVetProperties.iosTools.get(i);
 			}
-			toolStatus = getToolStatus(os, appId, tool.id);
-			if (toolStatus == ToolStatus.ERROR) {
-				numToolErrors++;
-			} else if (toolStatus == ToolStatus.FAIL) {
-				numToolFails++;
-			} else if (toolStatus == ToolStatus.WARNING) {
-				numToolWarnings++;
-			} else if (toolStatus == ToolStatus.PASS) {
-				numToolPasses++;
-			} else if (toolStatus == ToolStatus.NA) {
-				//numToolsNa++;  // App status should already be pending
-			} else if (toolStatus == ToolStatus.SUBMITTED) {
-				numToolsSubmitted++;
-			} else if (toolStatus == ToolStatus.PASS){
-				numToolPasses++;
+			if (tool.analysisType != AnalysisType.AUDIT) {
+				toolStatus = getToolStatus(os, appId, tool.id);
+				if (toolStatus == ToolStatus.ERROR) {
+					numToolErrors++;
+				} else if (toolStatus == ToolStatus.FAIL) {
+					numToolFails++;
+				} else if (toolStatus == ToolStatus.WARNING) {
+					numToolWarnings++;
+				} else if (toolStatus == ToolStatus.PASS) {
+					numToolPasses++;
+				} else if (toolStatus == ToolStatus.NA) {
+					//numToolsNa++;  // App status should already be pending
+				} else if (toolStatus == ToolStatus.SUBMITTED) {
+					numToolsSubmitted++;
+				} else if (toolStatus == ToolStatus.PASS){
+					numToolPasses++;
+				}
 			}
 		}
+		
+		
+		log.debug("@@@ numTools: " + numTools);
+		log.debug("@@@ numToolErrors: " + numToolErrors);
+		log.debug("@@@ numToolFails: " + numToolFails);
+		log.debug("@@@ numToolWarnings: " + numToolWarnings);
+		log.debug("@@@ numToolsSubmitted: " + numToolsSubmitted);
+		log.debug("@@@ numToolPasses: " + numToolPasses);
+		log.debug("@@@ numTools: " + numTools);
 		if (numToolErrors > 0) {
 			AppStatusManager.setAppStatus(appId, AppStatus.ERROR);
 		} else if (numToolFails > 0) {
@@ -146,9 +184,10 @@ public class ToolStatusManager {
 			AppStatusManager.setAppStatus(appId, AppStatus.WARNING);
 		} else if (numToolsSubmitted > 0) {
 			AppStatusManager.setAppStatus(appId, AppStatus.PROCESSING);
-		} else if (numToolPasses == numTools) {
+		} else if (numToolPasses == numTools-1) { // Don't count audit tool
 			AppStatusManager.setAppStatus(appId, AppStatus.PASS);
 		} else {
+			
 			AppVetProperties.log.debug("Unknown app status in ToolStatusManager");
 			// Keep current app status
 		}

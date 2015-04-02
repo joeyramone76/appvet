@@ -19,6 +19,8 @@
  */
 package gov.nist.appvet.gwt.shared;
 
+import gov.nist.appvet.shared.analysis.AnalysisType;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 
@@ -26,6 +28,7 @@ public class ToolStatusGwt implements IsSerializable {
 
 	private String appId = null;
 	private String tool = null;
+	private AnalysisType analysisType = null;
 	private String statusDescription = null;
 	private String report = null;
 
@@ -44,7 +47,7 @@ public class ToolStatusGwt implements IsSerializable {
 		return statusDescription;
 	}
 
-	public String getTool() {
+	public String getToolDisplayName() {
 		return tool;
 	}
 
@@ -60,8 +63,16 @@ public class ToolStatusGwt implements IsSerializable {
 		statusDescription = desc;
 	}
 
-	public void setTool(String tool) {
+	public void setToolDisplayName(String tool) {
 		this.tool = tool;
+	}
+
+	public AnalysisType getAnalysisType() {
+		return analysisType;
+	}
+
+	public void setAnalysisType(AnalysisType analysisType) {
+		this.analysisType = analysisType;
 	}
 
 }

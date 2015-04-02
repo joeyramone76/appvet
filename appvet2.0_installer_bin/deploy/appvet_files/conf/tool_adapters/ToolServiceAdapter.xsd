@@ -26,35 +26,75 @@
 
 	<complexType name="DescriptionType">
 		<sequence>
-			<element name="Name" type="string" maxOccurs="1" minOccurs="1" >
+			<element name="Name" type="string" maxOccurs="1"
+				minOccurs="1">
 				<annotation>
-					<documentation>The Name element defines the name of an AppVet tool service. For example, <Name>My Android Tester</Name>.</documentation>
-				</annotation></element>
+					<documentation>
+						The Name element defines the name of an AppVet
+						tool service. For example,
+						<Name>My Android Tester</Name>
+						.
+					</documentation>
+				</annotation>
+			</element>
 			<element name="Id" maxOccurs="1" minOccurs="1">
-                <annotation>
-                	<documentation>The Id element defines the ID of the AppVet tool service. The Id element must be alphabetic lowercase. For example, <Id>myandroidtester</Id>.</documentation>
-                </annotation>
-                <simpleType>
+				<annotation>
+					<documentation>
+						The Id element defines the ID of the AppVet tool
+						service. The Id element must be alphabetic
+						lowercase. For example,
+						<Id>myandroidtester</Id>
+						.
+					</documentation>
+				</annotation>
+				<simpleType>
 					<restriction base="string">
 						<pattern value="[a-z]+" />
 					</restriction>
 				</simpleType>
 			</element>
+			<element name="Analysis" type="appvet:AnalysisType"
+				maxOccurs="1" minOccurs="1">
+			</element>
+			
+
 			<element name="VendorName" type="string" maxOccurs="1"
-				minOccurs="0" >
+				minOccurs="0">
 				<annotation>
-					<documentation>The VendorName element defines the vendor name of the AppVet tool service. For example, <Vendor>Example, Inc.</Vendor>.</documentation>
-				</annotation></element>
+					<documentation>
+						The VendorName element defines the vendor name
+						of the AppVet tool service. For example,
+						<Vendor>Example, Inc.</Vendor>
+						.
+					</documentation>
+				</annotation>
+			</element>
 			<element name="VendorWebsite" type="anyURI" maxOccurs="1"
-				minOccurs="0" >
+				minOccurs="0">
 				<annotation>
-					<documentation>The VendorWebsite element defines the vendor's website. For example, <VendorWebsite>https://www.example.com</VendorWebsite>.</documentation>
-				</annotation></element>
+					<documentation>
+						The VendorWebsite element defines the vendor's
+						website. For example,
+						<VendorWebsite>
+							https://www.example.com
+						</VendorWebsite>
+						.
+					</documentation>
+				</annotation>
+			</element>
 			<element name="ReportFile" type="appvet:ReportFileType"
 				maxOccurs="1" minOccurs="1">
 				<annotation>
-					<documentation>The ReportFile element defines the file type of the tool service report. The ReportFormat element must be TXT, PDF, HTML, or RTF. For example, <ReportFile>TXT</ReportFile>.</documentation>
-				</annotation></element>
+					<documentation>
+						The ReportFile element defines the file type of
+						the tool service report. The ReportFormat
+						element must be TXT, PDF, HTML, or RTF. For
+						example,
+						<ReportFile>TXT</ReportFile>
+						.
+					</documentation>
+				</annotation>
+			</element>
 		</sequence>
 	</complexType>
 
@@ -92,6 +132,14 @@
 			</choice>
 		</sequence>
 	</complexType>
+	
+	<simpleType name="AnalysisType">
+		<restriction base="string">
+			<enumeration value="PREPROCESSOR" />
+			<enumeration value="ANALYSISTOOL" />
+			<enumeration value="AUDIT" />
+		</restriction>
+	</simpleType>
 
 	<simpleType name="ReportFileType">
 		<restriction base="string">
@@ -295,6 +343,4 @@ element should not be set.
 				</annotation></element>
 		</sequence>
 	</complexType>
-
-
 </schema>

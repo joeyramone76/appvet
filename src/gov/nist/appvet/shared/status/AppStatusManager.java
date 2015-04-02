@@ -53,6 +53,7 @@ public class AppStatusManager {
 	
 	public synchronized static AppStatus getAppStatus(String appid) {
 		String appStatusStr = getAppStatusName(appid);
+		log.debug("AppStatus string is: " + appStatusStr);
 		return AppStatus.getStatus(appStatusStr);
 	}
 }

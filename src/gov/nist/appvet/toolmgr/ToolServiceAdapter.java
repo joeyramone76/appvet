@@ -24,6 +24,7 @@ import gov.nist.appvet.servlet.shared.SSLWrapper;
 import gov.nist.appvet.shared.ErrorMessage;
 import gov.nist.appvet.shared.Logger;
 import gov.nist.appvet.shared.ReportFileType;
+import gov.nist.appvet.shared.analysis.AnalysisType;
 import gov.nist.appvet.shared.app.AppInfo;
 import gov.nist.appvet.shared.os.DeviceOS;
 import gov.nist.appvet.shared.status.ToolStatus;
@@ -66,6 +67,7 @@ public class ToolServiceAdapter implements Runnable {
 	public AppInfo appInfo = null;
 	public String name = null; // Display Name (e.g., Androwarn (Maaaaz))
 	public String id = null; // ID used as a database table column name
+	public AnalysisType analysisType = null; // The type of analysis (PREPROCESSOR, ANALYSISTOOL, or AUDIT)
 	public String vendorName = null;
 	public Protocol protocol = null;
 	public String webSite = null;
@@ -124,27 +126,30 @@ public class ToolServiceAdapter implements Runnable {
 		}
 	}
 	
-//	public static ToolServiceAdapter getByAndroidToolId(String toolId) {
-//		for (int i = 0; i < AppVetProperties.androidTools.size(); i++) {
-//			final ToolServiceAdapter adapter = AppVetProperties.androidTools.get(i);
-//			if (adapter.id.equals(toolId)) {
-//				return adapter;
-//			}
-//		}
-//		log.error("Android tool id '" + toolId + "' does not exist!");
-//		return null;
-//	}
-//	
-//	public static ToolServiceAdapter getByiOSToolId(String toolId) {
-//		for (int i = 0; i < AppVetProperties.iosTools.size(); i++) {
-//			final ToolServiceAdapter adapter = AppVetProperties.iosTools.get(i);
-//			if (adapter.id.equals(toolId)) {
-//				return adapter;
-//			}
-//		}
-//		log.error("iOS tool ID " + toolId + "' does not exist!");
-//		return null;
-//	}
+	public static ToolServiceAdapter getAudit(DeviceOS os) {
+		if (os == DeviceOS.ANDROID) {
+			for (int i = 0; i < AppVetProperties.androidTools.size(); i++) {
+				AnalysisType analysisType = AppVetProperties.androidTools.get(i).analysisType;
+				if (analysisType == AnalysisType.AUDIT) {
+					return AppVetProperties.androidTools.get(i);
+				}
+			}
+			log.error("Android audit report does not exist!");
+			return null;
+		} else if (os == DeviceOS.IOS) {
+			for (int i = 0; i < AppVetProperties.iosTools.size(); i++) {
+				AnalysisType analysisType = AppVetProperties.iosTools.get(i).analysisType;
+				if (analysisType == AnalysisType.AUDIT) {
+					return AppVetProperties.iosTools.get(i);
+				}
+			}
+			log.error("iOS audit report does not exist!");
+			return null;
+		} else {
+			log.error("Invalid OS: " + os);
+			return null;
+		}
+	}
 
 
 	public static String getHtmlReportString(String reportPath, AppInfo appInfo) {
@@ -217,6 +222,8 @@ public class ToolServiceAdapter implements Runnable {
 		checkNullString(configFileName, "name", name);
 		id = xml.getXPathValue("/ToolServiceAdapter/Description/Id");
 		checkNullString(configFileName, "id", id);
+		String analysisValue = xml.getXPathValue("/ToolServiceAdapter/Description/Analysis");
+		analysisType = AnalysisType.getAnalysisType(analysisValue);
 		vendorName = xml.getXPathValue("/ToolServiceAdapter/Description/VendorName");
 		webSite = xml.getXPathValue("/ToolServiceAdapter/Description/VendorWebsite");
 		// Report configuration  

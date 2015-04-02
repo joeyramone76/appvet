@@ -33,6 +33,7 @@ import gov.nist.appvet.gwt.shared.AppInfoGwt;
 import gov.nist.appvet.gwt.shared.ConfigInfoGwt;
 import gov.nist.appvet.gwt.shared.ToolStatusGwt;
 import gov.nist.appvet.gwt.shared.UserInfoGwt;
+import gov.nist.appvet.shared.analysis.AnalysisType;
 import gov.nist.appvet.shared.appvetparameters.AppVetParameter;
 import gov.nist.appvet.shared.os.DeviceOS;
 import gov.nist.appvet.shared.servletcommands.AppVetServletCommand;
@@ -171,6 +172,8 @@ public class AppVetPanel extends DockLayoutPanel {
 									"Could not retrieve app info", true);
 						} else {
 							String appNameHtml = null;
+							
+							/* Set app icon */
 							appInfoIcon.setVisible(true);
 
 							if (selectedApp.appStatus == AppStatus.REGISTERING) {
@@ -205,6 +208,7 @@ public class AppVetPanel extends DockLayoutPanel {
 								appInfoIcon.setUrl(iconPath);
 							}
 
+							/* Set app status */
 							if ((selectedApp.appStatus == AppStatus.ERROR)
 									|| (selectedApp.appStatus == AppStatus.FAIL)
 									|| (selectedApp.appStatus == AppStatus.WARNING)
@@ -233,6 +237,7 @@ public class AppVetPanel extends DockLayoutPanel {
 										+ selectedApp.versionName);
 							}
 
+							/* Get tool results */
 							final String htmlToolResults = getHtmlToolResults(
 									selectedApp.appId, toolsResults);
 							toolResultsHtml.setHTML(htmlToolResults);
@@ -242,33 +247,56 @@ public class AppVetPanel extends DockLayoutPanel {
 
 					public String getHtmlToolResults(String appId,
 							List<ToolStatusGwt> toolResults) {
+						
+						/* Get pre-processing analysis results */
 						String statuses = "<hr><div id=\"appInfoSectionHeader\">PreProcessing</div>\n";
 						for (int i = 0; i < toolResults.size(); i++) {
-							statuses += "<table>"
-									+ "<tr>\n"
-									+ "<td align=\"left\" width=\"185\">"
-									+ toolResults.get(i).getTool()
-									+ "</td>\n"
-									+ "<td align=\"left\" width=\"120\">"
-									+ toolResults.get(i).getStatusDescription()
-									+ "</td>\n"
-									+"<td align=\"left\" width=\"45\">"
-									+ toolResults.get(i).getReport()
-									+ "</td>\n"
-									+ "</tr>\n"
-									+ "</table>";
-							
-							if (toolResults.get(i).getTool()
-									.indexOf("Android Manifest") > -1) {
-								statuses += "<hr><div id=\"appInfoSectionHeader\">Tools</div>\n";
-							} 
+							AnalysisType analysisType = toolResults.get(i).getAnalysisType();
+							if (analysisType == AnalysisType.PREPROCESSOR) {
+								statuses += getToolStatusHtmlDisplay(toolResults.get(i));
+							}
+						}
+						
+						/* Get analysis tool results. */
+						statuses += "<hr><div id=\"appInfoSectionHeader\">Tools</div>\n";
+						for (int i = 0; i < toolResults.size(); i++) {
+							AnalysisType analysisType = toolResults.get(i).getAnalysisType();
+							if (analysisType == AnalysisType.ANALYSISTOOL) {
+								statuses += getToolStatusHtmlDisplay(toolResults.get(i));
+							}
+						}
+						
+						/* Get audit results */
+						statuses += "<hr><div id=\"appInfoSectionHeader\">Audit</div>\n";
+						for (int i = 0; i < toolResults.size(); i++) {
+							AnalysisType analysisType = toolResults.get(i).getAnalysisType();
+							if (analysisType == AnalysisType.AUDIT) {
+								statuses += getToolStatusHtmlDisplay(toolResults.get(i));
+							}
 						}
 						return statuses;
+					}
+					
+					public String getToolStatusHtmlDisplay(ToolStatusGwt toolStatus) {
+						return "<table>"
+								+ "<tr>\n"
+								+ "<td align=\"left\" width=\"185\">"
+								+ toolStatus.getToolDisplayName()
+								+ "</td>\n"
+								+ "<td align=\"left\" width=\"120\">"
+								+ toolStatus.getStatusDescription()
+								+ "</td>\n"
+								+"<td align=\"left\" width=\"45\">"
+								+ toolStatus.getReport()
+								+ "</td>\n"
+								+ "</tr>\n"
+								+ "</table>";
 					}
 				});
 			}
 		}
 	}
+	
 
 	class AppUploadFormHandler implements FormHandler {
 		AppUploadDialogBox submitAppDialogBox = null;
@@ -827,7 +855,7 @@ public class AppVetPanel extends DockLayoutPanel {
 				final String dateString = "?nocache"
 						+ new Date().getTime();
 				final String url = SERVLET_URL + dateString + 
-						"&" + AppVetParameter.COMMAND.value + "=" + AppVetServletCommand.GET_APPVET_LOG.name() + "=" + 
+						"&" + AppVetParameter.COMMAND.value + "=" + AppVetServletCommand.GET_APPVET_LOG.name() + 
 						"&" + AppVetParameter.SESSIONID.value + "=" + sessionId;
 				Window.open(url, "_blank", "");
 			}

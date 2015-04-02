@@ -89,9 +89,9 @@ public class AppsListPagingDataGrid<T> extends PagingDataGrid<T> {
 					log.info("App status in table is: " + os);
 				}
 				if (os == DeviceOS.ANDROID) {
-					sb.appendHtmlConstant("<img width=\"15\" src=\"images/android_logo_black.png\"  alt=\"\" />");
+					sb.appendHtmlConstant("<img width=\"10\" src=\"images/android_logo_black.png\"  alt=\"\" />");
 				} else if (os == DeviceOS.IOS) {
-					sb.appendHtmlConstant("<img width=\"15\" src=\"images/ios_logo_black.png\"  alt=\"\" />");
+					sb.appendHtmlConstant("<img width=\"10\" src=\"images/ios_logo_black.png\"  alt=\"\" />");
 				} 
 				return sb.toSafeHtml();
 			}
@@ -118,7 +118,7 @@ public class AppsListPagingDataGrid<T> extends PagingDataGrid<T> {
 					log.info("App status in table is: " + appStatus.name());
 				}
 				if (appStatus == AppStatus.REGISTERING) {
-					iconVersion++; 
+					iconVersion++; // Forces refresh of icon
 					final String iconPath = appVetHostUrl
 							+ "/appvet_images/default.png?v" + iconVersion;
 					sb.appendHtmlConstant("<img width=\"20\" src=\"" + iconPath
