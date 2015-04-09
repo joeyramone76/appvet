@@ -98,7 +98,6 @@ public class ToolMgr implements Runnable {
 				log.debug(MemoryUtil.getFreeHeap("ToolMgr.run()"));
 				appInfo = new AppInfo(appid);
 				if (!getAppMetaData(appInfo)) {
-					System.exit(0);
 					cleanUpFiles(appInfo);
 					continue mainLoop;
 				}

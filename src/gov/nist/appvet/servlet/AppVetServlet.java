@@ -209,7 +209,7 @@ public class AppVetServlet extends HttpServlet {
 							|| toolStatus == ToolStatus.FAIL
 							|| toolStatus == ToolStatus.WARNING
 							|| toolStatus == ToolStatus.PASS) {
-						downloadReports(response, appId, sessionId,
+						returnReport(response, appId, toolId,
 								clientIpAddress);
 					} else {
 						sendHttpResponse(userName, appId, command.name(),
@@ -222,7 +222,6 @@ public class AppVetServlet extends HttpServlet {
 					log.warn("Null appstatus for DOWNLOAD_REPORTS");
 				}
 				
-				returnReport(response, appId, toolId, clientIpAddress);
 				break;
 			case GET_APP_LOG:
 				/*
@@ -585,6 +584,8 @@ public class AppVetServlet extends HttpServlet {
 
 	private void downloadReports(HttpServletResponse response, String appid,
 			String sessionId, String clientIpAddress) {
+		
+		log.debug("DownloadReports() is being called!");
 		boolean zipped = false;
 		String destinationZipPath = null;
 		String contentDisposition = "";
@@ -895,6 +896,7 @@ public class AppVetServlet extends HttpServlet {
 					String filePath = AppVetProperties.APPS_ROOT + "/" + appid
 							+ "/reports/" + tool.reportName;
 					File file = new File(filePath);
+					log.debug("Sending back report path: " + filePath);
 					if (!file.exists()) {
 						sendHttpResponse(null, appid, null, clientIpAddress,
 								"Report not available", response,
