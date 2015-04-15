@@ -12,7 +12,10 @@ public enum AppVetParameter {
 	APPID ("appid"),
 	REPORT ("report"),
 	TOOLID ("toolid"),
-	TOOLRISK ("toolrisk");
+	TOOLRISK ("toolrisk"),
+	APPNAME("appname"),
+	APPVERSION("appversion"),
+	APPOS("appos");
 
 	public String value;
 	

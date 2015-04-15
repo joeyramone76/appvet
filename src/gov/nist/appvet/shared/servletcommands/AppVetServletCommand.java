@@ -19,9 +19,6 @@
  */
 package gov.nist.appvet.shared.servletcommands;
 
-import java.io.Serializable;
-
-import com.google.gwt.user.client.rpc.IsSerializable;
 
 public enum AppVetServletCommand {
 
@@ -34,7 +31,8 @@ public enum AppVetServletCommand {
 	GET_APPVET_LOG, 
 	DOWNLOAD_REPORTS, 
 	SUBMIT_APP, 
-	SUBMIT_REPORT;
+	SUBMIT_REPORT,
+	SUBMIT_APP_NAME;
 
 	private AppVetServletCommand() {
 	}

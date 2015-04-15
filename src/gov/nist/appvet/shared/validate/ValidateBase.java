@@ -135,6 +135,15 @@ public class ValidateBase {
 		else
 			return false;
 	}
+	
+	public static boolean hasValidOs(String appOS) {
+		String os = appOS.toLowerCase();
+		if (os.equals("android") || os.equals("ios")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	public ValidateBase() {
 	}
